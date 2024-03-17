@@ -1,0 +1,156 @@
+'use client'
+
+import Image from 'next/image'
+import { Fragment, useEffect, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { showSignupHandlerDispatch } from './register'
+
+export const showLoginHandlerDispatch = () => {
+	document.dispatchEvent(new CustomEvent('showLogin'))
+}
+
+export const hideLoginHandlerDispatch = () => {
+	document.dispatchEvent(new CustomEvent('hideLogin'))
+}
+
+export default function Login() {
+	let [isOpen, setIsOpen] = useState(false)
+
+	const showLoginHandler = () => setIsOpen(true)
+	const hideLoginHandler = () => setIsOpen(false)
+
+	const showSignup = () => {
+		setIsOpen(false)
+		showSignupHandlerDispatch()
+	}
+
+	useEffect(() => {
+		document.addEventListener('showLogin', showLoginHandler)
+		document.addEventListener('hideLogin', hideLoginHandler)
+
+		return () => {
+			document.removeEventListener('showLogin', showLoginHandler)
+			document.removeEventListener('hideLogin', hideLoginHandler)
+		}
+	}, [])
+	return (
+		<>
+			<Transition appear show={isOpen} as={Fragment}>
+				<Dialog as="div" className="relative z-10 text-sm" onClose={hideLoginHandler}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-black/25" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl pb-6 bg-white text-left align-middle shadow-xl transition-all">
+									<div>
+										<div className="border-b border-[#E7E7E7]">
+											<div className="flex flex-row justify-between items-center py-5 px-12">
+												<h3 className="text-base font-bold">Log in</h3>
+												<button
+													className="w-[15px] h-[15px] aspect-[1/1] relative"
+													onClick={hideLoginHandler}
+												>
+													<Image
+														fill
+														src="/images/close.svg"
+														style={{ objectFit: 'contain' }}
+														alt="search-icon"
+														className=""
+													/>
+												</button>
+											</div>
+										</div>
+										<div className="py-5 px-12">
+											<p className="text-[#1B1B1B] mb-6">
+												Log in or{' '}
+												<button
+													onClick={() => showSignup()}
+													className="text-[#46B8E9] font-bold outline-none"
+												>
+													Sign up
+												</button>{' '}
+												if you don&apos;t have an account.
+											</p>
+											<div className="relative mb-4">
+												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[15.53px]">
+													<span className="w-[19.41px] h-[15.53px] relative inline-flex opacity-70">
+														<Image
+															fill
+															src="/images/icon-email.svg"
+															style={{ objectFit: 'contain' }}
+															alt="email-icon"
+															className=""
+														/>
+													</span>
+												</div>
+												<input
+													type="email"
+													placeholder="Enter your email address..."
+													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+												/>
+											</div>
+											<div className="relative">
+												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[20px]">
+													<span className="w-[21px] h-[20px] relative inline-flex opacity-50">
+														<Image
+															fill
+															src="/images/icon-key.svg"
+															style={{ objectFit: 'contain' }}
+															alt="icon-key"
+															className=""
+														/>
+													</span>
+												</div>
+												<input
+													type="password"
+													placeholder=" Enter your password..."
+													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+												/>
+												<div className="absolute top-1/2 -translate-y-1/2 right-4 max-h-[15.53px]">
+													<span className="w-[19.41px] h-[15.53px] relative inline-flex">
+														<Image
+															fill
+															src="/images/show-password.svg"
+															style={{ objectFit: 'contain' }}
+															alt="show-password"
+															className=""
+														/>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div className="flex flex-row justify-between pb-5 px-12">
+											<button className="bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold px-7 py-3 text-white rounded-lg transition-all">
+												Log in
+											</button>
+											<button className="underline opacity-60">Lost your password?</button>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition>
+		</>
+	)
+}
