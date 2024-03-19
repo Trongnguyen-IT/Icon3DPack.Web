@@ -28,11 +28,11 @@ export default function Profile() {
 					</div>
 				</div>
 			</div>
-			<div className="grid grid-cols-12 gap-4">
+			<div className="grid grid-cols-12 gap-4 mt-6">
 				<div className="col-start-1 col-span-6">
 					<b className="color-[#1B1B1B] flex mb-4">Name</b>
 					<input
-						className="w-full border rounded-lg py-2.5 px-2 border-[#E7E7E7] outline-none"
+						className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 						type="text"
 						placeholder="Jasy Sam"
 					/>
@@ -40,7 +40,7 @@ export default function Profile() {
 				<div className="col-span-6">
 					<b className="color-[#1B1B1B] flex mb-4">Email address</b>
 					<input
-						className="w-full border rounded-lg py-2.5 px-2 border-[#E7E7E7] outline-none"
+						className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 						type="text"
 						placeholder="jasy.design@gmail.com"
 					/>
@@ -52,12 +52,12 @@ export default function Profile() {
 				<a className="col-span-6 mt-4 opacity-60" href="">
 					Used to sign in, and receive awesome icon updates.
 				</a>
-				<div className="col-start-4 col-span-6 flex justify-between">
+				<div className="col-start-4 col-span-6 flex justify-between mt-12">
 					<div className="grid grid-cols-4 gap-4 w-full">
-						<button className="border rounded-lg border-gray py-2.5 col-span-1 font-bold">
+						<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
 							Cancel
 						</button>
-						<button className="border rounded-lg bg-[#46B8E9] py-2.5 col-span-3 font-medium text-white">
+						<button className="border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white">
 							Save Changes
 						</button>
 					</div>

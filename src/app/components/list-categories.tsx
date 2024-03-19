@@ -94,7 +94,7 @@ export default function ListCategories() {
 								alt={p.name}
 							/>
 							<div className="text-center pt-4">
-								<p className="text-[1.25rem] capitalize font-bold mb-1">{p.name}</p>
+								<p className="text-2xl capitalize font-bold mb-1">{p.name}</p>
 								<p className="text-[#CDCDCD]">130+ icons</p>
 							</div>
 						</SwiperSlide>

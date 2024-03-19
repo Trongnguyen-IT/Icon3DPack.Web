@@ -36,7 +36,7 @@ export default function Login() {
 	return (
 		<>
 			<Transition appear show={isOpen} as={Fragment}>
-				<Dialog as="div" className="relative z-10 text-sm" onClose={hideLoginHandler}>
+				<Dialog as="div" className="relative z-10" onClose={hideLoginHandler}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -60,13 +60,13 @@ export default function Login() {
 								leaveFrom="opacity-100 scale-100"
 								leaveTo="opacity-0 scale-95"
 							>
-								<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl pb-6 bg-white text-left align-middle shadow-xl transition-all">
+								<Dialog.Panel className="w-full max-w-[39.875rem] h-[26.5rem] transform overflow-hidden rounded-2xl pb-6 bg-white text-left align-middle shadow-xl transition-all">
 									<div>
 										<div className="border-b border-[#E7E7E7]">
-											<div className="flex flex-row justify-between items-center py-5 px-12">
-												<h3 className="text-base font-bold">Log in</h3>
+											<div className="flex flex-row justify-between items-center py-6 px-12">
+												<h3 className="text-xl font-bold">Log in</h3>
 												<button
-													className="w-[15px] h-[15px] aspect-[1/1] relative"
+													className="w-[1.090625rem] aspect-[1/1] relative"
 													onClick={hideLoginHandler}
 												>
 													<Image
@@ -79,8 +79,8 @@ export default function Login() {
 												</button>
 											</div>
 										</div>
-										<div className="py-5 px-12">
-											<p className="text-[#1B1B1B] mb-6">
+										<div className="py-6 px-12">
+											<p className="text-[#1B1B1B] mb-7">
 												Log in or{' '}
 												<button
 													onClick={() => showSignup()}
@@ -90,7 +90,7 @@ export default function Login() {
 												</button>{' '}
 												if you don&apos;t have an account.
 											</p>
-											<div className="relative mb-4">
+											<div className="relative mb-5">
 												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[15.53px]">
 													<span className="w-[19.41px] h-[15.53px] relative inline-flex opacity-70">
 														<Image
@@ -105,11 +105,11 @@ export default function Login() {
 												<input
 													type="email"
 													placeholder="Enter your email address..."
-													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 											</div>
 											<div className="relative">
-												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[20px]">
+												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-5">
 													<span className="w-[21px] h-[20px] relative inline-flex opacity-50">
 														<Image
 															fill
@@ -123,7 +123,7 @@ export default function Login() {
 												<input
 													type="password"
 													placeholder=" Enter your password..."
-													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 												<div className="absolute top-1/2 -translate-y-1/2 right-4 max-h-[15.53px]">
 													<span className="w-[19.41px] h-[15.53px] relative inline-flex">
@@ -138,8 +138,8 @@ export default function Login() {
 												</div>
 											</div>
 										</div>
-										<div className="flex flex-row justify-between pb-5 px-12">
-											<button className="bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold px-7 py-3 text-white rounded-lg transition-all">
+										<div className="flex flex-row justify-between pb-5 pt-3 px-12">
+											<button className="w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold text-white rounded-lg transition-all">
 												Log in
 											</button>
 											<button className="underline opacity-60">Lost your password?</button>

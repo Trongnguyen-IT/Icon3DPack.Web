@@ -5,9 +5,9 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
 
 	return (
 		<div className="bg-[#F9F9F9] py-12">
-			<div className="container max-w-6xl mx-auto bg-[#F9F9F9]">
+			<div className="container mx-auto bg-[#F9F9F9]">
 				<h2 className="text-center font-bold mb-5">Account settings</h2>
-				<div className="flex flex-row text-sm">
+				<div className="flex flex-row">
 					<div className="basis-3/12">
 						<ul role="list" className="sidebar">
 							<li className=" rounded-lg py-2 px-3 bg-[#E7E7E7]">
@@ -118,17 +118,17 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
 						</p>
 						<div className="grid grid-cols-4 gap-4">
 							<input
-								className="col-start-2 col-span-2 border rounded-lg  py-2.5 px-2 border-[#E7E7E7]"
+								className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7]"
 								type="text"
 								placeholder="Current password..."
 							/>
 							<input
-								className="col-start-2 col-span-2 border rounded-lg  py-2.5 px-2 border-[#E7E7E7]"
+								className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7]"
 								type="text"
 								placeholder="New password..."
 							/>
 							<input
-								className="col-start-2 col-span-2 border rounded-lg  py-2.5 px-2 border-[#E7E7E7]"
+								className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7]"
 								type="text"
 								placeholder="Confirm password..."
 							/>
@@ -138,10 +138,10 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
 							<div className="col-start-2 col-span-2">
 								<div className="col-start-4 col-span-6 flex justify-between">
 									<div className="grid grid-cols-4 gap-4 w-full">
-										<button className="border rounded-lg border-gray py-2.5 col-span-1 font-bold">
+										<button className="border rounded-lg border-gray py-3 col-span-1 font-bold">
 											Cancel
 										</button>
-										<button className="border rounded-lg bg-[#46B8E9] py-2.5 col-span-3 font-medium text-white">
+										<button className="border rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white">
 											Save Changes
 										</button>
 									</div>

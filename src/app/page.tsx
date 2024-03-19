@@ -5,7 +5,7 @@ import ProductList from './components/product-list'
 
 export default function Home() {
 	return (
-		<main className="container max-w-6xl mx-auto py-20">
+		<main className="container mx-auto py-24">
 			<Banner />
 			<ListCategories />
 			<ProductList />

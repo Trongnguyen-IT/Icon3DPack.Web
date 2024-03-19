@@ -30,10 +30,10 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
 	]
 
 	return (
-		<div className="bg-[#F9F9F9] py-12">
-			<div className="container max-w-6xl mx-auto bg-[#F9F9F9]">
+		<div className="bg-[#F9F9F9] py-12 min-h-[60vh]">
+			<div className="container mx-auto bg-[#F9F9F9]">
 				<h2 className="text-center font-bold mb-5">Account settings</h2>
-				<div className="flex flex-row text-sm">
+				<div className="flex flex-row">
 					<div className="basis-3/12">
 						<ul role="list" className="sidebar">
 							{navLinks.map((item: any, index: number) => {

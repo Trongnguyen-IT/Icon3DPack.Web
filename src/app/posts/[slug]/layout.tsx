@@ -16,6 +16,10 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 			name: 'Licensing',
 		},
 		{
+			url: 'privacy',
+			name: 'Privacy',
+		},
+		{
 			url: 'termsofuse',
 			name: 'Terms of use',
 		},
@@ -27,8 +31,8 @@ export default function PostLayout({ children }: { children: React.ReactNode }) 
 
 	return (
 		<section className="bg-[#F9F9F9] py-12">
-			<div className="container max-w-6xl mx-auto bg-[#F9F9F9]">
-				<div className="flex flex-row text-sm">
+			<div className="container mx-auto bg-[#F9F9F9]">
+				<div className="flex flex-row">
 					<div className="basis-3/12">
 						<ul role="list" className="sidebar">
 							{navLinks.map((item: any, index: number) => {

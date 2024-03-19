@@ -2,17 +2,16 @@ import Image from 'next/image'
 
 export default function SearchInput() {
 	return (
-		<div className="ab lb adu bbn flex h-full rounded-lg border border-[#E7E7E7] justify-between overflow-hidden">
+		<div className="flex justify-between relative">
 			<input
 				type="text"
 				name="account-number"
 				id="account-number"
-				className="lu tn adu afa arq atw axv bbt bbx bcf bgd bne bnf bnr cid cif w-11/12 h-full pl-4 outline-none"
+				className="h-[3.125rem] w-full py-3 pl-4 border border-[#E7E7E7] rounded-lg outline-none overflow-hidden"
 				placeholder="Search for an 3d icon..."
 			/>
-
-			<div className="u aa as de lx yz auc aspect-[1/1] relative m-2">
-				<button>
+			<div className="absolute top-1/2 -translate-y-1/2 right-2">
+				<button className="relative aspect-[1/1] ">
 					<Image
 						src={'../../images/search-icon.svg'}
 						style={{ objectFit: 'contain' }}

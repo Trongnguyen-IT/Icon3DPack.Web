@@ -22,6 +22,10 @@ export default function Footer() {
 			name: 'Terms of use',
 		},
 		{
+			url: 'privacy',
+			name: 'Privacy',
+		},
+		{
 			url: 'contact',
 			name: 'Contact',
 		},
@@ -45,7 +49,7 @@ export default function Footer() {
 
 	return (
 		<footer className="bg-black text-white">
-			<div className="container  max-w-6xl mx-auto  py-20">
+			<div className="container mx-auto py-20">
 				<div className="flex flex-row items-center">
 					<div className="basis-3/4">
 						<div className="flex flex-col">
@@ -57,11 +61,11 @@ export default function Footer() {
 									alt="3DIconPack"
 								/>
 							</Link>
-							<ul className="grid grid-flow-col gap-4 auto-cols-max">
+							<ul className="grid grid-flow-col gap-7 auto-cols-max">
 								{navLinks.map((p: any, index: number) => {
 									return (
 										<li className="text-white opacity-50" key={index}>
-											<Link href={`/posts/${p.url}`} className="text-sm font-light">
+											<Link href={`/posts/${p.url}`} className="">
 												{p.name}
 											</Link>
 										</li>
@@ -72,12 +76,12 @@ export default function Footer() {
 					</div>
 					<div className="basis-1/4">
 						<div className="flex flex-col">
-							<p className="text-sm font-bold mb-4">Connect with us</p>
-							<ul className="grid grid-cols-6 gap-2">
+							<p className="font-bold mb-4">Connect with us</p>
+							<ul className="grid grid-cols-6 gap-1">
 								{icons.map((p: string, index: number) => {
 									return (
 										<li key={index} className="">
-											<Link href="." className="w-full h-full inline-flex relative aspect-[1/1]">
+											<Link href="." className="w-10 h-10 inline-flex relative aspect-[1/1]">
 												<Image src={p} fill style={{ objectFit: 'contain' }} alt={p} />
 											</Link>
 										</li>
@@ -91,21 +95,29 @@ export default function Footer() {
 			{/* <button onClick={onScroll}>
 				<Image src="/images/Top.svg" alt="top icon" width={60} height={60}></Image>
 			</button> */}
-			<div className="border-solid border-t border-[#292929]">
-				<div className="container max-w-6xl mx-auto">
-					<div className="flex flex-row justify-between w-full min-h-[1px] items-center ">
-						<div className="text-sm opacity-60">© 2020-2023 by 3DICONPACK</div>
-						<div className="a">
-							<Link href="." className="flex aspect-[1/1] relative max-w-[186px] min-w-[80px]">
-								<Image
-									src={'../../../images/icon-donate.svg'}
-									fill
-									style={{ objectFit: 'contain' }}
-									alt="3DIconPack"
-								/>
-							</Link>
-						</div>
-					</div>
+			<div className="border-solid border-t border-[#292929] py-10 relative">
+				<div className="container mx-auto">
+					<p className="opacity-60">© 2020-2023 by 3DICONPACK</p>
+				</div>
+				<div className="absolute top-1/2 right-[7%] -translate-y-1/2">
+					<Link href="." className="flex aspect-[1/1] relative w-[3.75rem] h-[3.7rem]">
+						<Image
+							src={'../../../images/icon-donate.svg'}
+							fill
+							style={{ objectFit: 'contain' }}
+							alt="3DIconPack"
+						/>
+					</Link>
+				</div>
+				<div className="absolute bottom-full right-[7%] translate-y-2">
+					<button onClick={() => {}} className="flex aspect-[1/1] relative w-[3.75rem] h-[3.7rem]">
+						<Image
+							src={'../../../images/icon-donate.svg'}
+							fill
+							style={{ objectFit: 'contain' }}
+							alt="3DIconPack"
+						/>
+					</button>
 				</div>
 			</div>
 		</footer>

@@ -18,7 +18,7 @@ export default function ProductDetails({ params }: { params: { product_id: strin
 	})
 
 	return (
-		<div className="container max-w-6xl mx-auto py-20 text-sm">
+		<div className="container mx-auto py-20">
 			<div>
 				<Link href="/">
 					<span

@@ -35,7 +35,7 @@ export default function Register() {
 	return (
 		<>
 			<Transition appear show={isOpen} as={Fragment}>
-				<Dialog as="div" className="relative z-10 text-sm" onClose={hideSignupHandler}>
+				<Dialog as="div" className="relative z-10" onClose={hideSignupHandler}>
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
@@ -59,13 +59,13 @@ export default function Register() {
 								leaveFrom="opacity-100 scale-100"
 								leaveTo="opacity-0 scale-95"
 							>
-								<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl pb-6 bg-white text-left align-middle shadow-xl transition-all">
+								<Dialog.Panel className="w-full max-w-[39.875rem] h-[30.875rem] transform overflow-hidden rounded-2xl pb-6 bg-white text-left align-middle shadow-xl transition-all">
 									<div>
 										<div className="border-b border-[#E7E7E7]">
-											<div className="flex flex-row justify-between items-center py-5 px-12">
-												<h3 className="text-base font-bold">Sign up</h3>
+											<div className="flex flex-row justify-between items-center py-6 px-12">
+												<h3 className="text-xl font-bold">Sign up</h3>
 												<button
-													className="w-[15px] h-[15px] aspect-[1/1] relative"
+													className="w-[1.090625rem] aspect-[1/1] relative"
 													onClick={hideSignupHandler}
 												>
 													<Image
@@ -78,8 +78,8 @@ export default function Register() {
 												</button>
 											</div>
 										</div>
-										<div className="py-5 px-12">
-											<p className="text-[#1B1B1B] mb-6">
+										<div className="py-6 px-12">
+											<p className="text-[#1B1B1B] mb-7">
 												Sign up or{' '}
 												<button
 													onClick={() => showLogin()}
@@ -89,7 +89,7 @@ export default function Register() {
 												</button>{' '}
 												to an existing your account.
 											</p>
-											<div className="relative mb-4">
+											<div className="relative mb-5">
 												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[15.53px]">
 													<span className="w-[19.41px] h-[15.53px] relative inline-flex opacity-50">
 														<Image
@@ -104,11 +104,11 @@ export default function Register() {
 												<input
 													type="text"
 													placeholder="Full name..."
-													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 											</div>
-											<div className="relative mb-4">
-												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-[15.53px]">
+											<div className="relative mb-5">
+												<div className="absolute top-1/2 -translate-y-1/2 left-4 max-h-5">
 													<span className="w-[19.41px] h-[15.53px] relative inline-flex opacity-70">
 														<Image
 															fill
@@ -122,7 +122,7 @@ export default function Register() {
 												<input
 													type="email"
 													placeholder="Enter your email address..."
-													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 											</div>
 											<div className="relative">
@@ -140,7 +140,7 @@ export default function Register() {
 												<input
 													type="password"
 													placeholder=" Enter your password..."
-													className="w-full border rounded-lg py-2.5 px-2 pl-12 border-[#E7E7E7] outline-none"
+													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 												<div className="absolute top-1/2 -translate-y-1/2 right-4 max-h-[15.53px]">
 													<span className="w-[19.41px] h-[15.53px] relative inline-flex">
@@ -155,7 +155,7 @@ export default function Register() {
 												</div>
 											</div>
 										</div>
-										<div className="flex flex-row justify-between pb-5 px-12">
+										<div className="flex flex-row justify-between pb-5 pt-3 px-12">
 											<button className="bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold px-7 py-3 text-white rounded-lg transition-all">
 												Sign up
 											</button>

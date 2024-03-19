@@ -5,7 +5,7 @@ export default function DeleteAccount() {
 
 	return (
 		<div className="basis-9/12 p-8 mx-5 bg-white rounded-[1.25rem]">
-			<p>
+			<p className="mb-5">
 				<b>Delete account</b>
 			</p>
 			<div className="flex flex-col">
@@ -19,7 +19,7 @@ export default function DeleteAccount() {
 				</div>
 				<div className="flex flex-row justify-center  items-center mb-12">
 					<div className="basis-72">
-						<button className="border rounded-lg bg-[#F04F23] py-2.5 col-span-3 font-medium text-white w-full">
+						<button className="border rounded-lg bg-[#F04F23] py-3 col-span-3 font-medium text-white w-full">
 							Delete account
 						</button>
 					</div>

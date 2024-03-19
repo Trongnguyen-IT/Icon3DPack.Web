@@ -30,12 +30,12 @@ export default function MyCombobox() {
 			  )
 
 	return (
-		<div className="w-full h-full">
+		<div className="w-full">
 			<Combobox value={selected} onChange={setSelected}>
-				<div className="relative h-full z-10">
-					<div className="relative w-full h-full cursor-default overflow-hidden rounded-lg border border-[#E7E7E7] bg-white text-left focus:outline-none sm:text-sm">
+				<div className="relative z-10">
+					<div className="relative w-full cursor-default bg-white text-left focus:outline-none">
 						<Combobox.Input
-							className="col-start-1 col-span-5 border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 outline-none"
+							className="w-full h-[3.125rem] overflow-hidden rounded-lg border border-[#E7E7E7] col-start-1 col-span-5 pl-3 pr-10 leading-5 text-gray-900 outline-none"
 							displayValue={(person: any) => person.name}
 							onChange={(event) => setQuery(event.target.value)}
 						/>
@@ -58,7 +58,7 @@ export default function MyCombobox() {
 						leaveTo="opacity-0"
 						afterLeave={() => setQuery('')}
 					>
-						<Combobox.Options className="absolute mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base sm:text-sm">
+						<Combobox.Options className="absolute mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base">
 							{filteredPeople.length === 0 && query !== '' ? (
 								<div className="relative cursor-default select-none px-4 py-2 text-gray-700">
 									Nothing found.

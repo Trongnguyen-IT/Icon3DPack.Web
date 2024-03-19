@@ -21,10 +21,10 @@ export default function Notification() {
 				<div className="col-start-2 col-span-2">
 					<div className="col-start-4 col-span-6 flex justify-between">
 						<div className="grid grid-cols-4 gap-4 w-full">
-							<button className="border rounded-lg border-gray py-2.5 col-span-1 font-bold">
+							<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
 								Cancel
 							</button>
-							<button className="border rounded-lg bg-[#46B8E9] py-2.5 col-span-3 font-medium text-white">
+							<button className="border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white">
 								Save Changes
 							</button>
 						</div>
