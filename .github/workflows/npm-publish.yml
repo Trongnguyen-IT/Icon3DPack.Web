@@ -19,5 +19,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Start app
+      run:  pm2 startOrRestart /home/ubuntu/actions-runner-gui/_work/Icon3DPack.Web/Icon3DPack.Web/ecosystem.config.js --only gui-icon3dpack
     
   
