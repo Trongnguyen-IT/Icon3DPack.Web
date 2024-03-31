@@ -1,11 +1,11 @@
 import { AxiosResponse } from 'axios'
 import api from '../api'
-import ProfileModel from '@/app/models/users/profile-model'
-import LoginResponseModel from '@/app/models/users/login-response'
-import ApiResult from '@/app/models/api-result'
-import BaseResponseModel from '@/app/models/base-response-model'
-import ProfileUpdateModel from '@/app/models/users/profile-update-model'
-import RegisterModel from '@/app/models/users/register-model'
+import ProfileModel from '@/models/users/profile-model'
+import LoginResponseModel from '@/models/users/login-response'
+import ApiResult from '@/models/api-result'
+import BaseResponseModel from '@/models/base-response-model'
+import ProfileUpdateModel from '@/models/users/profile-update-model'
+import RegisterModel from '@/models/users/register-model'
 
 async function getProfileApi(): Promise<AxiosResponse<ApiResult<ProfileModel>>> {
 	return await api.get('/users/profile')

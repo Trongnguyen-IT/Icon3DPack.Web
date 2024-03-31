@@ -1,13 +1,13 @@
 'use client'
 
-import ImageUpload from '@/app/components/image-upload'
+import ImageUpload from '@/components/image-upload'
 import { useEffect, useState } from 'react'
-import { getProfileApi, updateProfileApi } from '../../apis/user/user-request'
-import ProfileModel from '../../models/users/profile-model'
-import ProfileUpdateModel from '@/app/models/users/profile-update-model'
+import { getProfileApi, updateProfileApi } from '@/apis/user/user-request'
+import ProfileModel from '@/models/users/profile-model'
+import ProfileUpdateModel from '@/models/users/profile-update-model'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { ConvertToCloudfontUrl } from '@/app/helper/cloudfont-helper'
+import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 
 export default function Profile() {
 	const [avatarUrl, setAvatarUrl] = useState('')

@@ -1,7 +1,7 @@
 import Image from 'next/image'
-import Banner from './components/banner'
-import ListCategories from './components/list-categories'
-import ProductList from './components/product-list'
+import Banner from '../components/banner'
+import ListCategories from '../components/list-categories'
+import ProductList from '../components/product-list'
 
 export default function Home() {
 	return (

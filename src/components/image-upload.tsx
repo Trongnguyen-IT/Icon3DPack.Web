@@ -1,10 +1,8 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { upload } from '../apis/image-upload'
-import FileUploadRequest from '../models/users/file-load-model'
-import { awsS3Configuration } from '../configs'
-import { ConvertToCloudfontUrl } from '../helper/cloudfont-helper'
+import { upload } from '@/apis/image-upload'
+import FileUploadRequest from '@/models/users/file-load-model'
 
 export default function ImageUpload({
 	imageUrl,
