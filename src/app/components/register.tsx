@@ -1,9 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { Fragment, useEffect, useState } from 'react'
+import { ChangeEvent, Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showLoginHandlerDispatch } from './login'
+import RegisterModel from '../models/users/register-model'
+import { registerApi } from '../apis/user/user-request'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export const showSignupHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showSignup'))
@@ -15,6 +19,7 @@ export const hideSignupHandlerDispatch = () => {
 
 export default function Register() {
 	let [isOpen, setIsOpen] = useState(false)
+	let [registerModel, setRegisterModel] = useState({} as RegisterModel)
 
 	const showSignupHandler = () => setIsOpen(true)
 	const hideSignupHandler = () => setIsOpen(false)
@@ -23,6 +28,24 @@ export default function Register() {
 		setIsOpen(false)
 		showLoginHandlerDispatch()
 	}
+
+	const submit = async () => {
+		const result = await registerApi(registerModel)
+		result.data.result && notify()
+	}
+
+	const notify = () =>
+		toast.success('Update success!', {
+			position: 'top-right',
+			autoClose: 2000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+			theme: 'light',
+		})
+
 	useEffect(() => {
 		document.addEventListener('showSignup', showSignupHandler)
 		document.addEventListener('hideSignup', hideSignupHandler)
@@ -102,6 +125,12 @@ export default function Register() {
 													</span>
 												</div>
 												<input
+													onChange={(e: ChangeEvent<HTMLInputElement>) =>
+														setRegisterModel((prev: RegisterModel) => ({
+															...prev,
+															fullName: e.target.value,
+														}))
+													}
 													type="text"
 													placeholder="Full name..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
@@ -120,6 +149,12 @@ export default function Register() {
 													</span>
 												</div>
 												<input
+													onChange={(e: ChangeEvent<HTMLInputElement>) =>
+														setRegisterModel((prev: RegisterModel) => ({
+															...prev,
+															email: e.target.value,
+														}))
+													}
 													type="email"
 													placeholder="Enter your email address..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
@@ -138,6 +173,12 @@ export default function Register() {
 													</span>
 												</div>
 												<input
+													onChange={(e: ChangeEvent<HTMLInputElement>) =>
+														setRegisterModel((prev: RegisterModel) => ({
+															...prev,
+															password: e.target.value,
+														}))
+													}
 													type="password"
 													placeholder=" Enter your password..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
@@ -156,7 +197,10 @@ export default function Register() {
 											</div>
 										</div>
 										<div className="flex flex-row justify-between pb-5 pt-3 px-12">
-											<button className="bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold px-7 py-3 text-white rounded-lg transition-all">
+											<button
+												onClick={() => submit()}
+												className="bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold px-7 py-3 text-white rounded-lg transition-all"
+											>
 												Sign up
 											</button>
 										</div>
@@ -167,6 +211,7 @@ export default function Register() {
 					</div>
 				</Dialog>
 			</Transition>
+			<ToastContainer containerId={'registerId'} />
 		</>
 	)
 }

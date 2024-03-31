@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showSignupHandlerDispatch } from './register'
+import { loginApi } from '../apis/user/user-request'
+import { useRouter } from 'next/navigation'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -14,7 +16,11 @@ export const hideLoginHandlerDispatch = () => {
 }
 
 export default function Login() {
+	const { push } = useRouter()
+
 	let [isOpen, setIsOpen] = useState(false)
+	let [email, setEmail] = useState('')
+	let [password, setPassword] = useState('')
 
 	const showLoginHandler = () => setIsOpen(true)
 	const hideLoginHandler = () => setIsOpen(false)
@@ -22,6 +28,20 @@ export default function Login() {
 	const showSignup = () => {
 		setIsOpen(false)
 		showSignupHandlerDispatch()
+	}
+
+	const submit = async () => {
+		const data = {
+			email: email,
+			password,
+		}
+		const result = await loginApi(data)
+
+		if (result.data.result) {
+			localStorage.setItem('token', result.data.result.token)
+			hideLoginHandler()
+			push('/')
+		}
 	}
 
 	useEffect(() => {
@@ -33,6 +53,7 @@ export default function Login() {
 			document.removeEventListener('hideLogin', hideLoginHandler)
 		}
 	}, [])
+
 	return (
 		<>
 			<Transition appear show={isOpen} as={Fragment}>
@@ -103,6 +124,7 @@ export default function Login() {
 													</span>
 												</div>
 												<input
+													onChange={(e) => setEmail(e.target.value)}
 													type="email"
 													placeholder="Enter your email address..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
@@ -121,6 +143,7 @@ export default function Login() {
 													</span>
 												</div>
 												<input
+													onChange={(e) => setPassword(e.target.value)}
 													type="password"
 													placeholder=" Enter your password..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
@@ -139,7 +162,10 @@ export default function Login() {
 											</div>
 										</div>
 										<div className="flex flex-row justify-between pb-5 pt-3 px-12">
-											<button className="w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold text-white rounded-lg transition-all">
+											<button
+												onClick={() => submit()}
+												className="w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold text-white rounded-lg transition-all"
+											>
 												Log in
 											</button>
 											<button className="underline opacity-60">Lost your password?</button>
