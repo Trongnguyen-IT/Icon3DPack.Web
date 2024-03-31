@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import ProductItem from '../../../components/product-item'
+import ProductItem from '@/components/product-item'
 
 export default function ProductDetails({ params }: { params: { product_id: string } }) {
 	const [products, setProduct] = useState(() => {
