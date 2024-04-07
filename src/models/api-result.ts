@@ -1,5 +1,7 @@
-export default interface ApiResult<T> {
+interface ApiResult<T = any> {
 	succeeded: boolean
 	result: T
 	errors: string
 }
+
+export type { ApiResult }

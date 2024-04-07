@@ -4,8 +4,10 @@ import Image from 'next/image'
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showSignupHandlerDispatch } from './register'
-import { loginApi } from '../apis/user/user-request'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
+import http from '@/services/http-request'
+import { ApiResult } from '@/models/api-result'
+import { ProfileResponseModel } from '@/models/users/user-response-model'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -16,8 +18,6 @@ export const hideLoginHandlerDispatch = () => {
 }
 
 export default function Login() {
-	const { push } = useRouter()
-
 	let [isOpen, setIsOpen] = useState(false)
 	let [email, setEmail] = useState('')
 	let [password, setPassword] = useState('')
@@ -35,12 +35,24 @@ export default function Login() {
 			email: email,
 			password,
 		}
-		const result = await loginApi(data)
 
-		if (result.data.result) {
-			localStorage.setItem('token', result.data.result.token)
+		const { status, payload } = await http.post<ApiResult<ProfileResponseModel>>(
+			'/users/authenticate',
+			data
+		)
+
+		if (payload) {
+			await http.post('/api', payload.result, { baseUrl: '' })
+			// const resultFromNextServer = await fetch('/api', {
+			// 	method: 'POST',
+			// 	body: JSON.stringify(result.data.result),
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// })
+
 			hideLoginHandler()
-			push('/')
+			redirect('/')
 		}
 	}
 

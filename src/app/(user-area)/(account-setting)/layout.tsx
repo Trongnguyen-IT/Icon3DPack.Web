@@ -1,33 +1,12 @@
 'use client'
 
+import { userSettingRoutes } from '@/router/routes'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export default function SettingLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname()
-	const navLinks = [
-		{
-			url: 'profile',
-			name: 'Profile',
-			icon: 'images/icon-profile.svg',
-		},
-		{
-			url: 'change-password',
-			name: 'Security',
-			icon: 'images/icon-security.svg',
-		},
-		{
-			url: 'notification',
-			name: 'Notifications',
-			icon: 'images/icon-notification.svg',
-		},
-		{
-			url: 'delete-account',
-			name: 'Delete account',
-			icon: 'images/icon-delete.svg',
-		},
-	]
 
 	return (
 		<div className="bg-[#F9F9F9] py-12 min-h-[60vh]">
@@ -36,7 +15,7 @@ export default function SettingLayout({ children }: { children: React.ReactNode 
 				<div className="flex flex-row">
 					<div className="basis-3/12">
 						<ul role="list" className="sidebar">
-							{navLinks.map((item: any, index: number) => {
+							{userSettingRoutes.map((item: any, index: number) => {
 								const isActive = `/${item.url}` === pathname
 								return (
 									<li

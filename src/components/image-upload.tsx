@@ -1,19 +1,22 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { upload } from '@/apis/image-upload'
-import FileUploadRequest from '@/models/users/file-load-model'
+import FileUploadRequest from '@/models/files/file-load-request'
+import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
+import { upload } from '@/services/image-upload'
 
 export default function ImageUpload({
 	imageUrl,
 	updateAvatar,
 	bucketName,
 	prefix,
+	isShowImage,
 }: {
 	imageUrl: string
 	updateAvatar: Function
 	bucketName: string
 	prefix: string
+	isShowImage: boolean
 }) {
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
@@ -51,26 +54,28 @@ export default function ImageUpload({
 				bucketName: bucketName,
 				prefix: prefix,
 			} as FileUploadRequest
-			const result = await upload(resuest)
+			const { status, payload } = await upload(resuest)
 
-			result.data.succeeded && result.data.result && updateAvatar(result.data.result)
+			payload.succeeded && payload.result && updateAvatar(payload.result)
 		} catch (err) {
 			console.log(err)
 		}
 	}
 
 	return (
-		<div className="flex items-center justify-between">
-			<div className="w-[3.75rem] h-[3.75rem] relative rounded-full overflow-hidden aspect-[1/1]">
-				<Image fill src={previewImg} style={{ objectFit: 'contain' }} alt={previewImg} />
+		<div className="grid grid-cols-12 place-items-center gap-4">
+			<div className={`${!isShowImage ? 'hidden' : ''} col-span-2`}>
+				<div className="w-[3.75rem] h-[3.75rem] relative rounded-full overflow-hidden ">
+					<Image fill src={previewImg} alt={previewImg} className="object-contain object-center" />
+				</div>
 			</div>
-			<div>
+			<div className="col-span-3 place-self-start">
 				<button
 					onClick={() => uploadInput.current?.click()}
 					className="flex justify-center items-center w-[7.5rem] h-[3.125rem] border rounded-lg border-[#E7E7E7] font-bold"
 				>
 					<Image
-						src="images/icon-upload.svg"
+						src={ConvertToCloudfontUrl('utilities-image/icon-upload.svg')}
 						width={16}
 						height={16}
 						alt="Picture of the author"
@@ -85,17 +90,17 @@ export default function ImageUpload({
 					className='hidden className="max-w-[260px] ext-sm text-stone-500 file:mr-5 file:py-1 file:px-3 file:border-[1px] file:text-xs file:font-medium file:bg-stone-50 file:text-stone-700 hover:file:cursor-pointer hover:file:bg-blue-50 hover:file:text-blue-700"'
 				/>
 			</div>
-			<span className="font-medium opacity-50">JPG, GIF or PNG. 1MB Max.</span>
+			<span className="col-span-6 font-medium opacity-50">JPG, GIF or PNG. 1MB Max.</span>
 			<button
-				className="w-[1.155rem] h[1.283125rem] aspect-[18/20] relative cursor-pointer"
+				className="w-[1.155rem] h[1.283125rem] aspect-[18/20] relative cursor-pointer col-span-1"
 				onClick={() => handleRemove()}
 			>
 				<Image
-					src="images/delete.svg"
+					src={ConvertToCloudfontUrl('utilities-image/icon-delete.svg')}
 					width={18}
 					height={20}
 					alt="Picture of the author"
-					style={{ objectFit: 'contain' }}
+					className="object-contain object-center"
 				/>
 			</button>
 		</div>

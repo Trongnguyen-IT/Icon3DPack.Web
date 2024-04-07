@@ -5,7 +5,6 @@ import { ChangeEvent, Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showLoginHandlerDispatch } from './login'
 import RegisterModel from '../models/users/register-model'
-import { registerApi } from '../apis/user/user-request'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
