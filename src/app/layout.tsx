@@ -3,7 +3,7 @@ import { Montserrat } from 'next/font/google'
 import './globals.css'
 import AppProvider from '@/app/app-provider'
 import { cookies } from 'next/headers'
-import { UserService } from '@/services/user'
+import { AuthService } from '@/services/user/auth-service'
 
 const inter = Montserrat({ subsets: ['latin'], variable: '--montserrat-font' })
 
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const cookieStore = cookies()
 	const sessionToken = cookieStore.get('sessionToken')
-	const userService = new UserService('users')
+	const authService = new AuthService('users')
 
 	let user: any | null = null
 	if (sessionToken) {
 		const {
 			payload: { result },
-		} = await userService.profile(sessionToken.value)
+		} = await authService.profile(sessionToken.value)
 
 		user = result
 	}

@@ -1,9 +1,9 @@
-import AddOrEditProduct from '@/app/admin/components/products/add-edit'
+import AddOrEditProduct from '../_components/add-edit'
 
-export default function AddProduct() {
+export default function ProductAdd() {
 	return (
 		<div>
-			<h1 className="font-bold text-[1.875rem]">Add Category</h1>
+			<h1 className="font-bold text-[1.875rem] mb-8">Add Product</h1>
 			<AddOrEditProduct />
 		</div>
 	)

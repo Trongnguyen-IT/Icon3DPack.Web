@@ -33,7 +33,7 @@ export default function AdminHeader() {
 					)}
 
 					{user && (
-						<Link href="profile">
+						<Link href="/profile">
 							<div className="w-[3.125rem] h-[3.125rem] relative rounded-full overflow-hidden aspect-[1/1]">
 								<Image
 									fill

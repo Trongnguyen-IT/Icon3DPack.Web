@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { FileExtensionService } from '@/services/file-extensions'
 import { FileExtensionResponseModel } from '@/models/file-extensions/file-extension-response-model'
+import Delete from './components/delete'
 
 export default async function AdminFileExtension() {
 	const cookieStore = cookies()
@@ -60,12 +61,7 @@ export default async function AdminFileExtension() {
 											>
 												Edit
 											</Link>
-											{/* <button
-												onClick={() => onDelete(item.id)}
-												className="col-span-1 text-white border bg-[#F04F23] border-[#E7E7E7] rounded-xl py-3"
-											>
-												Delete
-											</button> */}
+											<Delete key={item.id} props={{ id: item.id }} />
 										</div>
 									</td>
 								</tr>

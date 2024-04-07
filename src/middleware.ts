@@ -20,11 +20,11 @@ export function middleware(request: NextRequest) {
 	}
 	// Đăng nhập rồi thì không cho vào login/register nữa
 	if (authPaths.some((path) => pathname.startsWith(path)) && sessionToken) {
-		return NextResponse.redirect(new URL('/me', request.url))
+		return NextResponse.redirect(new URL('/profile', request.url))
 	}
 
 	if (pathname.match(productEditRegex) && !sessionToken) {
-		return NextResponse.redirect(new URL('/', request.url))
+		return NextResponse.redirect(new URL('/profile', request.url))
 	}
 
 	return NextResponse.next()

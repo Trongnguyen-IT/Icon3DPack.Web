@@ -1,23 +1,22 @@
 import 'react-toastify/dist/ReactToastify.css'
 import { cookies } from 'next/headers'
-import ProfileClient from './profile-client'
-import { UserService } from '@/services/user'
+import ProfileClient from './profile-form'
+import { AuthService } from '@/services/user/auth-service'
 
 export default async function Profile() {
 	const cookieStore = cookies()
 	const sessionToken = cookieStore.get('sessionToken')
-	console.log('sessionToken', sessionToken)
 
-	const userService = new UserService('users')
+	const authService = new AuthService('users')
 
 	const {
-		payload: { result: profile },
-	} = await userService.profile(sessionToken?.value)
+		payload: { result: user },
+	} = await authService.profile(sessionToken?.value)
 
 	return (
 		<div>
 			{' '}
-			<ProfileClient props={profile} />{' '}
+			<ProfileClient props={{ user }} />{' '}
 		</div>
 	)
 }

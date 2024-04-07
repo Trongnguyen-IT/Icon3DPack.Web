@@ -1,39 +1,28 @@
 'use client'
 
 import ImageUpload from '@/components/image-upload'
-import { useEffect, useState } from 'react'
-import ProfileModel from '@/models/users/profile-model'
-import ProfileUpdateModel from '@/models/users/profile-update-model'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { UserResponseModel } from '@/models/users/user-response-model'
-import { updateOne } from '@/services/products'
-import { UserService } from '@/services/user'
-import { UserRequestModel } from '@/models/users/user-request-model'
+import { AuthService } from '@/services/user/auth-service'
 
-export default function ProfileClient({ props }: { props: UserResponseModel }) {
-	const userService = new UserService('users')
-	const [avatarUrl, setAvatarUrl] = useState('')
-	const [profile, setProfile] = useState(() => {
-		return props
-	})
+export default function ProfileClient({ props }: { props: { user: UserResponseModel } }) {
+	const { user } = props
+	const authService = new AuthService('users')
+	const [profile, setProfile] = useState(user)
 
 	const updateProfile = async (): Promise<void> => {
-		const requestModel = {
-			fullName: profile.fullName,
-			email: profile.email,
-			imageUrl: avatarUrl,
-		} as UserRequestModel
-
 		const {
 			payload: { result },
-		} = await userService.updateProfile(profile.id, requestModel)
-		console.log('result', result)
+		} = await authService.updateProfile(profile)
 	}
 
-	const updateAvatar = (fileKey: string): void => {
-		setAvatarUrl(fileKey)
+	const updateAvatar = (imageUrl: string): void => {
+		setProfile((prev) => ({
+			...prev,
+			imageUrl: imageUrl,
+		}))
 	}
 
 	const notify = () =>
@@ -48,17 +37,6 @@ export default function ProfileClient({ props }: { props: UserResponseModel }) {
 			theme: 'light',
 		})
 
-	useEffect(() => {
-		// const fetchingData = async () => {
-		// 	const result = await getProfileApi()
-		// 	if (result.data.succeeded && result.data.result) {
-		// 		setProfile(result.data.result)
-		// 		result.data.result.imageUrl && setAvatarUrl(result.data.result.imageUrl)
-		// 	}
-		// }
-		// fetchingData()
-	}, [])
-
 	return (
 		<div>
 			<div className="mb-4">
@@ -68,7 +46,7 @@ export default function ProfileClient({ props }: { props: UserResponseModel }) {
 						<ImageUpload
 							isShowImage={true}
 							updateAvatar={updateAvatar}
-							imageUrl={ConvertToCloudfontUrl(avatarUrl)}
+							imageUrl={ConvertToCloudfontUrl(profile?.imageUrl)}
 							bucketName="icon3dpack-bucket-s3"
 							prefix="user-profile"
 						></ImageUpload>
@@ -82,7 +60,7 @@ export default function ProfileClient({ props }: { props: UserResponseModel }) {
 						className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 						type="text"
 						placeholder="Jasy Sam"
-						value={profile.fullName}
+						value={profile?.fullName}
 						onChange={(e) => setProfile((pre) => ({ ...pre, fullName: e.target.value }))}
 					/>
 				</div>
@@ -93,7 +71,7 @@ export default function ProfileClient({ props }: { props: UserResponseModel }) {
 						type="text"
 						placeholder="jasy.design@gmail.com"
 						disabled
-						value={profile.email}
+						value={profile?.email}
 					/>
 				</div>
 
@@ -117,9 +95,8 @@ export default function ProfileClient({ props }: { props: UserResponseModel }) {
 					</div>
 				</div>
 			</div>
-			<ToastContainer containerId={'profileId'} />
-			{/* Same as */}
-			<ToastContainer />
+			{/* <ToastContainer containerId={'profileId'} />
+			<ToastContainer /> */}
 		</div>
 	)
 }

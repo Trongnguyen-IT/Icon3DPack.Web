@@ -10,15 +10,7 @@ export const metadata: Metadata = {
 	description: '3DIconPack',
 }
 
-export default async function UILayout({
-	children,
-	user,
-}: {
-	children: React.ReactNode
-	user: UserResponseModel
-}) {
-	console.log('useruseruser', user)
-
+export default async function UILayout({ children }: { children: React.ReactNode }) {
 	return (
 		<>
 			<Header />

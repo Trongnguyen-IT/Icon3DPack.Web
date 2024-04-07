@@ -1,43 +1,16 @@
-export default function ChangePassword() {
-	const active = true
+import { cookies } from 'next/headers'
+import ChangePasswordForm from './change-password-form'
+import { AuthService } from '@/services/user/auth-service'
 
-	return (
-		<div>
-			<p className="mb-5">
-				<b>Change password</b>
-			</p>
-			<div className="grid grid-cols-4 gap-4">
-				<input
-					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-					type="text"
-					placeholder="Current password..."
-				/>
-				<input
-					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-					type="text"
-					placeholder="New password..."
-				/>
-				<input
-					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-					type="text"
-					placeholder="Confirm password..."
-				/>
-				<p className="col-start-2 col-span-2 opacity-50 pt-1 pb-11">
-					Enter your new password. 8 characters minimum.
-				</p>
-				<div className="col-start-2 col-span-2">
-					<div className="col-start-4 col-span-6 flex justify-between">
-						<div className="grid grid-cols-4 gap-4 w-full">
-							<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
-								Cancel
-							</button>
-							<button className="border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white">
-								Save Changes
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+export default async function ChangePassword() {
+	const cookieStore = cookies()
+	const sessionToken = cookieStore.get('sessionToken')
+
+	const authService = new AuthService('users')
+
+	const {
+		payload: { result: user },
+	} = await authService.profile(sessionToken?.value)
+
+	return <ChangePasswordForm props={{ user }} />
 }
