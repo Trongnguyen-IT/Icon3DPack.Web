@@ -10,23 +10,33 @@ function classNames(...classes: any) {
 export default function Dropdown({
 	props,
 }: {
-	props: { dataSource: { id: string; name: string }[]; callBack: (value: any) => any }
+	props: {
+		dataSource: { id: string; name: string }[]
+		activeId?: string
+		callBack: (value: any) => any
+	}
 }) {
-	const { dataSource, callBack } = props
-	const [selected, setSelected] = useState({ id: '', name: 'All categories' })
+	const { dataSource, activeId, callBack } = props
+	const [selected, setSelected] = useState(activeId)
 	const handleSelect = (item: any) => {
 		setSelected(item)
 		callBack(item.id)
 	}
+
+	const getActiveName = (id?: string) => {
+		const result = dataSource.find((p) => p.id === id)
+		return result ? result.name : 'All categories'
+	}
+
 	return (
 		<Menu as="div" className="relative flex text-left w-full">
 			<div className="w-full">
 				<Menu.Button className="h-[3.125rem] w-full inline-flex justify-between items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-					<span> {selected.name}</span>
+					<span> {getActiveName(selected)}</span>
 					<div className="h-3 w-3 text-gray-400 relative aspect-[1/1]">
 						<Image
 							fill
-							src={'../../images/dropdown-icon.svg'}
+							src={'../../../images/dropdown-icon.svg'}
 							alt="dropdown.svg"
 							className="object-contain object-center"
 						/>

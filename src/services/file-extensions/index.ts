@@ -6,8 +6,8 @@ class FileExtensionService extends BaseService<
 	FileExtensionRequestModel,
 	FileExtensionResponseModel
 > {
-	constructor(serviceUrl: string) {
-		super(serviceUrl)
+	constructor(serviceUrl: string, token?: string) {
+		super(serviceUrl, token)
 	}
 }
 

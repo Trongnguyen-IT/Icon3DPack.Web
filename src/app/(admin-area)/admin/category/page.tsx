@@ -8,18 +8,15 @@ import Delete from './_components/delete'
 
 export default async function AdminCategory() {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
+	const token = cookieStore.get('token')
 
-	const categoryService = new CategoryService('admincategory')
+	const categoryService = new CategoryService('admincategory', token?.value)
 
-	const {
-		payload: { result: dataSource },
-	} = await categoryService.getAll('/admincategory')
-	console.log('dataSource', dataSource)
+	const { result: dataSource } = await categoryService.getAll('/admincategory')
 
 	return (
 		<div>
-			<h1 className="font-bold text-[1.875rem] mb-8">Category</h1>
+			<h1 className="font-bold text-[1.875rem] mb-12">Category</h1>
 			<div className="flex justify-end mb-4">
 				<Link
 					href="/admin/category/add"

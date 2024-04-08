@@ -31,7 +31,6 @@ export default function AppProvider({
 	useState(() => {
 		if (typeof window !== 'undefined') {
 			clientSessionToken.value = inititalSessionToken
-			console.log('clientSessionToken', clientSessionToken)
 		}
 	})
 

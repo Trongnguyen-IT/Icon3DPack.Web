@@ -1,41 +1,58 @@
-import { UserRequestModel } from '@/models/users/user-request-model'
-import { BaseService } from '../base-service'
-import { UserResponseModel } from '@/models/users/user-response-model'
-import http from '../http-request'
 import { ApiResult } from '@/models/api-result'
 import { ChangePasswordModel } from '@/models/users/change-password'
+import HttpRequest from '../http-request'
+import { UserResponseModel } from '@/models/users/user-response-model'
+import { LoginModel } from '@/models/users/login-model'
+import { UserRequestModel } from '@/models/users/user-request-model'
 
 class AuthService {
+	public readonly token?: string
 	public readonly serviceUrl: string
+	public readonly httpRequest: HttpRequest
 
-	constructor(serviceUrl: string) {
+	constructor(serviceUrl: string, token?: string) {
 		this.serviceUrl = serviceUrl
+		this.httpRequest = new HttpRequest()
+		this.token = token
 	}
 
-	async profile(
-		token?: string
-	): Promise<{ status: number; payload: ApiResult<UserResponseModel> }> {
-		return await http.get<ApiResult<UserResponseModel>>(`/${this.serviceUrl}/profile`, {
+	async login(data: LoginModel): Promise<ApiResult<UserResponseModel>> {
+		return await this.httpRequest.post<ApiResult<UserResponseModel>>(
+			`/${this.serviceUrl}/authenticate`,
+			data
+		)
+	}
+
+	async profile(): Promise<ApiResult<UserResponseModel>> {
+		return await this.httpRequest.get<ApiResult<UserResponseModel>>(`/${this.serviceUrl}/profile`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${this.token}`,
 			},
 		})
 	}
 
-	async updateProfile(
-		data: UserRequestModel
-	): Promise<{ status: number; payload: ApiResult<UserRequestModel> }> {
-		return await http.put<ApiResult<UserRequestModel>>(`/${this.serviceUrl}/update-profile`, data)
+	async updateProfile(data: UserRequestModel): Promise<ApiResult<UserResponseModel>> {
+		return await this.httpRequest.put<ApiResult<UserResponseModel>>(
+			`/${this.serviceUrl}/update-profile`,
+			data
+		)
 	}
 
 	async changePassword(
 		id: string,
 		data: ChangePasswordModel
-	): Promise<{ status: number; payload: ApiResult<UserRequestModel> }> {
-		return await http.put<ApiResult<UserRequestModel>>(
+	): Promise<ApiResult<UserResponseModel>> {
+		return await this.httpRequest.put<ApiResult<UserResponseModel>>(
 			`/${this.serviceUrl}/${id}/change-password`,
 			data
 		)
 	}
+
+	async auth(data: UserRequestModel) {
+		await this.httpRequest.post<ApiResult<UserResponseModel>>(`/api/auth`, data, {
+			baseURL: '/',
+		})
+	}
 }
+
 export { AuthService }

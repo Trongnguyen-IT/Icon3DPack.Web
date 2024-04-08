@@ -5,18 +5,9 @@ import { AuthService } from '@/services/user/auth-service'
 
 export default async function Profile() {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
+	const sessionToken = cookieStore.get('token')
+	const authService = new AuthService('users', sessionToken?.value)
 
-	const authService = new AuthService('users')
-
-	const {
-		payload: { result: user },
-	} = await authService.profile(sessionToken?.value)
-
-	return (
-		<div>
-			{' '}
-			<ProfileClient props={{ user }} />{' '}
-		</div>
-	)
+	const { result: user } = await authService.profile()
+	return <ProfileClient props={{ user }} />
 }

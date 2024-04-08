@@ -3,18 +3,17 @@ import { CategoryService } from '@/services/categories'
 import { cookies } from 'next/headers'
 
 export default async function CategoryEditComponent({ params }: { params: any }) {
-	const categoryService = new CategoryService('admincategory')
-	const { id } = params
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
+	const token = cookieStore.get('token')
 
-	const { status, payload } = await categoryService.getOne(id)
+	const categoryService = new CategoryService('admincategory', token?.value)
+	const { id } = params
 
-	const category = payload.result
+	const { result: category } = await categoryService.getOne(id)
 
 	return (
 		<div>
-			<h1 className="font-bold text-[1.875rem]">Edit Category</h1>
+			<h1 className="font-bold text-[1.875rem] mb-12">Edit Category</h1>
 			<AddOrEditCategory id={id} category={category} />
 		</div>
 	)

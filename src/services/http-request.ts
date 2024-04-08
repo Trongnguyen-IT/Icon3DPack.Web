@@ -1,44 +1,7 @@
-import { baseAppUrl } from '@/configs'
 import { normalizePath } from '@/untils'
-import { redirect } from 'next/navigation'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
-type CustomOptions = Omit<RequestInit, 'method'> & {
-	baseUrl?: string | undefined
-}
-
-const ENTITY_ERROR_STATUS = 422
-const AUTHENTICATION_ERROR_STATUS = 401
-
-type EntityErrorPayload = {
-	message: string
-	errors: {
-		field: string
-		message: string
-	}[]
-}
-
-export class HttpError extends Error {
-	status: number
-	payload: {
-		message: string
-		[key: string]: any
-	}
-	constructor({ status, payload }: { status: number; payload: any }) {
-		super('Http Error')
-		this.status = status
-		this.payload = payload
-	}
-}
-
-export class EntityError extends HttpError {
-	status: 422
-	payload: EntityErrorPayload
-	constructor({ status, payload }: { status: 422; payload: EntityErrorPayload }) {
-		super({ status, payload })
-		this.status = status
-		this.payload = payload
-	}
-}
+const baseURL = 'http://localhost:5000/api/v1' //process.env.NEXT_PUBLIC_API_URL
 
 class SessionToken {
 	private token = ''
@@ -66,118 +29,104 @@ class SessionToken {
 }
 
 export const clientSessionToken = new SessionToken()
-let clientLogoutRequest: null | Promise<any> = null
 
-const request = async <Response>(
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-	url: string,
-	options?: CustomOptions | undefined
-) => {
-	try {
-		const body = options?.body
-			? options.body instanceof FormData
-				? options.body
-				: JSON.stringify(options.body)
-			: undefined
+const axiosIntance = axios.create({
+	baseURL,
+	headers: {
+		accept: 'application/json', // If you receieve JSON response.
+	},
+})
 
-		const baseHeaders =
-			body instanceof FormData
-				? {
-						Authorization: clientSessionToken.value
-							? `Bearer ${clientSessionToken.value}`
-							: 'Bearer',
-				  }
-				: {
-						'Content-Type': 'application/json',
-						Authorization: clientSessionToken.value
-							? `Bearer ${clientSessionToken.value}`
-							: 'Bearer',
-				  }
+// Add a request interceptor
+axiosIntance.interceptors.request.use(
+	function (config) {
+		// Do something before request is sent
 
-		// Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_API_ENDPOINT
-		// Nếu truyền baseUrl thì lấy giá trị truyền vào, truyền vào '' thì đồng nghĩa với việc chúng ta gọi API đến Next.js Server
-
-		const baseUrl = options?.baseUrl === undefined ? baseAppUrl : options.baseUrl
-
-		const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
-
-		const res = await fetch(fullUrl, {
-			...options,
-			headers: {
-				...baseHeaders,
-				...options?.headers,
-			} as any,
-			body,
-			method,
-		})
-		const payload: Response = await res.json()
-		const data = {
-			status: res.status,
-			payload,
+		if (clientSessionToken?.value) {
+			config.headers['Authorization'] = `Bearer ${clientSessionToken?.value}`
 		}
-		// Interceptor là nời chúng ta xử lý request và response trước khi trả về cho phía component
-		// if (!res.ok) {
-		// 	if (res.status === ENTITY_ERROR_STATUS) {
-		// 		throw new EntityError(
-		// 			data as {
-		// 				status: 422
-		// 				payload: EntityErrorPayload
-		// 			}
-		// 		)
-		// 	} else if (res.status === AUTHENTICATION_ERROR_STATUS) {
-		// 		if (typeof window !== 'undefined') {
-		// 			if (!clientLogoutRequest) {
-		// 				clientLogoutRequest = fetch('/api/auth/logout', {
-		// 					method: 'POST',
-		// 					body: JSON.stringify({ force: true }),
-		// 					headers: {
-		// 						...baseHeaders,
-		// 					} as any,
-		// 				})
 
-		// 				await clientLogoutRequest
-		// 				clientSessionToken.value = ''
-		// 				clientSessionToken.expiresAt = new Date().toISOString()
-		// 				clientLogoutRequest = null
-		// 				location.href = '/login'
-		// 			}
-		// 		} else {
-		// 			const sessionToken = (options?.headers as any)?.Authorization.split('Bearer ')[1]
-		// 			redirect(`/logout?sessionToken=${sessionToken}`)
-		// 		}
-		// 	} else {
-		// 		throw new HttpError(data)
+		return config
+	},
+	function (error) {
+		// Do something with request error
+		return Promise.reject(error)
+	}
+)
+
+// Add a response interceptor
+axiosIntance.interceptors.response.use(
+	function (response) {
+		// Any status code that lie within the range of 2xx cause this function to trigger
+		// Do something with response data
+		if (
+			['users/authenticate', 'auth/register'].some(
+				(item) => item === normalizePath(response.config.url)
+			)
+		) {
+			clientSessionToken.value = response.data.result.token
+		}
+		// if (typeof window !== 'undefined') {
+		// 	if (['users/authenticate', 'auth/register'].some((item) => item === normalizePath(url))) {
+		// 		clientSessionToken.value = (payload as any).token
+		// 		clientSessionToken.expiresAt = (payload as any).expiresAt
+		// 	} else if ('auth/logout' === normalizePath(url)) {
+		// 		clientSessionToken.value = ''
+		// 		clientSessionToken.expiresAt = new Date().toISOString()
 		// 	}
 		// }
-		// Đảm bảo logic dưới đây chỉ chạy ở phía client (browser)
-		if (typeof window !== 'undefined') {
-			if (['users/authenticate', 'auth/register'].some((item) => item === normalizePath(url))) {
-				clientSessionToken.value = (payload as any).token
-				clientSessionToken.expiresAt = (payload as any).expiresAt
-			} else if ('auth/logout' === normalizePath(url)) {
-				clientSessionToken.value = ''
-				clientSessionToken.expiresAt = new Date().toISOString()
-			}
+
+		return response
+	},
+	function (error) {
+		// Any status codes that falls outside the range of 2xx cause this function to trigger
+		// Do something with response error
+		return Promise.reject(error)
+	}
+)
+
+class HttpRequest {
+	private readonly axiosIntance: AxiosInstance
+
+	constructor() {
+		this.axiosIntance = axiosIntance
+	}
+
+	async get<TResponse>(url: string, configs?: AxiosRequestConfig<any>) {
+		try {
+			const { data: result } = await this.axiosIntance.get<TResponse>(url, configs)
+			return result
+		} catch (error) {
+			throw error
 		}
-		return data
-	} catch (error) {
-		throw error
+	}
+
+	async post<TResponse>(url: string, data?: any, configs?: AxiosRequestConfig<any>) {
+		try {
+			const { data: result } = await this.axiosIntance.post<TResponse>(url, data, configs)
+			return result
+		} catch (error) {
+			throw error
+		}
+	}
+
+	async put<TResponse>(url: string, data?: any, configs?: AxiosRequestConfig<any>) {
+		try {
+			const { data: result } = await this.axiosIntance.put<TResponse>(url, data, configs)
+			return result
+		} catch (error) {
+			throw error
+		}
+	}
+
+	async delete<TResponse>(url: string, configs?: AxiosRequestConfig<any>) {
+		try {
+			const { data: result } = await this.axiosIntance.delete<TResponse>(url, configs)
+			return result
+		} catch (error) {
+			throw error
+		}
 	}
 }
 
-const http = {
-	get<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request<Response>('GET', url, options)
-	},
-	post<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request<Response>('POST', url, { ...options, body })
-	},
-	put<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request<Response>('PUT', url, { ...options, body })
-	},
-	delete<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-		return request<Response>('DELETE', url, { ...options })
-	},
-}
-
-export default http
+export default HttpRequest

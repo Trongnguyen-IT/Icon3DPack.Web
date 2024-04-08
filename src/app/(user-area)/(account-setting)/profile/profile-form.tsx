@@ -13,9 +13,7 @@ export default function ProfileClient({ props }: { props: { user: UserResponseMo
 	const [profile, setProfile] = useState(user)
 
 	const updateProfile = async (): Promise<void> => {
-		const {
-			payload: { result },
-		} = await authService.updateProfile(profile)
+		const { result } = await authService.updateProfile(profile)
 	}
 
 	const updateAvatar = (imageUrl: string): void => {

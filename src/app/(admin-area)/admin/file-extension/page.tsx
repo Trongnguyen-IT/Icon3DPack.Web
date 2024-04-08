@@ -8,12 +8,10 @@ import Delete from './components/delete'
 
 export default async function AdminFileExtension() {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
-	const fileextensionService = new FileExtensionService('adminfileextension')
+	const token = cookieStore.get('token')
+	const fileextensionService = new FileExtensionService('adminfileextension', token?.value)
 
-	const {
-		payload: { result: dataSource },
-	} = await fileextensionService.getAll('/adminfileextension')
+	const { result: dataSource } = await fileextensionService.getAll('/adminfileextension')
 
 	return (
 		<div>

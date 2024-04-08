@@ -80,8 +80,8 @@ export default function ListCategories() {
 					prevEl: navPrevButton.current,
 					nextEl: navNextButton.current,
 				}}
-				onSlideChange={() => console.log('slide change')}
-				onSwiper={(swiper: any) => console.log(swiper)}
+				onSlideChange={() => {}}
+				onSwiper={(swiper: any) => {}}
 			>
 				{images.map((p: any, index: number) => {
 					return (

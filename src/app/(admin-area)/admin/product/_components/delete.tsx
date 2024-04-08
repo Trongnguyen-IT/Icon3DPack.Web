@@ -1,9 +1,9 @@
 'use client'
 
-import ConfirmDialog from '@/app/(admin-area)/admin/category/_components/confirm-dialog'
 import { ProductService } from '@/services/products'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import ConfirmDialog from './confirm-dialog'
 
 export default function Delete({ props }: { props: { id: string } }) {
 	const router = useRouter()
@@ -12,10 +12,10 @@ export default function Delete({ props }: { props: { id: string } }) {
 
 	const confirmDelete = async (): Promise<void> => {
 		const productService = new ProductService('adminproduct')
-		const { payload } = await productService.deleteOne(id)
+		const { succeeded, result } = await productService.deleteOne(id)
 
-		if (payload.succeeded) {
-			payload.succeeded && setIsShow(false)
+		if (succeeded) {
+			setIsShow(false)
 			router.refresh()
 		}
 	}

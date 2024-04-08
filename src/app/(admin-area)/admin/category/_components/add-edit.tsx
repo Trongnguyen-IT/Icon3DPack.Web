@@ -22,9 +22,9 @@ export default function AddOrEditCategory({
 	const categoryService = new CategoryService('admincategory')
 
 	const onSubmit = async (data: CategoryRequestModel): Promise<void> => {
-		const { payload } = isAddMode ? await createOne(data) : await updateOne(id, data)
+		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
 
-		if (payload.succeeded) {
+		if (succeeded) {
 			router.push('/admin/category')
 			router.refresh()
 		}
@@ -49,13 +49,15 @@ export default function AddOrEditCategory({
 		<div>
 			<div className="grid grid-cols-8 gap-10">
 				<div className="col-span-2 flex justify-center items-center">
-					<div className=" flex justify-center items-center relative h-full w-full">
-						<Image
-							fill
-							src={ConvertToCloudfontUrl(model.imageUrl)}
-							alt={ConvertToCloudfontUrl(model.imageUrl)}
-							className="object-contain object-center"
-						/>
+					<div className="grid grid-cols-1 row-span-1 col-span-1 w-full h-full">
+						<div className=" flex justify-center items-center relative w-full aspect-[4/3]">
+							<Image
+								fill
+								src={ConvertToCloudfontUrl(model.imageUrl)}
+								alt={ConvertToCloudfontUrl(model.imageUrl)}
+								className="object-contain object-center"
+							/>
+						</div>
 					</div>
 				</div>
 				<div className="col-span-4">

@@ -24,9 +24,11 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 	const categoryService = new CategoryService('admincategory')
 
 	const onSubmit = async (data: ProductRequestModel): Promise<void> => {
-		const { payload } = isAddMode ? await createOne(data) : await updateOne(product.id, data)
+		const { succeeded, result } = isAddMode
+			? await createOne(data)
+			: await updateOne(product.id, data)
 
-		if (payload.succeeded) {
+		if (succeeded) {
 			router.push('/admin/product')
 			router.refresh()
 		}
@@ -37,9 +39,7 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 	}, [])
 
 	const getCategories = async () => {
-		const {
-			payload: { result: categories },
-		} = await categoryService.getAll()
+		const { result: categories } = await categoryService.getAll()
 
 		const mapDataSource = categories.map((p) => ({ id: p.id, name: p.name }))
 		setCategories(mapDataSource)
@@ -60,8 +60,6 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 		}))
 	}
 	const callBack = (id: string) => {
-		console.log('id', id)
-
 		setModel((prev) => {
 			return {
 				...prev,
@@ -74,13 +72,15 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 		<div>
 			<div className="grid grid-cols-8 gap-10">
 				<div className="col-span-2 flex justify-center items-center">
-					<div className=" flex justify-center items-center relative h-full w-full">
-						<Image
-							fill
-							src={ConvertToCloudfontUrl(model.imageUrl)}
-							alt={ConvertToCloudfontUrl(model.imageUrl)}
-							className="object-contain object-center"
-						/>
+					<div className="grid grid-cols-1 row-span-1 col-span-1 w-full h-full">
+						<div className=" flex justify-center items-center relative w-full aspect-[4/3]">
+							<Image
+								fill
+								src={ConvertToCloudfontUrl(model.imageUrl)}
+								alt={ConvertToCloudfontUrl(model.imageUrl)}
+								className="object-contain object-center"
+							/>
+						</div>
 					</div>
 				</div>
 				<div className="col-span-4">
@@ -98,7 +98,13 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 						<p className="mb-1 font-bold">Category</p>
 						<div className="grid grid-cols-2">
 							<div className="col-span-1">
-								<Dropdown props={{ dataSource: categories, callBack: callBack }}></Dropdown>
+								<Dropdown
+									props={{
+										dataSource: categories,
+										activeId: product?.categoryId,
+										callBack: callBack,
+									}}
+								></Dropdown>
 							</div>
 						</div>
 						{/* <input
@@ -152,7 +158,7 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 					</div>
 					<div className="grid grid-cols-4 gap-4 mt-8">
 						<Link
-							href={`/admin/categoryproduct/${product?.id}/edit`}
+							href={`/admin/product`}
 							className="col-span-1 text-center border border-[#E7E7E7] rounded-lg py-3 font-bold"
 						>
 							Cancel

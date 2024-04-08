@@ -9,10 +9,7 @@ const productEditRegex = /^\/admin\/\d+\/edit$/
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
-	const sessionToken = request.cookies.get('sessionToken')?.value
-	// console.log('pathname', pathname)
-	// console.log('sessionToken', sessionToken)
-	// console.log('privatePaths', privatePaths)
+	const sessionToken = request.cookies.get('token')?.value
 
 	// Chưa đăng nhập thì không cho vào private paths
 	if (privatePaths.some((path) => pathname.startsWith(path)) && !sessionToken) {
@@ -32,5 +29,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-	matcher: ['/profile', '/me', '/login', '/register', '/products/:path*', '/admin/category'],
+	matcher: ['/profile', '/me', '/login', '/register', '/products/:path*', '/admin/category', '/'],
 }

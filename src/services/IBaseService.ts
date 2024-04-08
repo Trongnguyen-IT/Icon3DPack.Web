@@ -1,16 +1,13 @@
 import { ApiResult } from '@/models/api-result'
 
 export default interface IBaseService<TRequest, TResponse> {
-	getAll: (params: any) => Promise<{ status: number; payload: ApiResult<Array<TResponse>> }>
+	getAll: (params: any) => Promise<ApiResult<TResponse[]>>
 
-	getOne: (params: string) => Promise<{ status: number; payload: ApiResult<TResponse> }>
+	getOne: (id: string) => Promise<ApiResult<TResponse>>
 
-	createOne: (data: TRequest) => Promise<{ status: number; payload: ApiResult<TResponse> }>
+	createOne: (data: TRequest) => Promise<ApiResult<TResponse>>
 
-	updateOne: (
-		id: string,
-		data: TRequest
-	) => Promise<{ status: number; payload: ApiResult<TResponse> }>
+	updateOne: (id: string, data: TRequest) => Promise<ApiResult<TResponse>>
 
-	deleteOne: (id: string) => Promise<{ status: number; payload: ApiResult<TResponse> }>
+	deleteOne: (id: string) => Promise<ApiResult<TResponse>>
 }

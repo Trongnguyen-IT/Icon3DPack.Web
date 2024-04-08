@@ -4,17 +4,18 @@ import Link from 'next/link'
 import Delete from './_components/delete'
 import { ProductService } from '@/services/products'
 import ProductResponseModel from '@/models/products/product-response-model'
+import { cookies } from 'next/headers'
 
 export default async function AdminCategory() {
-	const productService = new ProductService('product')
+	const cookieStore = cookies()
+	const token = cookieStore.get('token')
+	const productService = new ProductService('product', token?.value)
 
-	const {
-		payload: { result: dataSource },
-	} = await productService.getAll()
+	const { result: dataSource } = await productService.getAll()
 
 	return (
 		<div>
-			<h1 className="font-bold text-[1.875rem] mb-8">Product</h1>
+			<h1 className="font-bold text-[1.875rem] mb-12">Product</h1>
 			<div className="flex justify-end mb-4">
 				<Link
 					href="/admin/product/add"

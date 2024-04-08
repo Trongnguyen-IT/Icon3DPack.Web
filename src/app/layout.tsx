@@ -14,15 +14,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
-	const authService = new AuthService('users')
+	const sessionToken = cookieStore.get('token')
+
+	const authService = new AuthService('users', sessionToken?.value)
 
 	let user: any | null = null
 	if (sessionToken) {
-		const {
-			payload: { result },
-		} = await authService.profile(sessionToken.value)
-
+		const { result } = await authService.profile()
 		user = result
 	}
 

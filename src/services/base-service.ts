@@ -1,37 +1,56 @@
 import { ApiResult } from '@/models/api-result'
-import http from './http-request'
 import IBaseService from './IBaseService'
+import HttpRequest from './http-request'
 
 class BaseService<TRequest, TResponse> implements IBaseService<TRequest, TResponse> {
+	public readonly token?: string
 	public readonly serviceUrl: string
+	public readonly httpRequest: HttpRequest
 
-	constructor(serviceUrl: string) {
+	constructor(serviceUrl: string, token?: string) {
 		this.serviceUrl = serviceUrl
+		this.httpRequest = new HttpRequest()
+		this.token = token
 	}
 
-	async getAll(params?: any): Promise<{ status: number; payload: ApiResult<Array<TResponse>> }> {
-		return await http.get<ApiResult<Array<TResponse>>>(this.serviceUrl, { cache: 'no-store' })
-	}
-
-	async getOne(params: string): Promise<{ status: number; payload: ApiResult<TResponse> }> {
-		return await http.get<ApiResult<TResponse>>(`/${this.serviceUrl}/${params}`, {
-			cache: 'no-store',
+	async getAll(params?: any): Promise<ApiResult<TResponse[]>> {
+		return await this.httpRequest.get<ApiResult<TResponse[]>>(this.serviceUrl, {
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+			},
 		})
 	}
 
-	async createOne(data: TRequest): Promise<{ status: number; payload: ApiResult<TResponse> }> {
-		return await http.post<ApiResult<TResponse>>(`/${this.serviceUrl}`, data)
+	async getOne(id: string): Promise<ApiResult<TResponse>> {
+		return await this.httpRequest.get<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`, {
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+			},
+		})
 	}
 
-	async updateOne(
-		id: string,
-		data: TRequest
-	): Promise<{ status: number; payload: ApiResult<TResponse> }> {
-		return await http.put<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`, data)
+	async createOne(data: TRequest): Promise<ApiResult<TResponse>> {
+		return await this.httpRequest.post<ApiResult<TResponse>>(`/${this.serviceUrl}`, data, {
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+			},
+		})
 	}
 
-	async deleteOne(id: string): Promise<{ status: number; payload: ApiResult<TResponse> }> {
-		return await http.delete<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`)
+	async updateOne(id: string, data: TRequest): Promise<ApiResult<TResponse>> {
+		return await this.httpRequest.put<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+			},
+		})
+	}
+
+	async deleteOne(id: string): Promise<ApiResult<TResponse>> {
+		return await this.httpRequest.delete<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`, {
+			headers: {
+				Authorization: `Bearer ${this.token}`,
+			},
+		})
 	}
 }
 

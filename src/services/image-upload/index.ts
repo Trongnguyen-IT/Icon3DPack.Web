@@ -1,5 +1,5 @@
 import FileUploadRequest from '@/models/files/file-load-request'
-import http from '../http-request'
+import http from '../http-request-old'
 import { ApiResult } from '@/models/api-result'
 
 export async function upload(
