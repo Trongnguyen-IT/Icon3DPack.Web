@@ -4,13 +4,11 @@ import { AuthService } from '@/services/user/auth-service'
 
 export default async function ChangePassword() {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('sessionToken')
+	const token = cookieStore.get('token')
 
-	const authService = new AuthService('users')
+	const authService = new AuthService('users', token?.value)
 
-	const {
-		payload: { result: user },
-	} = await authService.profile(sessionToken?.value)
+	const { result: user } = await authService.profile()
 
 	return <ChangePasswordForm props={{ user }} />
 }

@@ -52,7 +52,7 @@ export default function ListCategories({
 					nextEl: navNextButton.current,
 				}}
 				onSlideChange={() => {}}
-				onSwiper={(swiper: any) => {}}
+				onSwiper={(swiper: any) => console.log(swiper)}
 			>
 				{categories.map((item: CategoryResponseModel, index: number) => {
 					return (
@@ -65,7 +65,7 @@ export default function ListCategories({
 							/>
 							<div className="text-center pt-4">
 								<p className="text-2xl capitalize font-bold mb-1">{item.name}</p>
-								<p className="text-[#CDCDCD]">130+ icons</p>
+								<p className="text-[#CDCDCD]">{item.productAmount}</p>
 							</div>
 						</SwiperSlide>
 					)
