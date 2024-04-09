@@ -2,20 +2,19 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { showLoginHandlerDispatch } from './login'
-import { ConvertToCloudfontUrl } from '../helper/cloudfont-helper'
+import { showLoginHandlerDispatch } from '../../_components/login'
+import { ConvertToCloudfontUrl } from '../../../helper/cloudfont-helper'
 import { useAppContext } from '@/app/app-provider'
-
-export default function AdminHeader() {
+export default function Header() {
 	const { user } = useAppContext()
 
 	return (
-		<header className="h-20 bg-[#151B39]">
+		<header className="border-b border-[#E7E7E7] h-20">
 			<div className="px-6 h-full flex items-center justify-between">
 				<div className="inline-flex w-full h-full col-start-1 col-end-2-1">
-					<Link href="/admin" className="aspect-[186/40] relative max-w-[150px]">
+					<Link href="/" className="aspect-[186/40] relative max-w-[150px]">
 						<Image
-							src={'../../../images/admin-logo.svg'}
+							src={'../../../images/logo.svg'}
 							fill
 							style={{ objectFit: 'contain' }}
 							alt="3DIconPack"
@@ -33,7 +32,7 @@ export default function AdminHeader() {
 					)}
 
 					{user && (
-						<Link href="/profile">
+						<Link href="profile">
 							<div className="w-[3.125rem] h-[3.125rem] relative rounded-full overflow-hidden aspect-[1/1]">
 								<Image
 									fill

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import AdminHeader from '@/_components/admin-header'
-import AdminSideBar from '../components/sidebars/client-component'
+import AdminHeader from '@/app/(admin-area)/_components/admin-header'
+import AdminSideBar from '../_components/sidebars/client-component'
 
 export const metadata: Metadata = {
 	title: '3DIconPack',

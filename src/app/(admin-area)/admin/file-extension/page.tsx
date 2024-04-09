@@ -39,8 +39,8 @@ export default async function AdminFileExtension() {
 							return (
 								<tr key={item.id}>
 									<td className="border border-slate-300 px-2">{item.id}</td>
-									<td className="border border-slate-300 px-2">
-										<div className="col-span-1 relative flex justify-center h-full aspect-[4/3] m-2">
+									<td className="border border-slate-300 px-2 flex justify-center">
+										<div className="col-span-1 relative flex justify-center h-full aspect-[4/3] m-2 w-32">
 											<Image
 												fill
 												src={ConvertToCloudfontUrl(item.imageUrl)}

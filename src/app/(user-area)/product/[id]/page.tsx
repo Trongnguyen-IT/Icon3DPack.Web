@@ -1,36 +1,31 @@
-'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import ProductItem from '@/_components/product-item'
+import ProductItem from '@/app/(user-area)/product/[id]/_components/product-item'
+import { ProductService } from '@/services/products'
+import { cookies } from 'next/headers'
+import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
+import ProductResponseModel from '@/models/products/product-response-model'
 
-export default function ProductDetails({ params }: { params: { product_id: string } }) {
-	const [products, setProduct] = useState(() => {
-		let productsList = []
-		for (let index = 0; index < 18; index++) {
-			productsList.push({
-				name: `product-${index + 1}`,
-				path: `../../images/products/product-${index + 1}.svg`,
-			})
-		}
+export default async function ProductDetails({ params }: { params: { id: string } }) {
+	console.log('params', params)
 
-		return productsList
-	})
+	const cookieStore = cookies()
+	const token = cookieStore.get('token')
+	const productService = new ProductService('product', token?.value)
+	const { succeeded, result: product } = await productService.getOne(params.id)
+	const { result: relatedProducts } = await productService.getAll()
 
 	return (
 		<div className="container mx-auto py-20">
 			<div>
-				<Link href="/">
-					<span
-						className="w-[15px] h-[15px] aspect-[1/1] relative cursor-pointer inline-block mb-4"
-						onClick={() => {}}
-					>
+				<Link href="/home">
+					<span className="w-[15px] h-[15px] aspect-[1/1] relative cursor-pointer inline-block mb-4">
 						<Image
 							fill
 							src="/images/left-arrow.svg"
-							style={{ objectFit: 'contain' }}
 							alt="left-arrow-icon"
-							className=""
+							className="object-contain object-center"
 						/>
 					</span>
 				</Link>
@@ -39,87 +34,66 @@ export default function ProductDetails({ params }: { params: { product_id: strin
 						<div className="w-full aspect-[690/518] relative cursor-pointer inline-block border rounded-2xl border-[#E7E7E7] overflow-hidden">
 							<Image
 								fill
-								src="/images/products/product-1.svg"
-								style={{ objectFit: 'contain' }}
-								alt="left-arrow-icon"
-								className=""
+								src={ConvertToCloudfontUrl(product.imageUrl)}
+								alt={ConvertToCloudfontUrl(product.imageUrl)}
+								className="object-contain object-center"
 							/>
 						</div>
 					</div>
 					<div>
 						<div className="flex flex-row justify-between items-center mb-8">
-							<h1 className="text-[1.625rem] font-bold">Stopwatch</h1>
+							<h1 className="text-[1.625rem] font-bold">{product.name}</h1>
 							<span className="inline-flex border border-solid border-[#E7E7E7] rounded-full p-3">
-								<span
-									className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block "
-									onClick={() => {}}
-								>
+								<span className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block ">
 									<Image
 										fill
 										src="/images/share-icon.svg"
-										style={{ objectFit: 'contain' }}
 										alt="share-icon"
-										className=""
+										className="object-contain object-center"
 									/>
 								</span>
 							</span>
 						</div>
 						<div className="flex flex-row items-center mb-4">
-							<span
-								className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3"
-								onClick={() => {}}
-							>
+							<span className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3">
 								<Image
 									fill
 									src="/images/high-resolution.svg"
-									style={{ objectFit: 'contain' }}
 									alt="high-resolution"
-									className=""
+									className="object-contain object-center"
 								/>
 							</span>
 							<span>High Resolution</span>
 						</div>
 						<div className="flex flex-row items-center mb-4">
-							<span
-								className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3"
-								onClick={() => {}}
-							>
+							<span className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3">
 								<Image
 									fill
 									src="/images/changeable.svg"
-									style={{ objectFit: 'contain' }}
 									alt="changeable"
-									className=""
+									className="object-contain object-center"
 								/>
 							</span>
 							<span>Changeable Colors</span>
 						</div>
 						<div className="flex flex-row items-center mb-4">
-							<span
-								className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3"
-								onClick={() => {}}
-							>
+							<span className="w-[19px] h-[19px] aspect-[1/1] relative cursor-pointer inline-block mr-3">
 								<Image
 									fill
 									src="/images/file-type.svg"
-									style={{ objectFit: 'contain' }}
 									alt="file type"
-									className=""
+									className="object-contain object-center"
 								/>
 							</span>
 							<span>File type: FIG, PSD, PNG, Blender</span>
 						</div>
 						<div className="flex flex-row items-center mt-8 mb-6">
-							<span
-								className="w-[1rem] h-[1rem] aspect-[1/1] relative cursor-pointer inline-block mr-3"
-								onClick={() => {}}
-							>
+							<span className="w-[1rem] h-[1rem] aspect-[1/1] relative cursor-pointer inline-block mr-3">
 								<Image
 									fill
 									src="/images/download-icon.svg"
-									style={{ objectFit: 'contain' }}
 									alt="download icon"
-									className=""
+									className="object-contain object-center"
 								/>
 							</span>
 							<strong>Download</strong>
@@ -175,11 +149,7 @@ export default function ProductDetails({ params }: { params: { product_id: strin
 								</div>
 							</div>
 						</div>
-						<p>
-							3d, accuracy, achievement, activity, black, button, challenge, clock, countdown,
-							deadline, dial, duration, efficiency, event, fitness, goal, icon, illustration,
-							interval, isolated, limit, measure, nobody
-						</p>
+						<p>{product.description}</p>
 					</div>
 				</div>
 			</div>
@@ -193,10 +163,10 @@ export default function ProductDetails({ params }: { params: { product_id: strin
 				</h2>
 				<div className="product-list">
 					<div className="product-items py-12 grid grid-cols-6 gap-4">
-						{products.map((item: any, index: number) => {
+						{relatedProducts.map((product: ProductResponseModel) => {
 							return (
-								<div key={index} className="col-span-1">
-									<ProductItem product={item} />
+								<div key={product.id} className="col-span-1">
+									<ProductItem props={{ product }} />
 								</div>
 							)
 						})}

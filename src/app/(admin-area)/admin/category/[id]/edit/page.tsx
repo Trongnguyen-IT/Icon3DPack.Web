@@ -2,7 +2,7 @@ import AddOrEditCategory from '@/app/(admin-area)/admin/category/_components/add
 import { CategoryService } from '@/services/categories'
 import { cookies } from 'next/headers'
 
-export default async function CategoryEditComponent({ params }: { params: any }) {
+export default async function CategoryEditComponent({ params }: { params: { id: string } }) {
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 

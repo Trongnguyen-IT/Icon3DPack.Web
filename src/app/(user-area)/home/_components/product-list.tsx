@@ -1,13 +1,14 @@
 import Image from 'next/image'
-import MyCombobox from '../../../../_components/my-combobox'
-import SearchInput from '../../../../_components/search-input'
-import SortInput from '../../../../_components/sort-input'
+import MyCombobox from './my-combobox'
+import SortInput from './sort-input'
 import { cookies } from 'next/headers'
 import { ProductService } from '@/services/products'
 import Link from 'next/link'
 import ProductResponseModel from '@/models/products/product-response-model'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
+import ProductHomeItem from './product-home-item'
+import SearchInput from '@/app/_components/search-input'
 
 export default async function ProductList({
 	props,
@@ -40,8 +41,8 @@ export default async function ProductList({
 				{products.map((product: ProductResponseModel, index: number) => {
 					return (
 						<div key={index} className="col-span-1">
-							{/* <ProductItem product={product} /> */}
-							<Link href={`/product/${product.id}/`}>
+							<ProductHomeItem props={{ product }} />
+							{/* <Link href={`/product/${product.id}/`}>
 								<div className="product-box relative group overflow-hidden border-transparent rounded-[20px] border-solid border-2 hover:border-[#46B8E9] transition duration-300">
 									<div className="relative product-image aspect-[217/213] overflow-hidden">
 										<Image
@@ -55,7 +56,7 @@ export default async function ProductList({
 										{product.name}
 									</span>
 								</div>
-							</Link>
+							</Link> */}
 						</div>
 					)
 				})}

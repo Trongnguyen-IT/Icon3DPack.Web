@@ -1,5 +1,5 @@
+import { showSignupHandlerDispatch } from '@/app/_components/register'
 import Image from 'next/image'
-import { showSignupHandlerDispatch } from './register'
 
 export default function Banner() {
 	return (
