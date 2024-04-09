@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ProductService } from '@/services/products'
 import ProductRequestModel from '@/models/products/product-request-model'
-import Dropdown from '@/_components/dropdown'
+import Dropdown from '@/app/_components/dropdown'
 import { CategoryService } from '@/services/categories'
 
 export default function AddOrEditProduct({ props }: { props?: { product?: ProductRequestModel } }) {
