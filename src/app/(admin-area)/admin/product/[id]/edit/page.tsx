@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 export default async function ProductEditComponent({ params }: { params: any }) {
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
-	const productService = new ProductService('product', token?.value)
+	const productService = new ProductService('adminproduct', token?.value)
 
 	const { id } = params
 

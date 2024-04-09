@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import AdminHeader from '@/components/admin-header'
+import AdminHeader from '@/_components/admin-header'
 import AdminSideBar from '../components/sidebars/client-component'
 
 export const metadata: Metadata = {

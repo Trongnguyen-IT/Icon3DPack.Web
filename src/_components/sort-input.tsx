@@ -1,22 +1,3 @@
-// import Image from 'next/image'
-
-// export default function FilterInput() {
-// 	return (
-// 		<div className="grid grid-cols-6 rounded-lg border place-content-center border-[#E7E7E7] h-full relative">
-// 			<input type="text" placeholder="Filter" />
-// 			<button className="col-start-6 col-span-1 aspect-[1/1] relative m-w-[1.5rem]">
-// 				<Image
-// 					src={'../../images/filter-icon.svg'}
-// 					style={{ objectFit: 'contain' }}
-// 					alt="search-icon"
-// 					width={16}
-// 					height={16}
-// 				/>
-// 			</button>
-// 		</div>
-// 	)
-// }
-
 'use client'
 
 import Image from 'next/image'
@@ -25,17 +6,10 @@ import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const people = [
-	{ name: 'Wade Cooper' },
-	{ name: 'Arlene Mccoy' },
-	{ name: 'Devon Webb' },
-	{ name: 'Tom Cook' },
-	{ name: 'Tanya Fox' },
-	{ name: 'Hellen Schmidt' },
-]
+const people = [{ name: 'Ascending ' }, { name: 'Descending ' }]
 
-export default function FilterInput() {
-	const [selected, setSelected] = useState(people[0])
+export default function SortInput() {
+	const [selected, setSelected] = useState({ name: 'Sort' })
 
 	return (
 		<Listbox value={selected} onChange={setSelected}>

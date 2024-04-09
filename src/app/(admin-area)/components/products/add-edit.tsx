@@ -1,6 +1,6 @@
 'use client'
 
-import ImageUpload from '@/components/image-upload'
+import ImageUpload from '@/_components/image-upload'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'

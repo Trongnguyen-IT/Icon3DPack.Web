@@ -4,6 +4,10 @@ import HttpRequest from '../http-request'
 import { UserResponseModel } from '@/models/users/user-response-model'
 import { LoginModel } from '@/models/users/login-model'
 import { UserRequestModel } from '@/models/users/user-request-model'
+import { RegisterModel } from '@/models/users/register-model'
+import { VeriryEmail } from '@/models/users/verify-email'
+
+type NewType = VeriryEmail
 
 class AuthService {
 	public readonly token?: string
@@ -19,6 +23,13 @@ class AuthService {
 	async login(data: LoginModel): Promise<ApiResult<UserResponseModel>> {
 		return await this.httpRequest.post<ApiResult<UserResponseModel>>(
 			`/${this.serviceUrl}/authenticate`,
+			data
+		)
+	}
+
+	async register(data: RegisterModel): Promise<ApiResult<UserResponseModel>> {
+		return await this.httpRequest.post<ApiResult<UserResponseModel>>(
+			`/${this.serviceUrl}/register`,
 			data
 		)
 	}
@@ -48,6 +59,11 @@ class AuthService {
 		)
 	}
 
+	async confirmEmail(data: VeriryEmail): Promise<ApiResult<any>> {
+		return await this.httpRequest.post<ApiResult<any>>(`/${this.serviceUrl}/confirm-email`, data)
+	}
+
+	//set cookie on next server
 	async auth(data: UserRequestModel) {
 		await this.httpRequest.post<ApiResult<UserResponseModel>>(`/api/auth`, data, {
 			baseURL: '/',

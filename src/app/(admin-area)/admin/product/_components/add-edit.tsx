@@ -1,6 +1,6 @@
 'use client'
 
-import ImageUpload from '@/components/image-upload'
+import ImageUpload from '@/_components/image-upload'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ProductService } from '@/services/products'
 import ProductRequestModel from '@/models/products/product-request-model'
-import Dropdown from '@/components/dropdown'
+import Dropdown from '@/_components/dropdown'
 import { CategoryService } from '@/services/categories'
 
 export default function AddOrEditProduct({ props }: { props?: { product?: ProductRequestModel } }) {

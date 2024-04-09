@@ -15,62 +15,33 @@ import 'swiper/css/scrollbar'
 
 import Image from 'next/image'
 import { useRef } from 'react'
+import { CategoryResponseModel } from '@/models/categories/category-response-model'
+import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 
-export default function ListCategories() {
-	const images = [
-		'fitness',
-		'live',
-		'marketing',
-		'business',
-		'fitness',
-		'live',
-		'marketing',
-		'business',
-	].map((p) => ({ name: p, url: `../../images/${p}.svg` }))
+export default function ListCategories({
+	props,
+}: {
+	props: { categories: CategoryResponseModel[] }
+}) {
+	const { categories } = props
+
+	// const images = [
+	// 	'fitness',
+	// 	'live',
+	// 	'marketing',
+	// 	'business',
+	// 	'fitness',
+	// 	'live',
+	// 	'marketing',
+	// 	'business',
+	// ].map((p) => ({ name: p, url: `../../images/${p}.svg` }))
 
 	const navPrevButton = useRef<HTMLButtonElement>(null)
 	const navNextButton = useRef<HTMLButtonElement>(null)
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
+
 	return (
-		// <Swiper>
-		// 	<SwiperSlide>Slide 1</SwiperSlide>
-		// 	<SwiperSlide>Slide 2</SwiperSlide>
-		// 	<span slot="container-start">Container Start</span>
-		// 	<span slot="container-end">Container End</span>
-		// 	<span slot="wrapper-start">Wrapper Start</span>
-		// 	<span slot="wrapper-end">Wrapper End</span>
-		// </Swiper>
-
-		// <Swiper
-		// 	// install Swiper modules
-		// 	modules={[Navigation, Pagination, Scrollbar, A11y]}
-		// 	spaceBetween={50}
-		// 	slidesPerView={1}
-		// 	navigation
-		// 	pagination={{ clickable: true }}
-		// 	scrollbar={{ draggable: true }}
-		// 	onSwiper={(swiper) => console.log(swiper)}
-		// 	onSlideChange={() => console.log('slide change')}
-		// 	onInit={(swiper) => {
-		// 		swiper.params.navigation.prevEl = prevRef.current
-		// 		swiper.params.navigation.nextEl = nextRef.current
-		// 		swiper.navigation.init()
-		// 		swiper.navigation.update()
-		// 	}}
-		// >
-		// 	<SwiperSlide className="h-[200px]">Slide 1</SwiperSlide>
-		// 	<SwiperSlide className="h-[200px]">Slide 2</SwiperSlide>
-		// 	<SwiperSlide className="h-[200px]">Slide 3</SwiperSlide>
-		// 	<SwiperSlide className="h-[200px]">Slide 4</SwiperSlide>
-		// 	<span slot="container-start">Container Start</span>
-		// 	<span slot="container-end">Container End</span>
-		// 	<span slot="wrapper-start">Wrapper Start</span>
-		// 	<span slot="wrapper-end">Wrapper End</span>
-
-		// 	<div ref={prevRef}>Prev</div>
-		// 	<div ref={nextRef}>Next</div>
-		// </Swiper>
 		<div className="category py-24">
 			<Swiper
 				modules={[Navigation]}
@@ -83,18 +54,17 @@ export default function ListCategories() {
 				onSlideChange={() => {}}
 				onSwiper={(swiper: any) => {}}
 			>
-				{images.map((p: any, index: number) => {
+				{categories.map((item: CategoryResponseModel, index: number) => {
 					return (
 						<SwiperSlide key={index} className="min-h-[252px]">
 							<Image
-								className="aspect-[335/252] static category-img"
-								src={p.url}
+								className="aspect-[335/252] static category-img object-contain object-center"
+								src={ConvertToCloudfontUrl(item.imageUrl)}
 								fill
-								style={{ objectFit: 'cover' }}
-								alt={p.name}
+								alt={ConvertToCloudfontUrl(item.imageUrl)}
 							/>
 							<div className="text-center pt-4">
-								<p className="text-2xl capitalize font-bold mb-1">{p.name}</p>
+								<p className="text-2xl capitalize font-bold mb-1">{item.name}</p>
 								<p className="text-[#CDCDCD]">130+ icons</p>
 							</div>
 						</SwiperSlide>

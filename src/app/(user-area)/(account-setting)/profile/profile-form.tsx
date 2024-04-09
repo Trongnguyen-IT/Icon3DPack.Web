@@ -1,6 +1,6 @@
 'use client'
 
-import ImageUpload from '@/components/image-upload'
+import ImageUpload from '@/_components/image-upload'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'

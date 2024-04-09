@@ -1,4 +1,4 @@
-export default interface RegisterModel {
+export type RegisterModel = {
 	fullName: string
 	email: string
 	password: string

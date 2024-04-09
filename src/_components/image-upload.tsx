@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
-import { upload } from '@/services/image-upload'
+import { UploadService } from '@/services/image-upload'
 
 export default function ImageUpload({
 	imageUrl,
@@ -18,6 +18,8 @@ export default function ImageUpload({
 	prefix: string
 	isShowImage: boolean
 }) {
+	const productService = new UploadService(bucketName, prefix)
+
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
 	const uploadInput = useRef<HTMLInputElement>(null)
@@ -49,14 +51,14 @@ export default function ImageUpload({
 			let formData = new FormData()
 			formData.append('file', file)
 
-			const resuest = {
+			const request = {
 				formData: formData,
 				bucketName: bucketName,
 				prefix: prefix,
 			} as FileUploadRequest
-			const { status, payload } = await upload(resuest)
+			const { succeeded, result } = await productService.upload(request)
 
-			payload.succeeded && payload.result && updateAvatar(payload.result)
+			succeeded && result && updateAvatar(result)
 		} catch (err) {
 			console.log(err)
 		}
