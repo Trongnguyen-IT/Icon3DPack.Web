@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { adminRoutes } from '@/router/routes'
+import { adminRoutes } from '@/configs/routes'
 
 export default function AdminSideBar() {
 	const pathname = usePathname()

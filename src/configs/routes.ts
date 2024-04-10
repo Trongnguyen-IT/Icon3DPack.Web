@@ -4,7 +4,7 @@ export const adminRoutes = [
 	{ path: '/admin/product', name: 'Product', icon: '/images/icon-product.svg' },
 	{ path: '/admin/user', name: 'User', icon: '/images/icon-user.svg' },
 	{ path: '/admin/file-extension', name: 'File Extension', icon: '/images/icon-setting.svg' },
-	{ path: '/setting', name: 'Setting', icon: '/images/icon-setting.svg' },
+	{ path: '/admin/post', name: 'Post', icon: '/images/icon-setting.svg' },
 ]
 
 export const userSettingRoutes = [

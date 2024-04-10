@@ -1,6 +1,6 @@
 'use client'
 
-import { userSettingRoutes } from '@/router/routes'
+import { userSettingRoutes } from '@/configs/routes'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
