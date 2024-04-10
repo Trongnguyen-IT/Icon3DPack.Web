@@ -2,7 +2,7 @@ import { ProductService } from '@/services/products'
 import AddOrEditProduct from '../../_components/add-edit'
 import { cookies } from 'next/headers'
 
-export default async function ProductEditComponent({ params }: { params: any }) {
+export default async function ProductEditComponent({ params }: { params: { id: string } }) {
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 	const productService = new ProductService('adminproduct', token?.value)

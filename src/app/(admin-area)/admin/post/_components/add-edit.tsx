@@ -7,18 +7,24 @@ import { PostRequestModel } from '@/models/posts/post-request-model'
 import { PostService } from '@/services/posts'
 import { Editor } from '@tinymce/tinymce-react'
 import { apikey } from '@/configs/tiny'
+import slugify from 'slugify'
+import { Montserrat } from 'next/font/google'
 
 export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRequestModel }) {
 	const isAddMode = !id
 	const router = useRouter()
 	const editorRef = useRef({} as any)
-	const [model, setModel] = useState(Object.assign({ name: '' }, post) as PostRequestModel)
+	const [model, setModel] = useState(
+		Object.assign({ name: '', order: 0 }, post) as PostRequestModel
+	)
 	const postService = new PostService('adminpost')
 
 	const onSubmit = async (data: PostRequestModel): Promise<void> => {
 		if (editorRef.current) {
 			data.content = editorRef.current.getContent()
 		}
+		data.slug = slugify(data.name, { lower: true, strict: true })
+
 		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
 
 		if (succeeded) {
@@ -33,13 +39,6 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 
 	async function updateOne(id: string, data: PostRequestModel) {
 		return await postService.updateOne(id, data)
-	}
-
-	const updateAvatar = (imageUrl: string): void => {
-		setModel((prev) => ({
-			...prev,
-			imageUrl: imageUrl,
-		}))
 	}
 
 	return (
@@ -61,8 +60,25 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 					/>
 				</div>
 				<div className="mb-4">
+					<p className="mb-1 font-bold">Order</p>
+					<input
+						className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+						type="number"
+						placeholder="Order"
+						value={model.order}
+						onChange={(e: ChangeEvent<HTMLInputElement>) =>
+							setModel((prev: PostRequestModel) => ({
+								...prev,
+								order: +e.target.value,
+							}))
+						}
+					/>
+				</div>
+
+				<div className="mb-4">
 					<p className="mb-1 font-bold">Content</p>
 					<Editor
+						id="post-editor"
 						apiKey={apikey}
 						onInit={(evt, editor) => (editorRef.current = editor)}
 						initialValue={model.content}
@@ -94,7 +110,7 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 								'bold italic forecolor | alignleft aligncenter ' +
 								'alignright alignjustify | bullist numlist outdent indent | ' +
 								'removeformat | help',
-							content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+							content_style: 'body { font-family: Montserrat; font-size:16px }',
 						}}
 					/>
 				</div>

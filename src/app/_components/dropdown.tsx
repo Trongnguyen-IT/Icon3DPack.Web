@@ -12,27 +12,23 @@ export default function Dropdown({
 }: {
 	props: {
 		dataSource: { id: string; name: string }[]
-		activeId?: string
+		active: { id: string; name: string }
 		callBack: (value: any) => any
 	}
 }) {
-	const { dataSource, activeId, callBack } = props
-	const [selected, setSelected] = useState(activeId)
+	const { dataSource, active, callBack } = props
+	const [selected, setSelected] = useState(active.id ? active : { id: '', name: 'All categories' })
+
 	const handleSelect = (item: any) => {
 		setSelected(item)
-		callBack(item.id)
-	}
-
-	const getActiveName = (id?: string) => {
-		const result = dataSource.find((p) => p.id === id)
-		return result ? result.name : 'All categories'
+		callBack(item)
 	}
 
 	return (
 		<Menu as="div" className="relative flex text-left w-full">
 			<div className="w-full">
 				<Menu.Button className="h-[3.125rem] w-full inline-flex justify-between items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-					<span> {getActiveName(selected)}</span>
+					<span> {selected.name}</span>
 					<div className="h-3 w-3 text-gray-400 relative aspect-[1/1]">
 						<Image
 							fill

@@ -59,11 +59,12 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 			imageUrl: imageUrl,
 		}))
 	}
-	const callBack = (id: string) => {
+	const callBack = (value: { id: string; name: string }): void => {
 		setModel((prev) => {
 			return {
 				...prev,
-				categoryId: id,
+				categoryId: value.id,
+				categoryName: value.name,
 			}
 		})
 	}
@@ -101,7 +102,7 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 								<Dropdown
 									props={{
 										dataSource: categories,
-										activeId: product?.categoryId,
+										active: { id: model?.categoryId, name: model?.categoryName },
 										callBack: callBack,
 									}}
 								></Dropdown>

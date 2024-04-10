@@ -41,14 +41,16 @@ export default async function AdminCategory() {
 							return (
 								<tr key={item.id}>
 									<td className="border border-slate-300 px-2">{item.id}</td>
-									<td className="border border-slate-300 px-2 flex justify-center">
-										<div className="col-span-1 relative flex justify-center h-full aspect-[4/3] m-2 w-32">
-											<Image
-												fill
-												src={ConvertToCloudfontUrl(item.imageUrl)}
-												className="object-contain object-center"
-												alt={ConvertToCloudfontUrl(item.imageUrl)}
-											></Image>
+									<td className="border border-slate-300 px-2">
+										<div className="flex justify-center">
+											<div className="col-span-1 relative h-full aspect-[4/3] m-2 w-32">
+												<Image
+													fill
+													src={ConvertToCloudfontUrl(item.imageUrl)}
+													className="object-contain object-center"
+													alt={ConvertToCloudfontUrl(item.imageUrl)}
+												></Image>
+											</div>
 										</div>
 									</td>
 									<td className="border border-slate-300 px-2">{item.name}</td>
