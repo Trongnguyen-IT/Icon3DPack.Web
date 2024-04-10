@@ -23,11 +23,12 @@ export default async function AdminPost() {
 					Add
 				</Link>
 			</div>
-			<table className="text-left w-full table-auto border-collapse border border-slate-400">
+			<table className="text-left w-full table-fixed border-collapse border border-slate-400">
 				<thead>
 					<tr>
 						<th className="border border-slate-300 px-2">Id</th>
 						<th className="border border-slate-300 px-2">Name</th>
+						<th className="border border-slate-300 px-2">Order</th>
 						<th className="border border-slate-300 px-2">Content</th>
 						<th className="border border-slate-300 px-2">Actions</th>
 					</tr>
@@ -39,17 +40,19 @@ export default async function AdminPost() {
 								<tr key={item.id}>
 									<td className="border border-slate-300 px-2">{item.id}</td>
 									<td className="border border-slate-300 px-2">{item.name}</td>
-									<td className="border border-slate-300 px-2">{item.content}</td>
+									<td className="border border-slate-300 px-2">{item.order}</td>
+									<td className="border border-slate-300 px-2">
+										<p className="truncate ">{item.content}</p>
+									</td>
 
 									<td className="border border-slate-300 px-2">
-										<div className="grid grid-cols-2 gap-2 mx-4">
+										<div className="flex justify-center">
 											<Link
 												href={`/admin/post/${item.id}/edit/`}
-												className="col-span-1 border text-center border-[#E7E7E7] rounded-xl py-3"
+												className="w-1/2 inline-block border text-center border-[#E7E7E7] rounded-xl py-3"
 											>
 												Edit
 											</Link>
-											<Delete key={item.id} props={{ id: item.id }} />
 										</div>
 									</td>
 								</tr>

@@ -9,7 +9,7 @@ class PostService extends BaseService<PostRequestModel, PostResponseModel> {
 	}
 
 	async getBySlug(slug: string): Promise<ApiResult<PostResponseModel>> {
-		return await this.httpRequest.get<ApiResult<PostResponseModel>>(`/${this.serviceUrl}?${slug}`, {
+		return await this.httpRequest.get<ApiResult<PostResponseModel>>(`/${this.serviceUrl}/${slug}`, {
 			headers: {
 				Authorization: `Bearer ${this.token}`,
 			},
