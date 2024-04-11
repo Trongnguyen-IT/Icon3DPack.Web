@@ -1,19 +1,24 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
+import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export default function MyCombobox({
 	props,
 }: {
 	props: {
 		categories: CategoryResponseModel[]
-		activeCategory?: CategoryResponseModel | null
+		activeCategory?: CategoryResponseModel
 	}
 }) {
+	const router = useRouter()
+	const pathname = usePathname()
+	const searchParams = useSearchParams()
 	const { categories, activeCategory } = props
 	const [selected, setSelected] = useState(
 		activeCategory ? activeCategory : ({ id: '', name: 'All categories' } as CategoryResponseModel)
@@ -29,6 +34,16 @@ export default function MyCombobox({
 						.replace(/\s+/g, '')
 						.includes(query.toLowerCase().replace(/\s+/g, ''))
 			  )
+
+	const createQueryString = useCallback(
+		(name: string, value: string) => {
+			const params = new URLSearchParams(searchParams.toString())
+			params.set(name, value)
+
+			return params.toString()
+		},
+		[searchParams]
+	)
 
 	return (
 		<div className="w-full">
@@ -69,7 +84,7 @@ export default function MyCombobox({
 									<Combobox.Option
 										key={person.id}
 										className={({ active }) =>
-											`relative cursor-default select-none py-2 pl-10 pr-4 ${
+											`relative select-none  ${
 												active ? 'bg-[#46B8E9] text-white' : 'text-[#1B1B1B]'
 											}`
 										}
@@ -77,11 +92,17 @@ export default function MyCombobox({
 									>
 										{({ selected, active }) => (
 											<>
-												<span
-													className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}
+												<button
+													className={`flex self-start py-2 pl-10 w-full truncate ${
+														selected ? 'font-medium' : 'font-normal'
+													}`}
+													onClick={() => {
+														// <pathname>?sort=asc
+														router.push(pathname + '?' + createQueryString('categoryId', person.id))
+													}}
 												>
 													{person.name}
-												</span>
+												</button>
 												{selected ? (
 													<span
 														className={`absolute inset-y-0 left-0 flex items-center pl-3 ${

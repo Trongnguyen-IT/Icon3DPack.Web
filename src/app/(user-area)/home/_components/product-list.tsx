@@ -1,6 +1,5 @@
 import MyCombobox from './my-combobox'
 import SortInput from './sort-input'
-import { cookies } from 'next/headers'
 import { ProductService } from '@/services/products'
 import ProductResponseModel from '@/models/products/product-response-model'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
@@ -13,9 +12,7 @@ export default async function ProductList({
 	props: { categories: CategoryResponseModel[]; activeCategory?: CategoryResponseModel }
 }) {
 	const { categories, activeCategory } = props
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const productService = new ProductService('product', token?.value)
+	const productService = new ProductService('product')
 
 	const queryObject = {
 		categoryId: activeCategory ? activeCategory.id : '',

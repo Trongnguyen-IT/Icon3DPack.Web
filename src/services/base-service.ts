@@ -14,19 +14,11 @@ class BaseService<TRequest, TResponse> implements IBaseService<TRequest, TRespon
 	}
 
 	async getAll(params?: any): Promise<ApiResult<TResponse[]>> {
-		return await this.httpRequest.get<ApiResult<TResponse[]>>(this.serviceUrl, {
-			headers: {
-				Authorization: `Bearer ${this.token}`,
-			},
-		})
+		return await this.httpRequest.get<ApiResult<TResponse[]>>(this.serviceUrl)
 	}
 
 	async getOne(id: string): Promise<ApiResult<TResponse>> {
-		return await this.httpRequest.get<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`, {
-			headers: {
-				Authorization: `Bearer ${this.token}`,
-			},
-		})
+		return await this.httpRequest.get<ApiResult<TResponse>>(`/${this.serviceUrl}/${id}`)
 	}
 
 	async createOne(data: TRequest): Promise<ApiResult<TResponse>> {
