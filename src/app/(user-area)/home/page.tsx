@@ -4,17 +4,21 @@ import { CategoryService } from '@/services/categories'
 import { cookies } from 'next/headers'
 import ProductList from './_components/product-list'
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: { categoryId: string } }) {
+	const { categoryId } = searchParams
+	console.log('categoryId', categoryId)
+
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 	const categoryService = new CategoryService('category', token?.value)
 	const { succeeded, result: categories } = await categoryService.getAll()
+	const activeCategory = categories.find((p) => p.id == categoryId)
 
 	return (
 		<main className="container mx-auto py-24">
 			<Banner />
 			<ListCategories props={{ categories }} />
-			<ProductList props={{ categories }} />
+			<ProductList props={{ categories, activeCategory }} />
 		</main>
 	)
 }

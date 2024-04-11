@@ -6,9 +6,18 @@ import Image from 'next/image'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 
-export default function MyCombobox({ props }: { props: { categories: CategoryResponseModel[] } }) {
-	const { categories } = props
-	const [selected, setSelected] = useState({ id: '', name: 'All categories' })
+export default function MyCombobox({
+	props,
+}: {
+	props: {
+		categories: CategoryResponseModel[]
+		activeCategory?: CategoryResponseModel | null
+	}
+}) {
+	const { categories, activeCategory } = props
+	const [selected, setSelected] = useState(
+		activeCategory ? activeCategory : ({ id: '', name: 'All categories' } as CategoryResponseModel)
+	)
 	const [query, setQuery] = useState('')
 
 	const filteredCategories =

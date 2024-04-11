@@ -4,6 +4,7 @@ export default async function Posts({ params }: { params: { slug: string } }) {
 	const { slug } = params
 
 	const postService = new PostService('post')
+
 	const { succeeded, result } = await postService.getBySlug(slug)
 
 	return (

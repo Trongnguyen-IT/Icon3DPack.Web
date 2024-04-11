@@ -6,4 +6,5 @@ export default interface ProductModel {
 	isShow: boolean
 	showTypes?: Array<string>
 	categoryId: string
+	categoryName: string
 }

@@ -15,21 +15,6 @@ class PostService extends BaseService<PostRequestModel, PostResponseModel> {
 			},
 		})
 	}
-
-	// async getBySlug(params: any): Promise<ApiResult<PostResponseModel>> {
-	// 	const queryString = Object.keys(params)
-	// 		.map((k) => {
-	// 			return `${k}=${params[k]}`
-	// 		})
-	// 		.join('&')
-	// 	console.log('queryString', queryString)
-
-	// 	return await this.httpRequest.get(`/${this.serviceUrl}?${queryString}`, {
-	// 		headers: {
-	// 			Authorization: `Bearer ${this.token}`,
-	// 		},
-	// 	})
-	// }
 }
 
 export { PostService }
