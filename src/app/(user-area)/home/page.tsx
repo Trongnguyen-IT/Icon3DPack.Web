@@ -7,7 +7,6 @@ import { CategoryResponseModel } from '@/models/categories/category-response-mod
 
 export default async function Home({ searchParams }: { searchParams: { categoryId: string } }) {
 	const { categoryId } = searchParams
-	console.log('categoryId', categoryId)
 
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')

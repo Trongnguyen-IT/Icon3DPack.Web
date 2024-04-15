@@ -65,7 +65,7 @@ class AuthService {
 
 	//set cookie on next server
 	async auth(data: UserRequestModel) {
-		await this.httpRequest.post<ApiResult<UserResponseModel>>(`/api/auth`, data, {
+		return await this.httpRequest.post<ApiResult<UserResponseModel>>(`/api/auth`, data, {
 			baseURL: '/',
 		})
 	}

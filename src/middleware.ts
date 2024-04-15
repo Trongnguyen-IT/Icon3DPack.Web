@@ -1,16 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { decodeJWT } from './untils'
 
-const privatePaths = ['/profile', '/admin/category', '/admin']
+const privatePaths = ['/profile', '/change-password', '/notification', '/delete-account']
 const authPaths = ['/login', '/register']
-
+const adminPaths = ['/admin']
 //const productEditRegex = /^\/admin\/\d+\/edit$/
-const productEditRegex = /^\/admin\/\d+\/$/
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const token = request.cookies.get('token')?.value
+	const decode = decodeJWT(token || '')
+	console.log('decode', decode)
+
+	const claimType = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+
+	const isAdmin = decode && Object.hasOwn(decode, claimType) && decode[claimType] === 'Admin'
 
 	// Chưa đăng nhập thì không cho vào private paths
 	if (privatePaths.some((path) => pathname.startsWith(path)) && !token) {
@@ -21,7 +27,11 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL('/profile', request.url))
 	}
 
-	if (pathname.match(productEditRegex) && !token) {
+	// Only admin can access
+	if (
+		(adminPaths.some((path) => pathname.startsWith(path)) && !token) ||
+		(adminPaths.some((path) => pathname.startsWith(path)) && token && !isAdmin)
+	) {
 		return NextResponse.redirect(new URL('/', request.url))
 	}
 
@@ -30,15 +40,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-	matcher: [
-		'/profile',
-		'/me',
-		'/login',
-		'/register',
-		'/products/:path*',
-		'/admin/category',
-		'/',
-		'/home',
-		'/admin/:path*',
-	],
+	matcher: ['/profile', '/change-password', '/notification', '/delete-account', '/admin/:path*'],
 }

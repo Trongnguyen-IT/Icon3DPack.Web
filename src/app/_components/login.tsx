@@ -4,10 +4,8 @@ import Image from 'next/image'
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showSignupHandlerDispatch } from './register'
-import httpRequest from '@/services/http-request'
 import { AuthService } from '@/services/user/auth-service'
 import { LoginModel } from '@/models/users/login-model'
-import { useRouter } from 'next/navigation'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -19,7 +17,6 @@ export const hideLoginHandlerDispatch = () => {
 
 export default function Login() {
 	const authService = new AuthService('users')
-	const router = useRouter()
 
 	let [isOpen, setIsOpen] = useState(false)
 	let [email, setEmail] = useState('')
@@ -38,10 +35,12 @@ export default function Login() {
 			password,
 		} as LoginModel
 
-		const { result } = await authService.login(data)
-		await authService.auth(result)
-		hideLoginHandler()
-		router.refresh()
+		const { succeeded: loginSuccess, result } = await authService.login(data)
+		const { succeeded } = await authService.auth(result)
+
+		if (loginSuccess) {
+			location.reload()
+		}
 	}
 
 	useEffect(() => {
