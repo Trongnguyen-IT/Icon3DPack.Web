@@ -14,7 +14,7 @@ export default function Dashboard() {
 	return (
 		<main className="container mx-auto py-24">
 			<h1 className="mb-12">Dashboard</h1>
-			<Editor
+			{/* <Editor
 				apiKey="oh15m4h9bzjccdj6ctxstu9epu4v4arxgj0844y64w20sxo6"
 				onInit={(evt, editor) => (editorRef.current = editor)}
 				initialValue="<p>This is the initial content of the editor.</p>"
@@ -48,7 +48,7 @@ export default function Dashboard() {
 						'removeformat | help',
 					content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
 				}}
-			/>
+			/> */}
 			<button onClick={log}>Log editor content</button>
 		</main>
 	)

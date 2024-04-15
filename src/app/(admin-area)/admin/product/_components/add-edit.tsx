@@ -143,7 +143,7 @@ export default function AddOrEditProduct({ props }: { props?: { product?: Produc
 					</div>
 					<div className="mb-4">
 						<div className="flex items-center">
-							<strong className="mr-2">Show product</strong>
+							<strong className="mr-2">Publish product</strong>
 							<label className="inline-flex items-center cursor-pointer">
 								<input
 									onChange={(e) => {
