@@ -14,12 +14,14 @@ export default function MyCombobox({
 	props: {
 		categories: CategoryResponseModel[]
 		activeCategory?: CategoryResponseModel
+		callBackSelected: (c: any) => void
 	}
 }) {
+	const { categories, activeCategory, callBackSelected } = props
+
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
-	const { categories, activeCategory } = props
 	const [selected, setSelected] = useState(
 		activeCategory ? activeCategory : ({ id: '', name: 'All categories' } as CategoryResponseModel)
 	)
@@ -28,8 +30,8 @@ export default function MyCombobox({
 	const filteredCategories =
 		query === ''
 			? categories
-			: categories.filter((person) =>
-					person.name
+			: categories.filter((category) =>
+					category.name
 						.toLowerCase()
 						.replace(/\s+/g, '')
 						.includes(query.toLowerCase().replace(/\s+/g, ''))
@@ -45,6 +47,11 @@ export default function MyCombobox({
 		[searchParams]
 	)
 
+	const handleSelect = (category: CategoryResponseModel) => {
+		router.push(pathname + '?' + createQueryString('categoryId', category.id))
+		callBackSelected(category)
+	}
+
 	return (
 		<div className="w-full">
 			<Combobox value={selected} onChange={setSelected}>
@@ -52,7 +59,7 @@ export default function MyCombobox({
 					<div className="relative w-full cursor-default bg-white text-left focus:outline-none">
 						<Combobox.Input
 							className="w-full h-[3.125rem] overflow-hidden rounded-lg border border-[#E7E7E7] col-start-1 col-span-5 pl-3 pr-10 leading-5 text-gray-900 outline-none"
-							displayValue={(person: any) => person.name}
+							displayValue={(category: any) => category.name}
 							onChange={(event) => setQuery(event.target.value)}
 						/>
 						<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -80,15 +87,15 @@ export default function MyCombobox({
 									Nothing found.
 								</div>
 							) : (
-								filteredCategories.map((person) => (
+								filteredCategories.map((category) => (
 									<Combobox.Option
-										key={person.id}
+										key={category.id}
 										className={({ active }) =>
 											`relative select-none  ${
 												active ? 'bg-[#46B8E9] text-white' : 'text-[#1B1B1B]'
 											}`
 										}
-										value={person}
+										value={category}
 									>
 										{({ selected, active }) => (
 											<>
@@ -96,12 +103,9 @@ export default function MyCombobox({
 													className={`flex self-start py-2 pl-10 w-full truncate ${
 														selected ? 'font-medium' : 'font-normal'
 													}`}
-													onClick={() => {
-														// <pathname>?sort=asc
-														router.push(pathname + '?' + createQueryString('categoryId', person.id))
-													}}
+													onClick={() => handleSelect(category)}
 												>
-													{person.name}
+													{category.name}
 												</button>
 												{selected ? (
 													<span

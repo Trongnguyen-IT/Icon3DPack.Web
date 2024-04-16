@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: { searchParams: { categoryI
 
 	console.log('queryObject', queryObject)
 
-	const { succeeded, result: products } = await productService.ProductFilter({ queryObject })
+	const { succeeded, result: products } = await productService.productFilter({ queryObject })
 
 	const dropdownOptions = [
 		Object.assign({}, { id: '', name: 'All Categories' } as CategoryResponseModel),

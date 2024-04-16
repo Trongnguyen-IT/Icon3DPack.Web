@@ -24,7 +24,6 @@ export default function Footer() {
 
 		fetchData()
 
-		window.removeEventListener('scroll', handleScroll)
 		window.addEventListener('scroll', handleScroll, { passive: true })
 		return () => window.removeEventListener('scroll', handleScroll)
 	}, [])

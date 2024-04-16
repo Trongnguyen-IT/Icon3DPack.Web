@@ -9,7 +9,7 @@ class ProductService extends BaseService<ProductRequestModel, ProductResponseMod
 		super(serviceUrl, token)
 	}
 
-	async ProductFilter({
+	async productFilter({
 		queryObject,
 		pageSize = 200,
 		pageNumber = 1,
