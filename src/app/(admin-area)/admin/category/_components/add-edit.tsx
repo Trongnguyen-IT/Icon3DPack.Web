@@ -1,25 +1,32 @@
 'use client'
 
 import ImageUpload from '@/app/_components/image-upload'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CategoryRequestModel } from '@/models/categories/category-request-model'
 import { CategoryService } from '@/services/categories'
+import { TagService } from '@/services/tag/tag-service'
+import { TagResponseModel } from '@/models/tags/tag-response-model'
+import { CategoryResponseModel } from '@/models/categories/category-response-model'
 
 export default function AddOrEditCategory({
 	id,
 	category,
 }: {
 	id?: string
-	category?: CategoryRequestModel
+	category?: CategoryResponseModel
 }) {
 	const isAddMode = !id
 	const router = useRouter()
-	const [model, setModel] = useState(Object.assign({ name: '' }, category) as CategoryRequestModel)
+	const [model, setModel] = useState({ ...category } as CategoryRequestModel)
+	const [tags, setTags] = useState([Object.assign({ name: '' })] as TagResponseModel[])
 	const categoryService = new CategoryService('admincategory')
+	const tagService = new TagService('admintag')
+
+	console.log('category', category)
 
 	const onSubmit = async (data: CategoryRequestModel): Promise<void> => {
 		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
@@ -44,6 +51,15 @@ export default function AddOrEditCategory({
 			imageUrl: imageUrl,
 		}))
 	}
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const { succeeded, result: tags } = await tagService.getAll()
+			succeeded && setTags(tags)
+		}
+
+		fetchData()
+	}, [])
 
 	return (
 		<div>
@@ -85,6 +101,64 @@ export default function AddOrEditCategory({
 								}))
 							}
 						/>
+					</div>
+					<div className="mb-4">
+						<p className="mb-1 font-bold">Tag</p>
+						{/* <input
+							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+							type="text"
+							placeholder="Tag name..."
+							value={model.name}
+							onChange={(e: ChangeEvent<HTMLInputElement>) =>
+								setModel((prev: CategoryRequestModel) => ({
+									...prev,
+									name: e.target.value,
+								}))
+							}
+						/> */}
+
+						<div className="flex flex-row mt-4">
+							<select
+								onChange={(e) =>
+									setModel((prev: CategoryRequestModel) => ({
+										...prev,
+										tagIds: [e.target.value],
+									}))
+								}
+								name="tag"
+								id="tag"
+								className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+							>
+								{tags.map((p, index) => {
+									return (
+										<option key={index} value={p.id} className="flex h-6 bg-red-700 py-6">
+											{p.name}
+										</option>
+									)
+								})}
+							</select>
+						</div>
+
+						<div className="flex flex-row mt-4">
+							{model.tags?.map((p, index) => {
+								return (
+									<div key={index}>
+										<div className="flex justify-between items-center  bg-[#D9D9D9] px-4 h-[1.875rem] col-span-1 border border-transparent rounded-3xl font-medium mr-3">
+											<span className="mr-2">{p.name}</span>
+											<button className="">
+												<Image
+													src="/images/close-tag.svg"
+													alt="close-tag"
+													className="object-contain aspect-square"
+													width={18}
+													height={18}
+												></Image>
+											</button>
+										</div>
+									</div>
+								)
+							})}
+						</div>
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Product amount</p>
