@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const token = request.cookies.get('token')?.value
 	const decode = decodeJWT(token || '')
-	console.log('decode', decode)
+	//console.log('decode', decode)
 
 	const claimType = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
 

@@ -5,35 +5,18 @@ import ProductResponseModel from '@/models/products/product-response-model'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import ProductHomeItem from './product-home-item'
 import SearchInput from '@/app/_components/search-input'
+import { PaginatedList } from '@/models/base-models/paginated-list'
 
 export default async function ProductList({
 	props,
 }: {
-	props: { categories: CategoryResponseModel[]; activeCategory?: CategoryResponseModel }
+	props: { products: PaginatedList<ProductResponseModel> }
 }) {
-	const { categories, activeCategory } = props
+	const { products } = props
 	const productService = new ProductService('product')
 
-	const queryObject = {
-		categoryId: activeCategory ? activeCategory.id : '',
-	}
-
-	const { succeeded, result: products } = await productService.productFilter({ queryObject })
 	return (
-		<div className="product-list">
-			<div className="product-filter grid grid-cols-12 gap-4">
-				<div className="col-span-2">
-					<div className="dropdown-list h-full">
-						<MyCombobox props={{ categories, activeCategory }} />
-					</div>
-				</div>
-				<div className="col-span-8">
-					<SearchInput />
-				</div>
-				<div className="col-span-2">
-					<SortInput />
-				</div>
-			</div>
+		<>
 			<div className="product-products py-12 grid grid-cols-6 gap-4">
 				{products.items.map((product: ProductResponseModel, index: number) => {
 					return (
@@ -43,6 +26,6 @@ export default async function ProductList({
 					)
 				})}
 			</div>
-		</div>
+		</>
 	)
 }

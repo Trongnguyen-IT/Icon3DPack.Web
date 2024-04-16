@@ -38,11 +38,12 @@ export default function ListCategories({
 
 	const navPrevButton = useRef<HTMLButtonElement>(null)
 	const navNextButton = useRef<HTMLButtonElement>(null)
+
 	const prevRef = useRef(null)
 	const nextRef = useRef(null)
 
 	return (
-		<div className="category py-24">
+		<div className="category py-24" id="categoryListRef">
 			<Swiper
 				modules={[Navigation]}
 				spaceBetween={16}

@@ -1,51 +1,44 @@
 'use client'
 
+import { PostResponseModel } from '@/models/posts/post-response-model'
+import { PostService } from '@/services/posts'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import Script from 'next/script'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function Footer() {
 	const icons = ['Figma', 'Dribbble', 'Behance', 'Pinterest', 'Instagram', 'Youtube'].map(
 		(p) => `../../../images/${p}.svg`
 	)
-	const navLinks = [
-		{
-			url: 'about',
-			name: 'About us',
-		},
-		{
-			url: 'licensing',
-			name: 'Licensing',
-		},
-		{
-			url: 'termsofuse',
-			name: 'Terms of use',
-		},
-		{
-			url: 'privacy',
-			name: 'Privacy',
-		},
-		{
-			url: 'contact',
-			name: 'Contact',
-		},
-	]
+	const postService = new PostService('post')
+	const [routes, setRoutes] = useState([Object.assign({})] as PostResponseModel[])
+	const donateRef = useRef<HTMLDivElement>(null)
 
-	// const onScroll = useCallback((event: any) => {
-	// 	scrollTo({
-	// 		top: 0,
-	// 		behavior: 'smooth',
-	// 	})
-	// }, [])
+	useEffect(() => {
+		const fetchData = async () => {
+			const { succeeded, result } = await postService.getAll()
 
-	// useEffect(() => {
-	// 	//add eventlistener to window
-	// 	window.addEventListener('scroll', onScroll, { passive: true })
-	// 	// remove event on unmount to prevent a memory leak with the cleanup
-	// 	return () => {
-	// 		window.removeEventListener('scroll', onScroll, { passive: true })
-	// 	}
-	// }, [])
+			succeeded && setRoutes(result)
+		}
+
+		fetchData()
+
+		window.removeEventListener('scroll', handleScroll)
+		window.addEventListener('scroll', handleScroll, { passive: true })
+		return () => window.removeEventListener('scroll', handleScroll)
+	}, [])
+
+	const handleScroll = () => {
+		const productFilterRef = document.getElementById('product-filter')
+		const triggerHeight = productFilterRef?.offsetTop || 0
+
+		if (productFilterRef && window.scrollY >= triggerHeight) {
+			donateRef?.current?.classList.remove('hidden')
+		} else {
+			donateRef?.current?.classList.add('hidden')
+		}
+	}
 
 	return (
 		<footer className="bg-black text-white">
@@ -62,15 +55,20 @@ export default function Footer() {
 								/>
 							</Link>
 							<ul className="grid grid-flow-col gap-7 auto-cols-max">
-								{navLinks.map((p: any, index: number) => {
+								{routes.map((p: any, index: number) => {
 									return (
 										<li className="text-white opacity-50" key={index}>
-											<Link href={`/posts/${p.url}`} className="">
+											<Link href={`/posts/${p.slug}`} className="">
 												{p.name}
 											</Link>
 										</li>
 									)
 								})}
+								<li className="text-white opacity-50">
+									<Link href="/posts/contact" className="flex items-center ">
+										<span>Contact</span>
+									</Link>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -92,31 +90,32 @@ export default function Footer() {
 					</div>
 				</div>
 			</div>
-			{/* <button onClick={onScroll}>
-				<Image src="/images/Top.svg" alt="top icon" width={60} height={60}></Image>
-			</button> */}
+
 			<div className="border-solid border-t border-[#292929] py-10 relative">
 				<div className="container mx-auto">
-					<p className="opacity-60">© 2020-2023 by 3DICONPACK</p>
+					<p className="opacity-60">© 2020-{new Date().getFullYear()} by 3DICONPACK</p>
 				</div>
-				<div className="absolute top-1/2 right-[7%] -translate-y-1/2">
-					<Link href="." className="flex aspect-[1/1] relative w-[3.75rem] h-[3.7rem]">
+				<div
+					className="fixed bottom-0 right-[7%] -translate-y-1/2 z-10 hidden transition duration-300"
+					ref={donateRef}
+				>
+					<button className="flex aspect-[1/1] relative w-[3.75rem] h-[3.7rem]">
 						<Image
 							src={'../../../images/icon-donate.svg'}
 							fill
 							style={{ objectFit: 'contain' }}
 							alt="3DIconPack"
 						/>
-					</Link>
-				</div>
-				<div className="absolute bottom-full right-[7%] translate-y-2">
-					<button onClick={() => {}} className="flex aspect-[1/1] relative w-[3.75rem] h-[3.7rem]">
-						<Image
-							src={'../../../images/icon-donate.svg'}
-							fill
-							style={{ objectFit: 'contain' }}
-							alt="3DIconPack"
-						/>
+						{/* <Script
+							src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+							data-id="3diconpack"
+							data-description="Support me on Buy me a coffee!"
+							data-message=""
+							data-color="#FF813F"
+							data-position="Right"
+							data-x_margin="18"
+							data-y_margin="18"
+						/> */}
 					</button>
 				</div>
 			</div>
