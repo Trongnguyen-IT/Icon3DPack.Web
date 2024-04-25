@@ -28,11 +28,11 @@ export default function AppProvider({
 }) {
 	const [user, setUser] = useState<UserResponseModel | null>(userProp)
 
-	useState(() => {
-		if (typeof window !== 'undefined') {
-			clientSessionToken.value = inititalSessionToken
-		}
-	})
+	// useState(() => {
+	// 	if (typeof window !== 'undefined') {
+	// 		clientSessionToken.value = inititalSessionToken
+	// 	}
+	// })
 
 	return (
 		<AppContext.Provider

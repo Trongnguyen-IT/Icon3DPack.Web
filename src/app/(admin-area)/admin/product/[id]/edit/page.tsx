@@ -13,7 +13,7 @@ export default async function ProductEditComponent({ params }: { params: { id: s
 
 	return (
 		<div>
-			<h1 className="font-bold text-[1.875rem] mb-12">Edit Category</h1>
+			<h1 className="font-bold text-[1.875rem] mb-12">Edit Product</h1>
 			<AddOrEditProduct props={{ product }} />
 		</div>
 	)

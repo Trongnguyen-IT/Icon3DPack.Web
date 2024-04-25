@@ -13,6 +13,9 @@ import { CategoryService } from '@/services/categories'
 import { TagResponseModel } from '@/models/tags/tag-response-model'
 import { TagService } from '@/services/tag/tag-service'
 import ProductResponseModel from '@/models/products/product-response-model'
+import AdminCombobox from '@/app/(admin-area)/_components/combobox'
+import { TagRequestModel } from '@/models/tags/tag-request-model'
+import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
 
 export default function AddOrEditProduct({
 	props,
@@ -25,7 +28,9 @@ export default function AddOrEditProduct({
 	const router = useRouter()
 	const [model, setModel] = useState(Object.assign({ ...product }) as ProductRequestModel)
 	const [categories, setCategories] = useState([{ id: '', name: '' }])
-	const [tags, setTags] = useState([Object.assign({})] as TagResponseModel[])
+	const [tags, setTags] = useState([
+		Object.assign({ id: '', name: '-- Select Tag --' }),
+	] as TagResponseModel[])
 	const productService = new ProductService('adminproduct')
 	const tagService = new TagService('admintag')
 	const categoryService = new CategoryService('admincategory')
@@ -41,23 +46,19 @@ export default function AddOrEditProduct({
 		}
 	}
 
-	useEffect(() => {
-		getCategories()
-		getTags()
-	}, [])
-
-	const getTags = async () => {
-		const { result: tags } = await tagService.getAll()
+	const getRelatedData = async () => {
+		const [{ result: tags }, { result: categories }] = await Promise.all([
+			await tagService.getAll(),
+			await categoryService.getAll(),
+		])
 
 		setTags(tags)
+		setCategories(categories)
 	}
 
-	const getCategories = async () => {
-		const { result: categories } = await categoryService.getAll()
-
-		const mapDataSource = categories.map((p) => ({ id: p.id, name: p.name }))
-		setCategories(mapDataSource)
-	}
+	useEffect(() => {
+		getRelatedData()
+	}, [])
 
 	async function createOne(data: ProductRequestModel) {
 		return await productService.createOne(data)
@@ -82,9 +83,25 @@ export default function AddOrEditProduct({
 			}
 		})
 	}
+	const onDropdownChange = (selected: any) => {
+		setModel((prev) => {
+			return {
+				...prev,
+				tags: [
+					...(prev?.tags?.filter((p) => p.id !== selected.id) || []),
+					Object.assign({} as TagRequestModel, selected),
+				],
+			}
+		})
+	}
+
+	const handleTagsChange = (newTags: any) => {
+		const updatedProduct = { ...model, tags: newTags }
+		setModel(updatedProduct)
+	}
 
 	return (
-		<div>
+		<div className="min-h-[100vh]">
 			<div className="grid grid-cols-8 gap-10">
 				<div className="col-span-2 flex justify-center items-center">
 					<div className="grid grid-cols-1 row-span-1 col-span-1 w-full h-full">
@@ -111,23 +128,13 @@ export default function AddOrEditProduct({
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Category</p>
-						<div className="grid grid-cols-2">
-							<div className="col-span-1">
-								<Dropdown
-									props={{
-										dataSource: categories,
-										active: { id: model?.categoryId, name: model?.categoryName },
-										callBack: callBack,
-									}}
-								></Dropdown>
-							</div>
-						</div>
-						{/* <input
-							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-							type="text"
-							placeholder="0"
-							value={model.categoryId}
-						/> */}
+						<Dropdown
+							props={{
+								dataSource: categories,
+								active: { id: model?.categoryId, name: model?.categoryName },
+								callBack: callBack,
+							}}
+						></Dropdown>
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Name</p>
@@ -144,69 +151,26 @@ export default function AddOrEditProduct({
 							}
 						/>
 					</div>
-					<div className="flex flex-row mt-4">
-						<select
-							onChange={(e) =>
-								setModel((prev: ProductRequestModel) => ({
-									...prev,
-									tagIds: [e.target.value],
-								}))
-							}
-							name="tag"
-							id="tag"
-							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-						>
-							{tags.map((p, index) => {
-								return (
-									<option key={index} value={p.id} className="flex h-6 bg-red-700 py-6">
-										{p.name}
-									</option>
-								)
-							})}
-						</select>
+					<div className="mb-4">
+						<p className="mb-1 font-bold">Tags</p>
+						<AdminCombobox props={{ dataSource: tags, onChange: onDropdownChange }}></AdminCombobox>
 					</div>
 
 					<div className="flex flex-row mt-4">
-						{product?.tags.map((p, index) => {
-							return (
-								<div key={index}>
-									<div className="flex justify-between items-center  bg-[#D9D9D9] px-4 h-[1.875rem] col-span-1 border border-transparent rounded-3xl font-medium mr-3">
-										<span className="mr-2">{p.name}</span>
-										<button className="">
-											<Image
-												src="/images/close-tag.svg"
-												alt="close-tag"
-												className="object-contain aspect-square"
-												width={18}
-												height={18}
-											></Image>
-										</button>
-									</div>
-								</div>
-							)
-						})}
+						<TagComponent
+							props={{ initialTags: model.tags, onChange: handleTagsChange }}
+						></TagComponent>
 					</div>
-					<div className="mb-4">
-						<p className="mb-1 font-bold">Description</p>
-						<textarea
-							rows={4}
-							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-							value={model.description || ''}
-							onChange={(e) => {
-								setModel((prev) => ({ ...prev, description: e.target.value }))
-							}}
-						/>
-					</div>
-					<div className="mb-4">
+					<div className="my-4">
 						<div className="flex items-center">
 							<strong className="mr-2">Publish product</strong>
 							<label className="inline-flex items-center cursor-pointer">
 								<input
 									onChange={(e) => {
-										setModel((prev) => ({ ...prev, isShow: e.target.checked }))
+										setModel((prev) => ({ ...prev, isPublish: e.target.checked }))
 									}}
 									type="checkbox"
-									defaultChecked={model.isShow}
+									defaultChecked={model.isPublish}
 									className="sr-only peer"
 								/>
 								<div className=" bg-[#E7E7E7] relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-transparent after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600"></div>

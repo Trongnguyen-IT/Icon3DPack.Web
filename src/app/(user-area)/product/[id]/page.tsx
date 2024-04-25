@@ -10,7 +10,7 @@ export default async function ProductDetails({ params }: { params: { id: string 
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 	const productService = new ProductService('product', token?.value)
-	const { succeeded, result: product } = await productService.getOne(params.id)
+	const { result: product } = await productService.getOne(params.id)
 
 	const queryObject = {
 		sortOrder: 'date_desc',
@@ -152,7 +152,6 @@ export default async function ProductDetails({ params }: { params: { id: string 
 								</div>
 							</div>
 						</div>
-						<p>{product.description}</p>
 					</div>
 				</div>
 			</div>

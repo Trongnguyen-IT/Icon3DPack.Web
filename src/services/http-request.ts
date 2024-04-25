@@ -1,6 +1,5 @@
 import { normalizePath } from '@/untils'
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-
 const baseURL = 'http://localhost:5000/api/v1' //process.env.NEXT_PUBLIC_API_URL
 
 class SessionToken {
@@ -37,13 +36,28 @@ const axiosIntance = axios.create({
 	},
 })
 
+function getCookie(name: string) {
+	let matches = document.cookie.match(
+		new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+	)
+	return matches ? decodeURIComponent(matches[1]) : undefined
+}
+
 // Add a request interceptor
 axiosIntance.interceptors.request.use(
 	function (config) {
 		// Do something before request is sent
+		//const cookieStore = document
 
-		if (clientSessionToken?.value) {
-			config.headers['Authorization'] = `Bearer ${clientSessionToken?.value}`
+		// console.log('consessionTokenfig', cookieStore)
+
+		// if (clientSessionToken?.value) {
+		// 	config.headers['Authorization'] = `Bearer ${clientSessionToken?.value}`
+		// }
+		if (typeof window !== 'undefined') {
+			const cookie = getCookie('token')
+			console.log('tokentoken', cookie)
+			config.headers['Authorization'] = `Bearer ${cookie}`
 		}
 
 		return config

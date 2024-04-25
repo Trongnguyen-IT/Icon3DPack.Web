@@ -6,6 +6,7 @@ import ProductList from './_components/product-list'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import FilterComponent from './_components/filter-component'
 import { ProductService } from '@/services/products'
+import HttpRequest from '@/services/http-request'
 
 export default async function Home({ searchParams }: { searchParams: { categoryId: string } }) {
 	const { categoryId } = searchParams
@@ -14,18 +15,12 @@ export default async function Home({ searchParams }: { searchParams: { categoryI
 	const token = cookieStore.get('token')
 	const categoryService = new CategoryService('category', token?.value)
 	const productService = new ProductService('product', token?.value)
-
 	const { result: categories } = await categoryService.getAll()
 	const activeCategory = categories.find((p) => p.id == categoryId)
 
-	// const queryObject = {
-	// 	categoryId: activeCategory ? activeCategory.id : '',
-	// }
 	const queryObject = Object.assign({}, activeCategory?.id ? { categoryId: activeCategory.id } : {})
 
-	console.log('queryObject', queryObject)
-
-	const { succeeded, result: products } = await productService.productFilter({ queryObject })
+	const { result: products } = await productService.productFilter({ queryObject })
 
 	const dropdownOptions = [
 		Object.assign({}, { id: '', name: 'All Categories' } as CategoryResponseModel),

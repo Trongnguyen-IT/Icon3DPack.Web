@@ -27,7 +27,7 @@ export default function Dropdown({
 	return (
 		<Menu as="div" className="relative flex text-left w-full">
 			<div className="w-full">
-				<Menu.Button className="h-[3.125rem] w-full inline-flex justify-between items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+				<Menu.Button className="h-[3.125rem] w-full inline-flex justify-between items-centerw-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none">
 					<span> {selected.name}</span>
 					<div className="h-3 w-3 text-gray-400 relative aspect-[1/1]">
 						<Image
