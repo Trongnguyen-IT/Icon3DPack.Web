@@ -1,13 +1,14 @@
-import { Fragment, useState } from 'react'
+import { ChangeEvent, Fragment, useRef, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 export default function AdminCombobox({
 	props,
 }: {
-	props: { dataSource: any[]; onChange: Function }
+	props: { dataSource: any[]; onChange: Function; onChangeInputTag: Function }
 }) {
-	const { dataSource, onChange } = props
+	const buttonRef = useRef<HTMLButtonElement>(null)
+	const { dataSource, onChange, onChangeInputTag } = props
 
 	const [selected, setSelected] = useState(dataSource[0])
 	const [query, setQuery] = useState('')
@@ -27,17 +28,26 @@ export default function AdminCombobox({
 		onChange(e)
 	}
 
+	const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
+		setQuery(event.target.value)
+		onChangeInputTag(event.target.value)
+	}
+
 	return (
 		<>
 			<Combobox value={selected} onChange={(e) => handleChange(e)}>
-				<div className="relative mt-1">
+				<div className="relative">
 					<div className="h-[3.125rem] w-full relative inline-flex justify-between items-center border-none gap-x-1.5 rounded-md bg-white text-left ">
 						<Combobox.Input
-							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+							onClick={() => buttonRef.current?.click()}
+							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none cursor-pointer"
 							displayValue={(item: any) => item.name}
-							onChange={(event) => setQuery(event.target.value)}
+							onChange={(event) => handleChangeInput(event)}
 						/>
-						<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+						<Combobox.Button
+							className="absolute inset-y-0 right-0 flex items-center pr-2"
+							ref={buttonRef}
+						>
 							<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 						</Combobox.Button>
 					</div>

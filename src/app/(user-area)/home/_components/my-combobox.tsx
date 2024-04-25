@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useCallback, useState } from 'react'
+import { Fragment, useCallback, useRef, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { CheckIcon } from '@heroicons/react/20/solid'
@@ -18,6 +18,8 @@ export default function MyCombobox({
 	}
 }) {
 	const { categories, activeCategory, callBackSelected } = props
+	const inputRef = useRef<HTMLInputElement>(null)
+	const buttonRef = useRef<HTMLButtonElement>(null)
 
 	const router = useRouter()
 	const pathname = usePathname()
@@ -52,17 +54,26 @@ export default function MyCombobox({
 		callBackSelected(category)
 	}
 
+	const handleInputClick = () => {
+		buttonRef.current?.click()
+	}
+
 	return (
 		<div className="w-full">
 			<Combobox value={selected} onChange={setSelected}>
 				<div className="relative z-10">
 					<div className="relative w-full cursor-default bg-white text-left focus:outline-none">
 						<Combobox.Input
-							className="w-full h-[3.125rem] overflow-hidden rounded-lg border border-[#E7E7E7] col-start-1 col-span-5 pl-3 pr-10 leading-5 text-gray-900 outline-none"
+							ref={inputRef}
+							onClick={() => handleInputClick()}
+							className="cursor-pointer w-full h-[3.125rem] overflow-hidden rounded-lg border border-[#E7E7E7] col-start-1 col-span-5 pl-3 pr-10 leading-5 text-gray-900 outline-none"
 							displayValue={(category: any) => category.name}
 							onChange={(event) => setQuery(event.target.value)}
 						/>
-						<Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+						<Combobox.Button
+							className="absolute inset-y-0 right-0 flex items-center pr-2"
+							ref={buttonRef}
+						>
 							<Image
 								src={'../../images/dropdown-icon.svg'}
 								width={16}
@@ -81,7 +92,7 @@ export default function MyCombobox({
 						leaveTo="opacity-0"
 						afterLeave={() => setQuery('')}
 					>
-						<Combobox.Options className="absolute mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base">
+						<Combobox.Options className="absolute mt-1 w-full rounded-md bg-white py-1 text-base">
 							{filteredCategories.length === 0 && query !== '' ? (
 								<div className="relative cursor-default select-none px-4 py-2 text-gray-700">
 									Nothing found.

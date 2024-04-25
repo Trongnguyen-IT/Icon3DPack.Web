@@ -31,6 +31,7 @@ export default function AddOrEditProduct({
 	const [tags, setTags] = useState([
 		Object.assign({ id: '', name: '-- Select Tag --' }),
 	] as TagResponseModel[])
+	const [newTag, setNewTag] = useState({} as TagResponseModel)
 	const productService = new ProductService('adminproduct')
 	const tagService = new TagService('admintag')
 	const categoryService = new CategoryService('admincategory')
@@ -100,6 +101,31 @@ export default function AddOrEditProduct({
 		setModel(updatedProduct)
 	}
 
+	const handleChangeInputTag = (newTag: any) => {
+		if (!tags.find((t) => t.id === newTag.id)) {
+			setNewTag(newTag)
+		}
+	}
+
+	const addTag = async () => {
+		if (!tags.find((t) => t.id === newTag.id)) {
+			const { succeeded, result: addedTag } = await tagService.createOne(
+				Object.assign({} as TagRequestModel, { name: newTag })
+			)
+			if (succeeded) {
+				setTags((prev) => {
+					return [...prev, addedTag]
+				})
+				setModel((prev) => {
+					return {
+						...prev,
+						tags: [...prev.tags, Object.assign({} as TagRequestModel, addedTag)],
+					}
+				})
+			}
+		}
+	}
+
 	return (
 		<div className="min-h-[100vh]">
 			<div className="grid grid-cols-8 gap-10">
@@ -153,7 +179,23 @@ export default function AddOrEditProduct({
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Tags</p>
-						<AdminCombobox props={{ dataSource: tags, onChange: onDropdownChange }}></AdminCombobox>
+						<div className="grid grid-cols-8">
+							<div className="col-span-7">
+								<AdminCombobox
+									props={{
+										dataSource: tags,
+										onChange: onDropdownChange,
+										onChangeInputTag: handleChangeInputTag,
+									}}
+								></AdminCombobox>
+							</div>
+							<button
+								className="col-span-1 h-full border border-[#46B8E9] rounded-lg bg-[#46B8E9] font-medium text-white"
+								onClick={() => addTag()}
+							>
+								add
+							</button>
+						</div>
 					</div>
 
 					<div className="flex flex-row mt-4">
