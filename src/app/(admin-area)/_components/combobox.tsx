@@ -64,9 +64,9 @@ export default function AdminCombobox({
 									Nothing found.
 								</div>
 							) : (
-								filteredDataSource.map((item) => (
+								filteredDataSource.map((item, index) => (
 									<Combobox.Option
-										key={item.id}
+										key={index}
 										className={({ active }) =>
 											`relative cursor-default select-none py-2 pl-10 pr-4 ${
 												active ? 'bg-[#46B8E9] text-white' : 'text-gray-900'

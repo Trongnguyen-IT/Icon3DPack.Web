@@ -11,6 +11,9 @@ import { CategoryService } from '@/services/categories'
 import { TagService } from '@/services/tag/tag-service'
 import { TagResponseModel } from '@/models/tags/tag-response-model'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
+import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
+import AdminCombobox from '@/app/(admin-area)/_components/combobox'
+import { TagRequestModel } from '@/models/tags/tag-request-model'
 
 export default function AddOrEditCategory({
 	id,
@@ -21,12 +24,13 @@ export default function AddOrEditCategory({
 }) {
 	const isAddMode = !id
 	const router = useRouter()
-	const [model, setModel] = useState({ ...category } as CategoryRequestModel)
+	const [model, setModel] = useState(
+		Object.assign({ tags: [] }, { ...category }) as CategoryRequestModel
+	)
 	const [tags, setTags] = useState([Object.assign({ name: '' })] as TagResponseModel[])
+	const [newTag, setNewTag] = useState({} as TagResponseModel)
 	const categoryService = new CategoryService('admincategory')
 	const tagService = new TagService('admintag')
-
-	console.log('category', category)
 
 	const onSubmit = async (data: CategoryRequestModel): Promise<void> => {
 		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
@@ -61,8 +65,50 @@ export default function AddOrEditCategory({
 		fetchData()
 	}, [])
 
+	const onDropdownChange = (selected: any) => {
+		setModel((prev) => {
+			return {
+				...prev,
+				tags: [
+					...(prev?.tags?.filter((p) => p.id !== selected.id) || []),
+					Object.assign({} as TagRequestModel, selected),
+				],
+			}
+		})
+	}
+
+	const handleTagsChange = (newTags: any) => {
+		const updatedProduct = { ...model, tags: newTags }
+		setModel(updatedProduct)
+	}
+
+	const handleChangeInputTag = (newTag: any) => {
+		if (!tags.find((t) => t.id === newTag.id)) {
+			setNewTag(newTag)
+		}
+	}
+
+	const addTag = async () => {
+		if (!tags.find((t) => t.id === newTag.id)) {
+			const { succeeded, result: addedTag } = await tagService.createOne(
+				Object.assign({} as TagRequestModel, { name: newTag })
+			)
+			if (succeeded) {
+				setTags((prev) => {
+					return [...prev, addedTag]
+				})
+				setModel((prev) => {
+					return {
+						...prev,
+						tags: [...prev.tags, Object.assign({} as TagRequestModel, addedTag)],
+					}
+				})
+			}
+		}
+	}
+
 	return (
-		<div>
+		<div className="min-h-[100vh]">
 			<div className="grid grid-cols-8 gap-10">
 				<div className="col-span-2 flex justify-center items-center">
 					<div className="grid grid-cols-1 row-span-1 col-span-1 w-full h-full">
@@ -103,64 +149,32 @@ export default function AddOrEditCategory({
 						/>
 					</div>
 					<div className="mb-4">
-						<p className="mb-1 font-bold">Tag</p>
-						{/* <input
-							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-							type="text"
-							placeholder="Tag name..."
-							value={model.name}
-							onChange={(e: ChangeEvent<HTMLInputElement>) =>
-								setModel((prev: CategoryRequestModel) => ({
-									...prev,
-									name: e.target.value,
-								}))
-							}
-						/> */}
-
-						<div className="flex flex-row mt-4">
-							<select
-								onChange={(e) =>
-									setModel((prev: CategoryRequestModel) => ({
-										...prev,
-										tagIds: [e.target.value],
-									}))
-								}
-								name="tag"
-								id="tag"
-								className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+						<p className="mb-1 font-bold">Tags</p>
+						<div className="grid grid-cols-8">
+							<div className="col-span-7">
+								<AdminCombobox
+									props={{
+										dataSource: tags,
+										onChange: onDropdownChange,
+										onChangeInputTag: handleChangeInputTag,
+									}}
+								></AdminCombobox>
+							</div>
+							<button
+								className="col-span-1 h-full border border-[#46B8E9] rounded-lg bg-[#46B8E9] font-medium text-white"
+								onClick={() => addTag()}
 							>
-								{tags.map((p, index) => {
-									return (
-										<option key={index} value={p.id} className="flex h-6 bg-red-700 py-6">
-											{p.name}
-										</option>
-									)
-								})}
-							</select>
-						</div>
-
-						<div className="flex flex-row mt-4">
-							{model.tags?.map((p, index) => {
-								return (
-									<div key={index}>
-										<div className="flex justify-between items-center  bg-[#D9D9D9] px-4 h-[1.875rem] col-span-1 border border-transparent rounded-3xl font-medium mr-3">
-											<span className="mr-2">{p.name}</span>
-											<button className="">
-												<Image
-													src="/images/close-tag.svg"
-													alt="close-tag"
-													className="object-contain aspect-square"
-													width={18}
-													height={18}
-												></Image>
-											</button>
-										</div>
-									</div>
-								)
-							})}
+								add
+							</button>
 						</div>
 					</div>
-					<div className="mb-4">
+
+					<div className="flex flex-row mt-4">
+						<TagComponent
+							props={{ initialTags: model.tags, onChange: handleTagsChange }}
+						></TagComponent>
+					</div>
+					{/* <div className="mb-4">
 						<p className="mb-1 font-bold">Product amount</p>
 						<input
 							disabled
@@ -169,7 +183,7 @@ export default function AddOrEditCategory({
 							placeholder="0"
 							value={model.productAmount}
 						/>
-					</div>
+					</div> */}
 					<div className="grid grid-cols-4 gap-4 mt-8">
 						<Link
 							href="/admin/category"

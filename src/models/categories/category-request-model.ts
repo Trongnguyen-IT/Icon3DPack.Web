@@ -1,10 +1,10 @@
 import { BaseAuditRequestModel } from '../base-models/base-audit-request-model'
-import { TagResponseModel } from '../tags/tag-response-model'
+import { TagRequestModel } from '../tags/tag-request-model'
 
 interface CategoryRequestModel extends BaseAuditRequestModel {
 	imageUrl: string
 	name: string
 	productAmount: number
-	tags: TagResponseModel[]
+	tags: TagRequestModel[]
 }
 export type { CategoryRequestModel }

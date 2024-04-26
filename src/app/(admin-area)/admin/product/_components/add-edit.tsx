@@ -16,6 +16,10 @@ import ProductResponseModel from '@/models/products/product-response-model'
 import AdminCombobox from '@/app/(admin-area)/_components/combobox'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
 import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
+import FileUpload from '@/app/_components/file-upload'
+import { FileExtensionService } from '@/services/file-extensions'
+import { FileExtensionRequestModel } from '@/models/file-extensions/file-extenstion-request-model'
+import { FileEntity } from '@/models/files/file-entity'
 
 export default function AddOrEditProduct({
 	props,
@@ -23,6 +27,7 @@ export default function AddOrEditProduct({
 	props?: { product?: ProductResponseModel }
 }) {
 	const product = props?.product
+	console.log('product', product)
 
 	const isAddMode = !product
 	const router = useRouter()
@@ -32,9 +37,13 @@ export default function AddOrEditProduct({
 		Object.assign({ id: '', name: '-- Select Tag --' }),
 	] as TagResponseModel[])
 	const [newTag, setNewTag] = useState({} as TagResponseModel)
+	const [extensions, setExtensions] = useState([] as FileExtensionRequestModel[])
+	const [fileEntities, setFileEntities] = useState([] as FileEntity[])
+
 	const productService = new ProductService('adminproduct')
 	const tagService = new TagService('admintag')
 	const categoryService = new CategoryService('admincategory')
+	const fileExtensionService = new FileExtensionService('adminfileextension')
 
 	const onSubmit = async (data: ProductRequestModel): Promise<void> => {
 		const { succeeded, result } = isAddMode
@@ -48,13 +57,15 @@ export default function AddOrEditProduct({
 	}
 
 	const getRelatedData = async () => {
-		const [{ result: tags }, { result: categories }] = await Promise.all([
+		const [{ result: tags }, { result: categories }, { result: extensions }] = await Promise.all([
 			await tagService.getAll(),
 			await categoryService.getAll(),
+			await fileExtensionService.getAll(),
 		])
 
 		setTags(tags)
 		setCategories(categories)
+		setExtensions(extensions)
 	}
 
 	useEffect(() => {
@@ -84,6 +95,7 @@ export default function AddOrEditProduct({
 			}
 		})
 	}
+
 	const onDropdownChange = (selected: any) => {
 		setModel((prev) => {
 			return {
@@ -124,6 +136,18 @@ export default function AddOrEditProduct({
 				})
 			}
 		}
+	}
+
+	const handleChangeFile = (file: any) => {
+		setModel((prev) => {
+			return {
+				...prev,
+				fileEntities: [
+					...prev.fileEntities.filter((p) => p.fileExtensionId !== file.fileExtensionId),
+					file,
+				],
+			}
+		})
 	}
 
 	return (
@@ -198,10 +222,30 @@ export default function AddOrEditProduct({
 						</div>
 					</div>
 
-					<div className="flex flex-row mt-4">
+					<div className="flex flex-row mb-4 mt-4">
 						<TagComponent
 							props={{ initialTags: model.tags, onChange: handleTagsChange }}
 						></TagComponent>
+					</div>
+					<div className="mb-4">
+						<p className="mb-1 font-bold">Files</p>
+						{extensions.map((item, index) => {
+							const fileEntity = product?.fileEntities.find((p) => p.fileExtensionId === item.id)
+							return (
+								<FileUpload
+									key={index}
+									props={{
+										imageUrl: item.imageUrl,
+										bucketName: 'icon3dpack-bucket-s3',
+										prefix: 'products',
+										fileType: item.name,
+										extension: item,
+										onChangeFile: handleChangeFile,
+										fileEntity: fileEntity,
+									}}
+								></FileUpload>
+							)
+						})}
 					</div>
 					<div className="my-4">
 						<div className="flex items-center">

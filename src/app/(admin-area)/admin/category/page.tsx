@@ -78,7 +78,7 @@ export default async function AdminCategory() {
 						})
 					) : (
 						<tr className="text-center">
-							<td colSpan={4}>No File Extension</td>
+							<td colSpan={4}>Please add new categories</td>
 						</tr>
 					)}
 				</tbody>

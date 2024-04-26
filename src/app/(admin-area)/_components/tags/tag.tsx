@@ -36,7 +36,7 @@ const Tag = ({
 }
 
 Tag.propTypes = {
-	text: PropTypes.any.isRequired,
+	tag: PropTypes.any.isRequired,
 	removable: PropTypes.bool,
 	onRemove: PropTypes.func,
 }
