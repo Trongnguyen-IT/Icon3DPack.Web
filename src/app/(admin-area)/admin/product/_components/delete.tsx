@@ -9,9 +9,9 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const router = useRouter()
 	const { id } = props
 	const [isShow, setIsShow] = useState(false)
+	const productService = new ProductService('adminproduct')
 
 	const confirmDelete = async (): Promise<void> => {
-		const productService = new ProductService('adminproduct')
 		const { succeeded, result } = await productService.deleteOne(id)
 
 		if (succeeded) {

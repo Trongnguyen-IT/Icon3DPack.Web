@@ -69,6 +69,18 @@ class AuthService {
 			baseURL: '/',
 		})
 	}
+
+	//set cookie on next server
+	async updateNotification(id: string, isNotification: boolean) {
+		return await this.httpRequest.put<ApiResult<any>>(
+			`/${this.serviceUrl}/${id}/update-notification/${isNotification}`
+		)
+	}
+
+	//set cookie on next server
+	async deleteAccount(id: string) {
+		return await this.httpRequest.delete<ApiResult<any>>(`/${this.serviceUrl}/${id}/delete-account`)
+	}
 }
 
 export { AuthService }

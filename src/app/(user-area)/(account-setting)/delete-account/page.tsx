@@ -1,30 +1,14 @@
-import { Menu } from '@headlessui/react'
+import { AuthService } from '@/services/user/auth-service'
+import { cookies } from 'next/headers'
+import DeleteAccountForm from './_components/delete-account'
 
-export default function DeleteAccount() {
-	const active = true
+export default async function DeleteAccount() {
+	const cookieStore = cookies()
+	const token = cookieStore.get('token')
 
-	return (
-		<div className="basis-9/12 p-8 mx-5 bg-white rounded-[1.25rem]">
-			<p className="mb-5">
-				<b>Delete account</b>
-			</p>
-			<div className="flex flex-col">
-				<div className="flex flex-row justify-center  items-center mb-12">
-					<div className="basis-2/3">
-						<p className="text-center opacity-50 mt-6">
-							Permanently deleting your account and all data associated with it is a manual process
-							performed on our end.
-						</p>
-					</div>
-				</div>
-				<div className="flex flex-row justify-center  items-center mb-12">
-					<div className="basis-72">
-						<button className="border rounded-lg bg-[#F04F23] py-3 col-span-3 font-medium text-white w-full">
-							Delete account
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+	const authService = new AuthService('users', token?.value)
+
+	const { result: user } = await authService.profile()
+
+	return <DeleteAccountForm props={{ user }}></DeleteAccountForm>
 }
