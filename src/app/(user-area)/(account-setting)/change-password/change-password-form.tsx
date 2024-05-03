@@ -10,10 +10,17 @@ import { ChangeEvent, useState } from 'react'
 export default function ChangePasswordForm({ props }: { props: { user: UserResponseModel } }) {
 	const authService = new AuthService('users')
 	const { user } = props
-	const [model, setModel] = useState({} as ChangePasswordModel)
+	const [model, setModel] = useState({
+		oldPassword: '',
+		newPassword: '',
+		confirmPassword: '',
+	} as ChangePasswordModel)
 
-	const submit = (model: ChangePasswordModel) => {
-		user && authService.changePassword(user.id, model)
+	const submit = async (model: ChangePasswordModel) => {
+		const { succeeded } = await authService.changePassword(user.id, model)
+		if (succeeded) {
+			setModel({ oldPassword: '', newPassword: '', confirmPassword: '' } as ChangePasswordModel)
+		}
 	}
 
 	return (
@@ -26,6 +33,7 @@ export default function ChangePasswordForm({ props }: { props: { user: UserRespo
 					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 					type="text"
 					placeholder="Current password..."
+					value={model.oldPassword}
 					onChange={(e: ChangeEvent<HTMLInputElement>) =>
 						setModel((prev: ChangePasswordModel) => ({
 							...prev,
@@ -37,6 +45,7 @@ export default function ChangePasswordForm({ props }: { props: { user: UserRespo
 					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 					type="text"
 					placeholder="New password..."
+					value={model.newPassword}
 					onChange={(e: ChangeEvent<HTMLInputElement>) =>
 						setModel((prev: ChangePasswordModel) => ({
 							...prev,
@@ -48,6 +57,7 @@ export default function ChangePasswordForm({ props }: { props: { user: UserRespo
 					className="col-start-2 col-span-2 border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
 					type="text"
 					placeholder="Confirm password..."
+					value={model.confirmPassword}
 					onChange={(e: ChangeEvent<HTMLInputElement>) =>
 						setModel((prev: ChangePasswordModel) => ({
 							...prev,

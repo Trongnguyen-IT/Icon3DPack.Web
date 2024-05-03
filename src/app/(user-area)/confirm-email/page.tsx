@@ -3,7 +3,7 @@ import ConfirmEmailForm from './confirm-email-form'
 export default function ConfirmEmail({
 	searchParams,
 }: {
-	searchParams: { [key: string]: string | string[] | undefined }
+	searchParams: { userId: string; token: string }
 }) {
 	return <ConfirmEmailForm props={searchParams}></ConfirmEmailForm>
 }

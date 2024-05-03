@@ -6,6 +6,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { showSignupHandlerDispatch } from './register'
 import { AuthService } from '@/services/user/auth-service'
 import { LoginModel } from '@/models/users/login-model'
+import { useRouter } from 'next/navigation'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -16,6 +17,7 @@ export const hideLoginHandlerDispatch = () => {
 }
 
 export default function Login() {
+	const router = useRouter()
 	const authService = new AuthService('users')
 
 	let [isOpen, setIsOpen] = useState(false)
@@ -39,7 +41,10 @@ export default function Login() {
 		const { succeeded } = await authService.auth(result)
 
 		if (loginSuccess) {
+			//hideLoginHandler()
 			location.reload()
+			//router.push('/profile')
+			//router.refresh()
 		}
 	}
 

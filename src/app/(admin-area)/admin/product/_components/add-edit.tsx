@@ -143,7 +143,7 @@ export default function AddOrEditProduct({
 			return {
 				...prev,
 				fileEntities: [
-					...prev.fileEntities.filter((p) => p.fileExtensionId !== file.fileExtensionId),
+					...(prev?.fileEntities?.filter((p) => p.fileExtensionId !== file.fileExtensionId) || []),
 					file,
 				],
 			}
