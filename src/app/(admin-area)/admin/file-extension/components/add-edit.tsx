@@ -88,6 +88,21 @@ export default function AddOrEditFileExtension({
 							}
 						/>
 					</div>
+					<div className="mb-4">
+						<p className="mb-1 font-bold">Order</p>
+						<input
+							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
+							type="text"
+							placeholder="Order"
+							value={model.order}
+							onChange={(e: ChangeEvent<HTMLInputElement>) =>
+								setModel((prev: FileExtensionRequestModel) => ({
+									...prev,
+									order: +e.target.value,
+								}))
+							}
+						/>
+					</div>
 					<div className="grid grid-cols-4 gap-4 mt-8">
 						<Link
 							href="/admin/file-extension"

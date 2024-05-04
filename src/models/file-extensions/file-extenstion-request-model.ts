@@ -4,6 +4,7 @@ interface FileExtensionRequestModel extends BaseAuditRequestModel {
 	id: string
 	name: string
 	imageUrl: string
+	order: number
 }
 
 export type { FileExtensionRequestModel }

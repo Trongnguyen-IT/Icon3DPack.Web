@@ -5,12 +5,19 @@ import { ProductService } from '@/services/products'
 import { cookies } from 'next/headers'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import ProductResponseModel from '@/models/products/product-response-model'
+import { FileExtensionService } from '@/services/file-extensions'
+import DownloadFile from './_components/download-file'
 
 export default async function ProductDetails({ params }: { params: { id: string } }) {
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 	const productService = new ProductService('product', token?.value)
-	const { result: product } = await productService.getOne(params.id)
+	const fileExtension = new FileExtensionService('fileextension', token?.value)
+
+	const [{ result: product }, { result: extension }] = await Promise.all([
+		await productService.getOne(params.id),
+		await fileExtension.getAll(params.id),
+	])
 
 	const queryObject = {
 		sortOrder: 'date_desc',
@@ -103,54 +110,12 @@ export default async function ProductDetails({ params }: { params: { id: string 
 						</div>
 
 						<div className="grid grid-cols-8 mb-8">
-							<div>
-								<div className="border border-solid border-[#E7E7E7] rounded-full inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center">
-									<Image
-										src="/images/figma-icon.svg"
-										style={{ objectFit: 'contain' }}
-										alt="figma"
-										className="w-[1.5rem] h-[1.5rem]"
-										width={20}
-										height={30}
-									/>
-								</div>
-							</div>
-							<div>
-								<div className="border border-solid border-[#E7E7E7] rounded-full p-3 inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center">
-									<Image
-										src="/images/ps-icon.svg"
-										style={{ objectFit: 'contain' }}
-										alt="ps icon"
-										className="w-[1.5rem] h-[1.5rem]"
-										width={20}
-										height={30}
-									/>
-								</div>
-							</div>
-							<div>
-								<div className="border border-solid border-[#E7E7E7] rounded-full p-3 inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center">
-									<Image
-										src="/images/png-icon.svg"
-										style={{ objectFit: 'contain' }}
-										alt="png icon"
-										className="w-[1.5rem] h-[1.5rem]"
-										width={20}
-										height={30}
-									/>
-								</div>
-							</div>
-							<div>
-								<div className="border border-solid border-[#E7E7E7] rounded-full p-3 inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center">
-									<Image
-										src="/images/blender-icon.svg"
-										style={{ objectFit: 'contain' }}
-										alt="blender-icon"
-										className="w-[1.5rem] h-[1.5rem]"
-										width={20}
-										height={30}
-									/>
-								</div>
-							</div>
+							{extension &&
+								extension.map((item) => {
+									return (
+										<DownloadFile key={item.id} props={{ product, extension: item }}></DownloadFile>
+									)
+								})}
 						</div>
 					</div>
 				</div>

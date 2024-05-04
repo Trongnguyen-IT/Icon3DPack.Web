@@ -28,6 +28,24 @@ class ProductService extends BaseService<ProductRequestModel, ProductResponseMod
 			`/${this.serviceUrl}/product-filter?${queryString}&pageSize=${pageSize}&pageNumber=${pageNumber}`
 		)
 	}
+
+	async DownloadFile({
+		productId,
+		bucketName,
+		key,
+	}: {
+		productId: string
+		bucketName: string
+		key: string
+	}): Promise<any> {
+		return await this.httpRequest.post(
+			`/${this.serviceUrl}/${productId}/download-file`,
+			{ bucketName, key },
+			{
+				responseType: 'blob', // Important for binary data
+			}
+		)
+	}
 }
 
 export { ProductService }

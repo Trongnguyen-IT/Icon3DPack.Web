@@ -30,6 +30,7 @@ export default async function AdminFileExtension() {
 						<th className="border border-slate-300 px-2">Id</th>
 						<th className="border border-slate-300 px-2">Cover</th>
 						<th className="border border-slate-300 px-2">Name</th>
+						<th className="border border-slate-300 px-2">Order</th>
 						<th className="border border-slate-300 px-2">Actions</th>
 					</tr>
 				</thead>
@@ -52,7 +53,7 @@ export default async function AdminFileExtension() {
 										</div>
 									</td>
 									<td className="border border-slate-300 px-2">{item.name}</td>
-
+									<td className="border border-slate-300 px-2">{item.order}</td>
 									<td className="border border-slate-300 px-2">
 										<div className="grid grid-cols-2 gap-2 mx-4">
 											<Link
