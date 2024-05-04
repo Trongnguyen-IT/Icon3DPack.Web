@@ -1,24 +1,25 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, memo } from 'react'
 import Image from 'next/image'
 import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { UploadService } from '@/services/image-upload'
 
-export default function ImageUpload({
+const ImageUpload = ({
 	imageUrl,
-	updateAvatar,
+	onUpdateAvatar,
 	bucketName,
 	prefix,
 	isShowImage,
 }: {
 	imageUrl: string
-	updateAvatar: Function
+	onUpdateAvatar: Function
 	bucketName: string
 	prefix: string
 	isShowImage: boolean
-}) {
+}) => {
 	const productService = new UploadService(bucketName, prefix)
+	console.log('child rerender')
 
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
@@ -58,7 +59,7 @@ export default function ImageUpload({
 			} as FileUploadRequest
 			const { succeeded, result } = await productService.upload(request)
 
-			succeeded && result && updateAvatar(result)
+			succeeded && result && onUpdateAvatar(result)
 		} catch (err) {
 			console.log(err)
 		}
@@ -108,3 +109,5 @@ export default function ImageUpload({
 		</div>
 	)
 }
+
+export default memo(ImageUpload)

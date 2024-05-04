@@ -1,21 +1,23 @@
 'use client'
 
-import { UserResponseModel } from '@/models/users/user-response-model'
 import { AuthService } from '@/services/user/auth-service'
 import ConfirmDeleteAccountDialog from './confirm-dialog'
 import { useState } from 'react'
+import { useAppContext } from '@/app/app-provider'
 
-export default function DeleteAccountForm({ props }: { props: { user: UserResponseModel } }) {
-	const { user } = props
+export default function DeleteAccountForm() {
+	const { user } = useAppContext()
 	const authService = new AuthService('users')
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const { succeeded, result } = await authService.deleteAccount(user.id)
+		if (user) {
+			const { succeeded, result } = await authService.deleteAccount(user.id)
 
-		if (succeeded) {
-			setIsShow(false)
-			//router.refresh()
+			if (succeeded) {
+				setIsShow(false)
+				//router.refresh()
+			}
 		}
 	}
 
@@ -37,7 +39,7 @@ export default function DeleteAccountForm({ props }: { props: { user: UserRespon
 					<div className="basis-72">
 						<ConfirmDeleteAccountDialog
 							props={{
-								id: user.id,
+								id: user?.id || '',
 								isShow: isShow,
 								callBackConfirm: confirmDelete,
 								setIsShow: setIsShow,

@@ -1,28 +1,28 @@
 'use client'
 
 import ImageUpload from '@/app/_components/image-upload'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { UserResponseModel } from '@/models/users/user-response-model'
 import { AuthService } from '@/services/user/auth-service'
+import { useAppContext } from '@/app/app-provider'
 
-export default function ProfileClient({ props }: { props: { user: UserResponseModel } }) {
-	const { user } = props
+export default function ProfileClient() {
+	const { user } = useAppContext()
 	const authService = new AuthService('users')
-	const [profile, setProfile] = useState(user)
+	const [profile, setProfile] = useState({ ...user } as UserResponseModel)
 
 	const updateProfile = async (): Promise<void> => {
 		const { result } = await authService.updateProfile(profile)
 	}
 
-	const updateAvatar = (imageUrl: string): void => {
+	const handleUpdateAvatar = useCallback((imageUrl: string) => {
 		setProfile((prev) => ({
 			...prev,
 			imageUrl: imageUrl,
 		}))
-	}
-
+	}, [])
 	const notify = () =>
 		toast.success('Update success!', {
 			position: 'top-right',
@@ -43,7 +43,7 @@ export default function ProfileClient({ props }: { props: { user: UserResponseMo
 					<div className="basis-1/2">
 						<ImageUpload
 							isShowImage={true}
-							updateAvatar={updateAvatar}
+							onUpdateAvatar={handleUpdateAvatar}
 							imageUrl={ConvertToCloudfontUrl(profile?.imageUrl)}
 							bucketName="icon3dpack-bucket-s3"
 							prefix="user-profile"

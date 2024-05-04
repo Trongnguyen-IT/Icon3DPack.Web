@@ -2,14 +2,13 @@
 
 import { useAppContext } from '@/app/app-provider'
 import { ChangePasswordModel } from '@/models/users/change-password'
-import { UserResponseModel } from '@/models/users/user-response-model'
 import { AuthService } from '@/services/user/auth-service'
 import Link from 'next/link'
 import { ChangeEvent, useState } from 'react'
 
-export default function ChangePasswordForm({ props }: { props: { user: UserResponseModel } }) {
+export default function ChangePasswordForm() {
 	const authService = new AuthService('users')
-	const { user } = props
+	const { user } = useAppContext()
 	const [model, setModel] = useState({
 		oldPassword: '',
 		newPassword: '',
@@ -17,9 +16,11 @@ export default function ChangePasswordForm({ props }: { props: { user: UserRespo
 	} as ChangePasswordModel)
 
 	const submit = async (model: ChangePasswordModel) => {
-		const { succeeded } = await authService.changePassword(user.id, model)
-		if (succeeded) {
-			setModel({ oldPassword: '', newPassword: '', confirmPassword: '' } as ChangePasswordModel)
+		if (user) {
+			const { succeeded } = await authService.changePassword(user.id, model)
+			if (succeeded) {
+				setModel({ oldPassword: '', newPassword: '', confirmPassword: '' } as ChangePasswordModel)
+			}
 		}
 	}
 

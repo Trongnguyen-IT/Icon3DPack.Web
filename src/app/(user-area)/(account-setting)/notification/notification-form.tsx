@@ -1,22 +1,23 @@
 'use client'
 
-import { UserResponseModel } from '@/models/users/user-response-model'
+import { useAppContext } from '@/app/app-provider'
 import { AuthService } from '@/services/user/auth-service'
-import { Menu } from '@headlessui/react'
 import { useState } from 'react'
 
-export default function NotificationForm({ props }: { props: { user: UserResponseModel } }) {
+export default function NotificationForm() {
 	const authService = new AuthService('users')
-	const { user } = props
-	const [isNotification, setIsNotification] = useState(user.receiveEmailNotification)
+	const { user } = useAppContext()
+	const [isNotification, setIsNotification] = useState(user?.receiveEmailNotification || false)
 
 	const submit = async () => {
-		const request = {
-			userId: user.id,
-			receiveEmailNotification: isNotification,
-		}
+		if (user) {
+			const request = {
+				userId: user.id,
+				receiveEmailNotification: isNotification,
+			}
 
-		const { succeeded } = await authService.updateNotification(user.id, isNotification)
+			const { succeeded } = await authService.updateNotification(user.id, isNotification)
+		}
 	}
 
 	return (
@@ -29,7 +30,7 @@ export default function NotificationForm({ props }: { props: { user: UserRespons
 							<input
 								type="checkbox"
 								value=""
-								defaultChecked={user.receiveEmailNotification}
+								defaultChecked={user?.receiveEmailNotification}
 								className="sr-only peer"
 								onChange={(e) => setIsNotification(e.target.checked)}
 							/>

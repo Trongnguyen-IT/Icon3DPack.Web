@@ -4,6 +4,7 @@ import './globals.css'
 import AppProvider from '@/app/app-provider'
 import { cookies } from 'next/headers'
 import { AuthService } from '@/services/user/auth-service'
+import { UserResponseModel } from '@/models/users/user-response-model'
 
 const inter = Montserrat({ subsets: ['latin'], variable: '--montserrat-font' })
 
@@ -18,7 +19,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 	const authService = new AuthService('users', sessionToken?.value)
 
-	let user: any | null = null
+	let user: UserResponseModel | null = null
 	if (sessionToken) {
 		const { result } = await authService.profile()
 		user = result

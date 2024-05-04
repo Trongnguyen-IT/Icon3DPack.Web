@@ -56,7 +56,6 @@ axiosIntance.interceptors.request.use(
 		// }
 		if (typeof window !== 'undefined') {
 			const cookie = getCookie('token')
-			console.log('tokentoken', cookie)
 			config.headers['Authorization'] = `Bearer ${cookie}`
 		}
 
