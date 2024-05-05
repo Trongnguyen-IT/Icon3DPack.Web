@@ -1,25 +1,27 @@
+'use client'
+
 import ProductResponseModel from '@/models/products/product-response-model'
 import ProductHomeItem from './product-home-item'
 import { PaginatedList } from '@/models/base-models/paginated-list'
+import { ProductService } from '@/services/products'
+import { cookies } from 'next/headers'
+import { memo, useEffect, useState } from 'react'
 
-export default async function ProductList({
-	props,
-}: {
-	props: { products: PaginatedList<ProductResponseModel> }
-}) {
-	const { products } = props
-
+const ProductList = ({ products }: { products: ProductResponseModel[] }) => {
 	return (
 		<>
 			<div className="py-12 grid grid-cols-6 gap-4">
-				{products.items.map((product: ProductResponseModel, index: number) => {
-					return (
-						<div key={index} className="col-span-1">
-							<ProductHomeItem props={{ product }} />
-						</div>
-					)
-				})}
+				{products &&
+					products.map((product: ProductResponseModel, index: number) => {
+						return (
+							<div key={index} className="col-span-1">
+								<ProductHomeItem product={product} />
+							</div>
+						)
+					})}
 			</div>
 		</>
 	)
 }
+
+export default memo(ProductList)

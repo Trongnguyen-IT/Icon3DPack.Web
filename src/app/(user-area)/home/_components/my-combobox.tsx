@@ -1,31 +1,25 @@
 'use client'
 
-import { Fragment, useCallback, useRef, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
-import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export default function MyCombobox({
-	props,
+	categories,
+	selectedCategory,
+	onSelectedCategory,
 }: {
-	props: {
-		categories: CategoryResponseModel[]
-		activeCategory?: CategoryResponseModel
-		callBackSelected: (c: any) => void
-	}
+	categories: CategoryResponseModel[]
+	selectedCategory: CategoryResponseModel
+	onSelectedCategory: (val: any) => void
 }) {
-	const { categories, activeCategory, callBackSelected } = props
 	const inputRef = useRef<HTMLInputElement>(null)
 	const buttonRef = useRef<HTMLButtonElement>(null)
 
-	const router = useRouter()
-	const pathname = usePathname()
-	const searchParams = useSearchParams()
 	const [selected, setSelected] = useState(
-		activeCategory ? activeCategory : ({ id: '', name: 'All categories' } as CategoryResponseModel)
+		selectedCategory ? selectedCategory : { id: null, name: 'All categories' }
 	)
 	const [query, setQuery] = useState('')
 
@@ -39,19 +33,9 @@ export default function MyCombobox({
 						.includes(query.toLowerCase().replace(/\s+/g, ''))
 			  )
 
-	const createQueryString = useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString())
-			params.set(name, value)
-
-			return params.toString()
-		},
-		[searchParams]
-	)
-
-	const handleSelect = (category: CategoryResponseModel) => {
-		router.push(pathname + '?' + createQueryString('categoryId', category.id))
-		callBackSelected(category)
+	const handleSelect = (category: any) => {
+		setSelected(category)
+		onSelectedCategory(category)
 	}
 
 	const handleInputClick = () => {
@@ -60,7 +44,7 @@ export default function MyCombobox({
 
 	return (
 		<div className="w-full">
-			<Combobox value={selected} onChange={setSelected}>
+			<Combobox value={selected} onChange={(val) => handleSelect(val)}>
 				<div className="relative z-10">
 					<div className="relative w-full cursor-default bg-white text-left focus:outline-none">
 						<Combobox.Input
@@ -114,7 +98,6 @@ export default function MyCombobox({
 													className={`flex self-start py-2 pl-10 w-full truncate ${
 														selected ? 'font-medium' : 'font-normal'
 													}`}
-													onClick={() => handleSelect(category)}
 												>
 													{category.name}
 												</button>

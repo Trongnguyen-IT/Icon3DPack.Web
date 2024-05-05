@@ -3,10 +3,10 @@
 import { showSignupHandlerDispatch } from '@/app/_components/register'
 import { useAppContext } from '@/app/app-provider'
 import Image from 'next/image'
+import { memo } from 'react'
 
-export default function Banner() {
+const Banner = () => {
 	const { user } = useAppContext()
-
 	return (
 		<div className="banner">
 			<div className="grid grid-cols-1 md:grid-cols-2">
@@ -41,3 +41,4 @@ export default function Banner() {
 		</div>
 	)
 }
+export default memo(Banner)

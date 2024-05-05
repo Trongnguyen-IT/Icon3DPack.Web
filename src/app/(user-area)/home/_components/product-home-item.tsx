@@ -2,9 +2,9 @@ import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import ProductResponseModel from '@/models/products/product-response-model'
 import Image from 'next/image'
 import Link from 'next/link'
+import { memo } from 'react'
 
-export default function ProductHomeItem({ props }: { props: { product: ProductResponseModel } }) {
-	const { product } = props
+const ProductHomeItem = ({ product }: { product: ProductResponseModel }) => {
 	return (
 		<Link href={`/product/${product.id}`}>
 			<div className="product-box relative group overflow-hidden border-transparent rounded-[20px] border-solid border-2 hover:border-[#46B8E9] transition duration-300">
@@ -23,3 +23,4 @@ export default function ProductHomeItem({ props }: { props: { product: ProductRe
 		</Link>
 	)
 }
+export default memo(ProductHomeItem)

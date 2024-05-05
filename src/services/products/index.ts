@@ -9,24 +9,14 @@ class ProductService extends BaseService<ProductRequestModel, ProductResponseMod
 		super(serviceUrl, token)
 	}
 
-	async productFilter({
-		queryObject,
-		pageSize = 200,
-		pageNumber = 1,
-	}: {
-		queryObject: any
-		pageNumber?: number
-		pageSize?: number
-	}): Promise<ApiResult<PaginatedList<ProductResponseModel>>> {
-		const queryString = Object.keys(queryObject)
-			.map((k) => {
-				return `${k}=${queryObject[k]}`
-			})
-			.join('&')
+	async productFilter(filterObject: any): Promise<ApiResult<PaginatedList<ProductResponseModel>>> {
+		// const queryString = Object.keys(queryObject)
+		// 	.map((k) => {
+		// 		return `${k}=${queryObject[k]}`
+		// 	})
+		// 	.join('&')
 
-		return await this.httpRequest.post(
-			`/${this.serviceUrl}/product-filter?${queryString}&pageSize=${pageSize}&pageNumber=${pageNumber}`
-		)
+		return await this.httpRequest.post(`/${this.serviceUrl}/product-filter`, filterObject)
 	}
 
 	async DownloadFile({

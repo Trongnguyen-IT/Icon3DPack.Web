@@ -1,7 +1,7 @@
 'use client'
 
 import ImageUpload from '@/app/_components/image-upload'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
@@ -28,7 +28,6 @@ export default function AddOrEditProduct({
 }) {
 	const product = props?.product
 	console.log('product', product)
-
 	const isAddMode = !product
 	const router = useRouter()
 	const [model, setModel] = useState(Object.assign({ ...product }) as ProductRequestModel)
@@ -80,13 +79,14 @@ export default function AddOrEditProduct({
 		return await productService.updateOne(id, data)
 	}
 
-	const updateAvatar = (imageUrl: string): void => {
+	const handleUpdateAvatar = useCallback((imageUrl: string) => {
 		setModel((prev) => ({
 			...prev,
 			imageUrl: imageUrl,
 		}))
-	}
-	const callBack = (value: { id: string; name: string }): void => {
+	}, [])
+
+	const handleCategoryChange = useCallback((value: any): void => {
 		setModel((prev) => {
 			return {
 				...prev,
@@ -94,9 +94,9 @@ export default function AddOrEditProduct({
 				categoryName: value.name,
 			}
 		})
-	}
+	}, [])
 
-	const onDropdownChange = (selected: any) => {
+	const onDropdownChange = useCallback((selected: any) => {
 		setModel((prev) => {
 			return {
 				...prev,
@@ -106,18 +106,18 @@ export default function AddOrEditProduct({
 				],
 			}
 		})
-	}
+	}, [])
 
-	const handleTagsChange = (newTags: any) => {
+	const handleTagsChange = useCallback((newTags: any) => {
 		const updatedProduct = { ...model, tags: newTags }
 		setModel(updatedProduct)
-	}
+	}, [])
 
-	const handleChangeInputTag = (newTag: any) => {
+	const handleChangeInputTag = useCallback((newTag: any) => {
 		if (!tags.find((t) => t.id === newTag.id)) {
 			setNewTag(newTag)
 		}
-	}
+	}, [])
 
 	const addTag = async () => {
 		if (!tags.find((t) => t.id === newTag.id)) {
@@ -131,14 +131,14 @@ export default function AddOrEditProduct({
 				setModel((prev) => {
 					return {
 						...prev,
-						tags: [...prev.tags, Object.assign({} as TagRequestModel, addedTag)],
+						tags: [...(prev.tags || []), Object.assign({} as TagRequestModel, addedTag)],
 					}
 				})
 			}
 		}
 	}
 
-	const handleChangeFile = (file: any) => {
+	const handleChangeFile = useCallback((file: any) => {
 		setModel((prev) => {
 			return {
 				...prev,
@@ -148,7 +148,7 @@ export default function AddOrEditProduct({
 				],
 			}
 		})
-	}
+	}, [])
 
 	return (
 		<div className="min-h-[100vh]">
@@ -173,17 +173,15 @@ export default function AddOrEditProduct({
 							imageUrl=""
 							bucketName="icon3dpack-bucket-s3"
 							prefix="products"
-							updateAvatar={updateAvatar}
+							onUpdateAvatar={handleUpdateAvatar}
 						/>
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Category</p>
 						<Dropdown
-							props={{
-								dataSource: categories,
-								active: { id: model?.categoryId, name: model?.categoryName },
-								callBack: callBack,
-							}}
+							dataSource={categories}
+							active={{ id: product?.categoryId, name: product?.categoryName }}
+							onCategoryChange={handleCategoryChange}
 						></Dropdown>
 					</div>
 					<div className="mb-4">
@@ -206,11 +204,9 @@ export default function AddOrEditProduct({
 						<div className="grid grid-cols-8">
 							<div className="col-span-7">
 								<AdminCombobox
-									props={{
-										dataSource: tags,
-										onChange: onDropdownChange,
-										onChangeInputTag: handleChangeInputTag,
-									}}
+									dataSource={tags}
+									onChange={onDropdownChange}
+									onChangeInputTag={handleChangeInputTag}
 								></AdminCombobox>
 							</div>
 							<button
@@ -223,9 +219,7 @@ export default function AddOrEditProduct({
 					</div>
 
 					<div className="flex flex-row mb-4 mt-4">
-						<TagComponent
-							props={{ initialTags: model.tags, onChange: handleTagsChange }}
-						></TagComponent>
+						<TagComponent initialTags={model.tags} onChange={handleTagsChange}></TagComponent>
 					</div>
 					<div className="mb-4">
 						<p className="mb-1 font-bold">Files</p>

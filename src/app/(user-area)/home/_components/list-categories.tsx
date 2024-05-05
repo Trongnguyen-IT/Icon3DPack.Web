@@ -24,23 +24,8 @@ export default function ListCategories({
 	props: { categories: CategoryResponseModel[] }
 }) {
 	const { categories } = props
-
-	// const images = [
-	// 	'fitness',
-	// 	'live',
-	// 	'marketing',
-	// 	'business',
-	// 	'fitness',
-	// 	'live',
-	// 	'marketing',
-	// 	'business',
-	// ].map((p) => ({ name: p, url: `../../images/${p}.svg` }))
-
 	const navPrevButton = useRef<HTMLButtonElement>(null)
 	const navNextButton = useRef<HTMLButtonElement>(null)
-
-	const prevRef = useRef(null)
-	const nextRef = useRef(null)
 
 	return (
 		<div className="category py-24" id="categoryListRef">

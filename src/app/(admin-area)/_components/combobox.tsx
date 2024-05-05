@@ -1,14 +1,17 @@
-import { ChangeEvent, Fragment, useRef, useState } from 'react'
+import { ChangeEvent, Fragment, memo, useRef, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-export default function AdminCombobox({
-	props,
+const AdminCombobox = ({
+	dataSource,
+	onChange,
+	onChangeInputTag,
 }: {
-	props: { dataSource: any[]; onChange: Function; onChangeInputTag: Function }
-}) {
+	dataSource: any[]
+	onChange: Function
+	onChangeInputTag: Function
+}) => {
 	const buttonRef = useRef<HTMLButtonElement>(null)
-	const { dataSource, onChange, onChangeInputTag } = props
 
 	const [selected, setSelected] = useState(dataSource[0])
 	const [query, setQuery] = useState('')
@@ -102,3 +105,5 @@ export default function AdminCombobox({
 		</>
 	)
 }
+
+export default memo(AdminCombobox)

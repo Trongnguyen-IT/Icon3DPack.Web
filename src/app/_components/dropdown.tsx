@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, memo, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import Image from 'next/image'
@@ -7,21 +7,20 @@ function classNames(...classes: any) {
 	return classes.filter(Boolean).join(' ')
 }
 
-export default function Dropdown({
-	props,
+const Dropdown = ({
+	dataSource,
+	active,
+	onCategoryChange,
 }: {
-	props: {
-		dataSource: { id: string; name: string }[]
-		active: { id: string; name: string }
-		callBack: (value: any) => any
-	}
-}) {
-	const { dataSource, active, callBack } = props
+	dataSource: { id: string; name: string }[]
+	active: any
+	onCategoryChange: (value: any) => void
+}) => {
 	const [selected, setSelected] = useState(active.id ? active : { id: '', name: 'All categories' })
 
 	const handleSelect = (item: any) => {
 		setSelected(item)
-		callBack(item)
+		onCategoryChange(item)
 	}
 
 	return (
@@ -75,3 +74,5 @@ export default function Dropdown({
 		</Menu>
 	)
 }
+
+export default memo(Dropdown)

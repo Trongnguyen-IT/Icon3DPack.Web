@@ -1,7 +1,7 @@
 'use client'
 
 import ImageUpload from '@/app/_components/image-upload'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState, memo } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
@@ -15,13 +15,7 @@ import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
 import AdminCombobox from '@/app/(admin-area)/_components/combobox'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
 
-export default function AddOrEditCategory({
-	id,
-	category,
-}: {
-	id?: string
-	category?: CategoryResponseModel
-}) {
+const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryResponseModel }) => {
 	const isAddMode = !id
 	const router = useRouter()
 	const [model, setModel] = useState(
@@ -49,12 +43,12 @@ export default function AddOrEditCategory({
 		return await categoryService.updateOne(id, data)
 	}
 
-	const updateAvatar = (imageUrl: string): void => {
+	const handleUpdateAvatar = useCallback((imageUrl: string) => {
 		setModel((prev) => ({
 			...prev,
 			imageUrl: imageUrl,
 		}))
-	}
+	}, [])
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -65,7 +59,7 @@ export default function AddOrEditCategory({
 		fetchData()
 	}, [])
 
-	const onDropdownChange = (selected: any) => {
+	const handleDropdownChange = useCallback((selected: any) => {
 		setModel((prev) => {
 			return {
 				...prev,
@@ -75,18 +69,18 @@ export default function AddOrEditCategory({
 				],
 			}
 		})
-	}
+	}, [])
 
-	const handleTagsChange = (newTags: any) => {
+	const handleTagsChange = useCallback((newTags: any) => {
 		const updatedProduct = { ...model, tags: newTags }
 		setModel(updatedProduct)
-	}
+	}, [])
 
-	const handleChangeInputTag = (newTag: any) => {
+	const handleChangeInputTag = useCallback((newTag: any) => {
 		if (!tags.find((t) => t.id === newTag.id)) {
 			setNewTag(newTag)
 		}
-	}
+	}, [])
 
 	const addTag = async () => {
 		if (!tags.find((t) => t.id === newTag.id)) {
@@ -130,7 +124,7 @@ export default function AddOrEditCategory({
 							imageUrl=""
 							bucketName="icon3dpack-bucket-s3"
 							prefix="categories"
-							updateAvatar={updateAvatar}
+							onUpdateAvatar={handleUpdateAvatar}
 						/>
 					</div>
 					<div className="mb-4">
@@ -153,26 +147,22 @@ export default function AddOrEditCategory({
 						<div className="grid grid-cols-8">
 							<div className="col-span-7">
 								<AdminCombobox
-									props={{
-										dataSource: tags,
-										onChange: onDropdownChange,
-										onChangeInputTag: handleChangeInputTag,
-									}}
+									dataSource={tags}
+									onChange={handleDropdownChange}
+									onChangeInputTag={handleChangeInputTag}
 								></AdminCombobox>
 							</div>
 							<button
 								className="col-span-1 h-full border border-[#46B8E9] rounded-lg bg-[#46B8E9] font-medium text-white"
 								onClick={() => addTag()}
 							>
-								add
+								Add tag
 							</button>
 						</div>
 					</div>
 
 					<div className="flex flex-row mt-4">
-						<TagComponent
-							props={{ initialTags: model.tags, onChange: handleTagsChange }}
-						></TagComponent>
+						<TagComponent initialTags={model.tags} onChange={handleTagsChange}></TagComponent>
 					</div>
 					{/* <div className="mb-4">
 						<p className="mb-1 font-bold">Product amount</p>
@@ -203,3 +193,5 @@ export default function AddOrEditCategory({
 		</div>
 	)
 }
+
+export default memo(AddOrEditCategory)

@@ -23,6 +23,7 @@ export default function ProfileClient() {
 			imageUrl: imageUrl,
 		}))
 	}, [])
+
 	const notify = () =>
 		toast.success('Update success!', {
 			position: 'top-right',

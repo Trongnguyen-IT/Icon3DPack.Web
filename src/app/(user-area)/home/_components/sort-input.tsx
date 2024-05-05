@@ -6,16 +6,26 @@ import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const people = [{ name: 'Ascending ' }, { name: 'Descending ' }]
+const options = [
+	{ name: 'Ascending by date', sortBy: 'CreatedTime', sortDirection: 'asc' },
+	{ name: 'Descending by date', sortBy: 'CreatedTime', sortDirection: 'desc' },
+	{ name: 'Ascending by downloaded', sortBy: 'DownloadCount', sortDirection: 'asc' },
+	{ name: 'Descending by downloaded', sortBy: 'DownloadCount', sortDirection: 'desc' },
+]
 
-export default function SortInput() {
+export default function SortInput({ onChangeSort }: { onChangeSort: (val: any) => void }) {
 	const [selected, setSelected] = useState({ name: 'Sort' })
+	const handeChangeSort = (val: any) => {
+		onChangeSort(val)
+	}
 
 	return (
-		<Listbox value={selected} onChange={setSelected}>
+		<Listbox value={selected} onChange={(val) => handeChangeSort(val)}>
 			<div className="relative w-full z-10">
 				<Listbox.Button className="relative h-[3.125rem] w-full cursor-pointer rounded-lg border border-[#E7E7E7] bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300">
-					<span className="block truncate">{selected.name}</span>
+					<span title={selected.name} className="block truncate">
+						{selected.name}
+					</span>
 					<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 						<Image
 							src={'../../images/filter-icon.svg'}
@@ -33,7 +43,7 @@ export default function SortInput() {
 					leaveTo="opacity-0"
 				>
 					<Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none">
-						{people.map((person, personIdx) => (
+						{options.map((person, personIdx) => (
 							<Listbox.Option
 								key={personIdx}
 								className={({ active }) =>
@@ -45,7 +55,7 @@ export default function SortInput() {
 							>
 								{({ selected }) => (
 									<>
-										<span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+										<span className={`block ${selected ? 'font-medium' : 'font-normal'}`}>
 											{person.name}
 										</span>
 										{selected ? (

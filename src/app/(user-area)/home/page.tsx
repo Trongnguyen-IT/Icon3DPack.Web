@@ -2,25 +2,14 @@ import Banner from '@/app/(user-area)/home/_components/banner'
 import ListCategories from '@/app/(user-area)/home/_components/list-categories'
 import { CategoryService } from '@/services/categories'
 import { cookies } from 'next/headers'
-import ProductList from './_components/product-list'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import FilterComponent from './_components/filter-component'
-import { ProductService } from '@/services/products'
-import HttpRequest from '@/services/http-request'
 
-export default async function Home({ searchParams }: { searchParams: { categoryId: string } }) {
-	const { categoryId } = searchParams
-
+export default async function Home() {
 	const cookieStore = cookies()
 	const token = cookieStore.get('token')
 	const categoryService = new CategoryService('category', token?.value)
-	const productService = new ProductService('product', token?.value)
 	const { result: categories } = await categoryService.getAll()
-	const activeCategory = categories.find((p) => p.id == categoryId)
-
-	const queryObject = Object.assign({}, activeCategory?.id ? { categoryId: activeCategory.id } : {})
-
-	const { result: products } = await productService.productFilter({ queryObject })
 
 	const dropdownOptions = [
 		Object.assign({}, { id: '', name: 'All Categories' } as CategoryResponseModel),
@@ -30,8 +19,7 @@ export default async function Home({ searchParams }: { searchParams: { categoryI
 		<main className="container mx-auto py-24">
 			<Banner />
 			<ListCategories props={{ categories }} />
-			<FilterComponent props={{ categories: dropdownOptions, activeCategory }} />
-			<ProductList props={{ products }} />
+			<FilterComponent props={{ categories: dropdownOptions }} />
 		</main>
 	)
 }

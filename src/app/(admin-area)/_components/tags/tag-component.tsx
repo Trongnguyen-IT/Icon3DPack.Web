@@ -1,9 +1,15 @@
+import { memo } from 'react'
 import Tag from './tag'
 import PropTypes from 'prop-types'
+import { TagRequestModel } from '@/models/tags/tag-request-model'
 
-const TagComponent = ({ props }: { props: { initialTags: any[]; onChange: Function } }) => {
-	const { initialTags, onChange } = props
-
+const TagComponent = ({
+	initialTags,
+	onChange,
+}: {
+	initialTags: TagRequestModel[]
+	onChange: (x: any) => void
+}) => {
 	const handleTagRemove = (tagToRemove: any) => {
 		const updatedTags = initialTags.filter((tag) => tag.id !== tagToRemove.id)
 		if (onChange) {
@@ -17,19 +23,9 @@ const TagComponent = ({ props }: { props: { initialTags: any[]; onChange: Functi
 		))
 	}
 
-	// const addTag = () => {
-	//     if (newTag) {
-	//         const updatedTags = [...initialTags, newTag];
-	//         if (onChange) {
-	//           onChange(updatedTags);
-	//         }
-	//       }
-	// }
-
 	return (
 		<div className="tag-container">
 			<div className="tags-list">{renderTags()}</div>
-			{/* <button onClick={addTag}>Add Tag</button> */}
 		</div>
 	)
 }
@@ -38,4 +34,5 @@ TagComponent.propTypes = {
 	initialTags: PropTypes.array,
 	onChange: PropTypes.func,
 }
-export default TagComponent
+
+export default memo(TagComponent)
