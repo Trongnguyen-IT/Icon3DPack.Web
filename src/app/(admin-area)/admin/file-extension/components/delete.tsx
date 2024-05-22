@@ -2,7 +2,7 @@
 
 import ConfirmDialog from '@/app/(admin-area)/admin/category/_components/confirm-dialog'
 import { apiStatus } from '@/configs'
-import { extensionService } from '@/services/file-extensions'
+import { deleteOne } from '@/services/file-extensions'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -12,7 +12,7 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const { status } = await extensionService.deleteOne(id)
+		const { status } = await deleteOne(id)
 
 		if (status === apiStatus.success) {
 			setIsShow(false)
