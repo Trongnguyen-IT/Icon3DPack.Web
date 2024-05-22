@@ -1,20 +1,20 @@
 'use client'
 
-import { ProductService } from '@/services/products'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import ConfirmDialog from './confirm-dialog'
+import { apiStatus } from '@/configs'
+import { adminDeleteOne } from '@/services/products'
 
 export default function Delete({ props }: { props: { id: string } }) {
 	const router = useRouter()
 	const { id } = props
 	const [isShow, setIsShow] = useState(false)
-	const productService = new ProductService('adminproduct')
 
 	const confirmDelete = async (): Promise<void> => {
-		const { succeeded, result } = await productService.deleteOne(id)
+		const { status } = await adminDeleteOne(id)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			setIsShow(false)
 			router.refresh()
 		}

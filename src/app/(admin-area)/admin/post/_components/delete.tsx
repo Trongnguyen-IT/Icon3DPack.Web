@@ -1,9 +1,10 @@
 'use client'
 
-import { PostService } from '@/services/posts'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import ConfirmDialog from './confirm-dialog'
+import { adminDeleteOne } from '@/services/posts'
+import { apiStatus } from '@/configs'
 
 export default function Delete({ props }: { props: { id: string } }) {
 	const router = useRouter()
@@ -11,10 +12,9 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const categoryService = new PostService('adminpost')
-		const { succeeded } = await categoryService.deleteOne(id)
+		const { status } = await adminDeleteOne(id)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			setIsShow(false)
 			router.refresh()
 		}

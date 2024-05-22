@@ -2,16 +2,16 @@ import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import Image from 'next/image'
 import Link from 'next/link'
 import Delete from './_components/delete'
-import { ProductService } from '@/services/products'
 import ProductResponseModel from '@/models/products/product-response-model'
+import { adminGetAll } from '@/services/products'
 import { cookies } from 'next/headers'
 
 export default async function AdminCategory() {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const productService = new ProductService('adminproduct', token?.value)
+	const token = cookies().get('accessToken')
 
-	const { result: dataSource } = await productService.getAll()
+	const {
+		data: { result: dataSource },
+	} = await adminGetAll(token?.value)
 
 	return (
 		<div>
@@ -35,8 +35,8 @@ export default async function AdminCategory() {
 					</tr>
 				</thead>
 				<tbody>
-					{dataSource && dataSource.length ? (
-						dataSource.map((item: ProductResponseModel): JSX.Element => {
+					{dataSource && dataSource.items?.length ? (
+						dataSource.items.map((item: ProductResponseModel): JSX.Element => {
 							return (
 								<tr key={item.id}>
 									<td className="border border-slate-300 px-2">{item.id}</td>
@@ -71,7 +71,7 @@ export default async function AdminCategory() {
 						})
 					) : (
 						<tr className="text-center">
-							<td colSpan={4}>No File Extension</td>
+							<td colSpan={4}>Please add product</td>
 						</tr>
 					)}
 				</tbody>

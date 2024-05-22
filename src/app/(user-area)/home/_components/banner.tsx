@@ -1,12 +1,11 @@
-'use client'
-
 import { showSignupHandlerDispatch } from '@/app/_components/register'
 import { useAppContext } from '@/app/app-provider'
 import Image from 'next/image'
 import { memo } from 'react'
+import SignupButton from './signup-button'
 
 const Banner = () => {
-	const { user } = useAppContext()
+	//const { user } = useAppContext()
 	return (
 		<div className="banner">
 			<div className="grid grid-cols-1 md:grid-cols-2">
@@ -17,14 +16,7 @@ const Banner = () => {
 					<p className="opacity-50 text-3xl font-medium leading-[2.8125rem] mb-7 text-[#1B1B1B]">
 						Quality design resources that helps you build best products on market.
 					</p>
-					{!user && (
-						<button
-							onClick={showSignupHandlerDispatch}
-							className="w-[23.1875rem] h-[3.75rem] text-white font-bold uppercase bg-[#F04F23] rounded-[10px]"
-						>
-							Free Sign Up and download
-						</button>
-					)}
+					<SignupButton />
 				</div>
 				<div className="left-side">
 					<div className="relative w-full h-full aspect-[690/485]">
@@ -33,7 +25,7 @@ const Banner = () => {
 							fill
 							style={{ objectFit: 'contain' }}
 							className=""
-							alt="3DIconPack"
+							alt="banner"
 						/>
 					</div>
 				</div>

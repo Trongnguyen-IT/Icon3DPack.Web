@@ -6,8 +6,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { showLoginHandlerDispatch } from './login'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { AuthService } from '@/services/user/auth-service'
 import { RegisterModel } from '@/models/users/register-model'
+import { register } from '@/services/user'
 
 export const showSignupHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showSignup'))
@@ -18,9 +18,9 @@ export const hideSignupHandlerDispatch = () => {
 }
 
 export default function Register() {
-	const authService = new AuthService('users')
 	let [isOpen, setIsOpen] = useState(false)
 	let [registerModel, setRegisterModel] = useState({} as RegisterModel)
+	const [isPassword, setIsPassword] = useState(true)
 
 	const showSignupHandler = () => setIsOpen(true)
 	const hideSignupHandler = () => setIsOpen(false)
@@ -31,8 +31,8 @@ export default function Register() {
 	}
 
 	const submit = async () => {
-		const { succeeded, result } = await authService.register(registerModel)
-		succeeded && notify()
+		const { status } = await register(registerModel)
+		// succeeded && notify()
 	}
 
 	const notify = () =>
@@ -180,12 +180,15 @@ export default function Register() {
 															password: e.target.value,
 														}))
 													}
-													type="password"
+													type={isPassword ? 'password' : 'text'}
 													placeholder=" Enter your password..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 												<div className="absolute top-1/2 -translate-y-1/2 right-4 max-h-[15.53px]">
-													<span className="w-[19.41px] h-[15.53px] relative inline-flex">
+													<button
+														className="w-[19.41px] h-[15.53px] relative inline-flex"
+														onClick={() => setIsPassword((prev) => !isPassword)}
+													>
 														<Image
 															fill
 															src="/images/show-password.svg"
@@ -193,7 +196,7 @@ export default function Register() {
 															alt="show-password"
 															className=""
 														/>
-													</span>
+													</button>
 												</div>
 											</div>
 										</div>

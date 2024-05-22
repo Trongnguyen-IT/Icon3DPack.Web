@@ -1,22 +1,29 @@
 'use client'
 
-import { useAppContext } from '@/app/app-provider'
-import { AuthService } from '@/services/user/auth-service'
+import { apiStatus } from '@/configs'
+import { UserResponseModel } from '@/models/users/user-response-model'
+import { updateNotification } from '@/services/user'
+import { successNotification } from '@/untils/toast-notification'
 import { useState } from 'react'
 
-export default function NotificationForm() {
-	const authService = new AuthService('users')
-	const { user } = useAppContext()
-	const [isNotification, setIsNotification] = useState(user?.receiveEmailNotification || false)
+export default function NotificationForm({
+	initialProfile,
+}: {
+	initialProfile: UserResponseModel
+}) {
+	const [isNotification, setIsNotification] = useState(
+		initialProfile?.receiveEmailNotification || false
+	)
 
 	const submit = async () => {
-		if (user) {
+		if (initialProfile) {
 			const request = {
-				userId: user.id,
+				userId: initialProfile.id,
 				receiveEmailNotification: isNotification,
 			}
 
-			const { succeeded } = await authService.updateNotification(user.id, isNotification)
+			const { status } = await updateNotification(initialProfile.id, isNotification)
+			status === apiStatus.success && successNotification()
 		}
 	}
 
@@ -30,7 +37,7 @@ export default function NotificationForm() {
 							<input
 								type="checkbox"
 								value=""
-								defaultChecked={user?.receiveEmailNotification}
+								defaultChecked={initialProfile?.receiveEmailNotification}
 								className="sr-only peer"
 								onChange={(e) => setIsNotification(e.target.checked)}
 							/>

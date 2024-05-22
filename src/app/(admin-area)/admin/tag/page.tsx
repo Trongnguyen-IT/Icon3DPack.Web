@@ -1,16 +1,16 @@
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Delete from './_components/delete'
-import { TagService } from '@/services/tag/tag-service'
 import { TagResponseModel } from '@/models/tags/tag-response-model'
+import { adminGetAll } from '@/services/tag'
 
 export default async function AdminTag() {
 	const cookieStore = cookies()
-	const token = cookieStore.get('token')
+	const token = cookieStore.get('accessToken')
 
-	const tagService = new TagService('admintag', token?.value)
-
-	const { result: dataSource } = await tagService.getAll('/admintag')
+	const {
+		data: { result: dataSource },
+	} = await adminGetAll('/admintag', token?.value)
 
 	return (
 		<div>

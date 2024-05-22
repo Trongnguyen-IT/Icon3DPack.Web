@@ -1,7 +1,8 @@
 'use client'
 
 import ConfirmDialog from '@/app/(admin-area)/admin/tag/_components/confirm-dialog'
-import { TagService } from '@/services/tag/tag-service'
+import { apiStatus } from '@/configs'
+import { adminDeleteOne } from '@/services/tag'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -11,10 +12,9 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const tagService = new TagService('admintag')
-		const { succeeded } = await tagService.deleteOne(id)
+		const { status } = await adminDeleteOne(id)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			setIsShow(false)
 			router.refresh()
 		}

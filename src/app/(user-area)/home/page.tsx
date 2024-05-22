@@ -1,25 +1,19 @@
 import Banner from '@/app/(user-area)/home/_components/banner'
 import ListCategories from '@/app/(user-area)/home/_components/list-categories'
-import { CategoryService } from '@/services/categories'
-import { cookies } from 'next/headers'
-import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import FilterComponent from './_components/filter-component'
+import { getAll } from '@/services/categories'
 
 export default async function Home() {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const categoryService = new CategoryService('category', token?.value)
-	const { result: categories } = await categoryService.getAll()
+	const {
+		status,
+		data: { result: categories },
+	} = await getAll()
 
-	const dropdownOptions = [
-		Object.assign({}, { id: '', name: 'All Categories' } as CategoryResponseModel),
-		...categories,
-	]
 	return (
 		<main className="container mx-auto py-24">
 			<Banner />
-			<ListCategories props={{ categories }} />
-			<FilterComponent props={{ categories: dropdownOptions }} />
+			<ListCategories categories={status ? categories : []} />
+			<FilterComponent categories={status ? categories : []} />
 		</main>
 	)
 }

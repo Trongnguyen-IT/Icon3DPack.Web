@@ -8,14 +8,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import ProductList from './product-list'
 import debounce from 'lodash.debounce'
 import Pagination from '../../_components/pagination'
-import { ProductService } from '@/services/products'
 import ProductResponseModel from '@/models/products/product-response-model'
+import { productFilter } from '@/services/products'
 
-export default function FilterComponent({
-	props,
-}: {
-	props: { categories: CategoryResponseModel[] }
-}) {
+export default function FilterComponent({ categories }: { categories: CategoryResponseModel[] }) {
 	const [products, setProducts] = useState([] as ProductResponseModel[])
 
 	const [filter, setFilter] = useState({
@@ -25,9 +21,6 @@ export default function FilterComponent({
 
 	const [pagingObject, setPagingObject] = useState(Object.assign({ pageNumber: 1, pageSize: 1 }))
 
-	const productService = new ProductService('product')
-
-	const { categories } = props
 	const [selectedCategory, setSelectedCategory] = useState({
 		id: '',
 		name: 'All Categories',
@@ -71,8 +64,6 @@ export default function FilterComponent({
 	}, [])
 
 	const handleChangePageSize = useCallback((pageNumber: number) => {
-		console.log('pageNumber', pageNumber)
-
 		setFilter((prev) => {
 			return {
 				...prev,
@@ -83,14 +74,18 @@ export default function FilterComponent({
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const { result: products } = await productService.productFilter(filter)
-			setProducts(products.items)
-			setPagingObject((prev: any) => {
-				return {
-					...prev,
-					...products,
-				}
-			})
+			const {
+				status,
+				data: { result: products },
+			} = await productFilter(filter)
+			status && setProducts(products.items)
+			status &&
+				setPagingObject((prev: any) => {
+					return {
+						...prev,
+						...products,
+					}
+				})
 		}
 
 		fetchData()
@@ -102,7 +97,10 @@ export default function FilterComponent({
 				<div className="col-span-2">
 					<div className="dropdown-list h-full">
 						<MyCombobox
-							categories={categories}
+							categories={[
+								Object.assign({}, { id: '', name: 'All Categories' } as CategoryResponseModel),
+								...categories,
+							]}
 							selectedCategory={selectedCategory}
 							onSelectedCategory={handleSelectedCategory}
 						></MyCombobox>

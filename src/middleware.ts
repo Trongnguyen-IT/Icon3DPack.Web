@@ -10,7 +10,7 @@ const adminPaths = ['/admin']
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
-	const token = request.cookies.get('token')?.value
+	const token = request.cookies.get('accessToken')?.value
 	const decode = decodeJWT(token || '')
 	//console.log('decode', decode)
 

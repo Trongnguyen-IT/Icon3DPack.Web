@@ -4,9 +4,11 @@ import Image from 'next/image'
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { showSignupHandlerDispatch } from './register'
-import { AuthService } from '@/services/user/auth-service'
 import { LoginModel } from '@/models/users/login-model'
 import { useRouter } from 'next/navigation'
+import { apiStatus } from '@/configs'
+import { useAppContext } from '../app-provider'
+import { auth, login, profile as getProfile } from '@/services/user'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -17,12 +19,14 @@ export const hideLoginHandlerDispatch = () => {
 }
 
 export default function Login() {
+	//const authService = new AuthService('users')
 	const router = useRouter()
-	const authService = new AuthService('users')
+	const { setUser } = useAppContext()
+	const [isOpen, setIsOpen] = useState(false)
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [isPassword, setIsPassword] = useState(true)
 
-	let [isOpen, setIsOpen] = useState(false)
-	let [email, setEmail] = useState('')
-	let [password, setPassword] = useState('')
 	const showLoginHandler = () => setIsOpen(true)
 	const hideLoginHandler = () => setIsOpen(false)
 
@@ -32,19 +36,37 @@ export default function Login() {
 	}
 
 	const submit = async () => {
-		const data = {
+		const request = {
 			email: email,
 			password,
 		} as LoginModel
 
-		const { succeeded: loginSuccess, result } = await authService.login(data)
-		const { succeeded } = await authService.auth(result)
+		const {
+			status,
+			statusText,
+			data: { result },
+		} = await login(request)
 
-		if (loginSuccess) {
-			//hideLoginHandler()
-			location.reload()
-			//router.push('/profile')
-			//router.refresh()
+		if (status === apiStatus.success) {
+			const { token } = result
+			localStorage.setItem('accessToken', token)
+
+			const { status: nextStatus } = await auth(result)
+
+			if (nextStatus) {
+				const {
+					data: { result: profile },
+				} = await getProfile()
+
+				setUser(profile)
+				hideLoginHandler()
+				router.push('/')
+				router.refresh()
+
+				//location.reload()
+				//router.push('/profile')
+				//router.refresh()
+			}
 		}
 	}
 
@@ -148,12 +170,15 @@ export default function Login() {
 												</div>
 												<input
 													onChange={(e) => setPassword(e.target.value)}
-													type="password"
+													type={isPassword ? 'password' : 'text'}
 													placeholder=" Enter your password..."
 													className="w-full border rounded-lg py-3 px-2 pl-12 border-[#E7E7E7] outline-none"
 												/>
 												<div className="absolute top-1/2 -translate-y-1/2 right-4 max-h-[15.53px]">
-													<span className="w-[19.41px] h-[15.53px] relative inline-flex">
+													<button
+														onClick={() => setIsPassword((prev) => !isPassword)}
+														className="w-[19.41px] h-[15.53px] relative inline-flex"
+													>
 														<Image
 															fill
 															src="/images/show-password.svg"
@@ -161,7 +186,7 @@ export default function Login() {
 															alt="show-password"
 															className=""
 														/>
-													</span>
+													</button>
 												</div>
 											</div>
 										</div>

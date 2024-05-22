@@ -1,19 +1,19 @@
-import { FileExtensionService } from '@/services/file-extensions'
 import { cookies } from 'next/headers'
 import AddOrEditFileExtension from '../../components/add-edit'
+import { adminGetOne } from '@/services/file-extensions'
 
 export default async function FileExtensionEditComponent({ params }: { params: any }) {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const fileextensionService = new FileExtensionService('adminfileextension', token?.value)
 	const { id } = params
+	const token = cookies().get('accessToken')
 
-	const { result: fileextension } = await fileextensionService.getOne(id)
+	const {
+		data: { result: extension },
+	} = await adminGetOne(id, token?.value)
 
 	return (
 		<div>
 			<h1 className="font-bold text-[1.875rem] mb-12">Edit FileExtension</h1>
-			<AddOrEditFileExtension id={id} fileextension={fileextension} />
+			<AddOrEditFileExtension id={id} extension={extension} />
 		</div>
 	)
 }

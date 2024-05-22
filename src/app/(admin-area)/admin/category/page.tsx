@@ -3,16 +3,17 @@ import Image from 'next/image'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
-import { CategoryService } from '@/services/categories'
 import Delete from './_components/delete'
+import { adminGetAll } from '@/services/categories'
 
 export default async function AdminCategory() {
 	const cookieStore = cookies()
-	const token = cookieStore.get('token')
+	const token = cookieStore.get('accessToken')
 
-	const categoryService = new CategoryService('admincategory', token?.value)
-
-	const { result: dataSource } = await categoryService.getAll('/admincategory')
+	const {
+		status,
+		data: { result: dataSource },
+	} = await adminGetAll(token?.value)
 
 	return (
 		<div>

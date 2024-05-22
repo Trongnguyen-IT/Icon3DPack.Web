@@ -1,7 +1,8 @@
 import { normalizePath } from '@/untils'
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
+import { deleteCookie, getCookie, setCookie } from 'cookies-next'
+import { RedirectType, redirect, useRouter } from 'next/navigation'
 const baseURL = 'http://localhost:5000/api/v1' //process.env.NEXT_PUBLIC_API_URL
-
 class SessionToken {
 	private token = ''
 	private _expiresAt = new Date().toISOString()
@@ -29,14 +30,18 @@ class SessionToken {
 
 export const clientSessionToken = new SessionToken()
 
-const axiosIntance = axios.create({
+// export type CustomOptions = Omit<InternalAxiosRequestConfig<any>, 'method'> & {
+// 	serviceName?: string | undefined
+// }
+
+const baseHttp = axios.create({
 	baseURL,
 	headers: {
 		accept: 'application/json', // If you receieve JSON response.
 	},
 })
 
-function getCookie(name: string) {
+function getCookieClient(name: string) {
 	let matches = document.cookie.match(
 		new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
 	)
@@ -44,7 +49,7 @@ function getCookie(name: string) {
 }
 
 // Add a request interceptor
-axiosIntance.interceptors.request.use(
+baseHttp.interceptors.request.use(
 	function (config) {
 		// Do something before request is sent
 		//const cookieStore = document
@@ -54,9 +59,13 @@ axiosIntance.interceptors.request.use(
 		// if (clientSessionToken?.value) {
 		// 	config.headers['Authorization'] = `Bearer ${clientSessionToken?.value}`
 		// }
+
 		if (typeof window !== 'undefined') {
-			const cookie = getCookie('token')
-			config.headers['Authorization'] = `Bearer ${cookie}`
+			//const cookie = getCookieClient('accessToken')
+			const token = localStorage.getItem('accessToken')
+			console.log('tokenBase', token)
+
+			config.headers['Authorization'] = `Bearer ${token}`
 		}
 
 		return config
@@ -68,17 +77,20 @@ axiosIntance.interceptors.request.use(
 )
 
 // Add a response interceptor
-axiosIntance.interceptors.response.use(
+baseHttp.interceptors.response.use(
 	function (response) {
+		//console.log('response', response)
+
 		// Any status code that lie within the range of 2xx cause this function to trigger
 		// Do something with response data
-		if (
-			['users/authenticate', 'auth/register'].some(
-				(item) => item === normalizePath(response.config.url)
-			)
-		) {
-			clientSessionToken.value = response.data.result.token
-		}
+		// if (
+		// 	['users/authenticate', 'auth/register'].some(
+		// 		(item) => item === normalizePath(response.config.url)
+		// 	)
+		// ) {
+		// 	clientSessionToken.value = response.data.result.token
+		// }
+
 		// if (typeof window !== 'undefined') {
 		// 	if (['users/authenticate', 'auth/register'].some((item) => item === normalizePath(url))) {
 		// 		clientSessionToken.value = (payload as any).token
@@ -88,58 +100,84 @@ axiosIntance.interceptors.response.use(
 		// 		clientSessionToken.expiresAt = new Date().toISOString()
 		// 	}
 		// }
+		//console.log('response', response)
 
 		return response
 	},
-	function (error) {
+	async function (error) {
+		if (error.response && error.response.status === 401) {
+			if (typeof window !== 'undefined') {
+				//console.log('logout client')
+				try {
+					await httpPost<any>(
+						`/api/auth/logout`,
+						{ force: true },
+						{
+							baseURL: '/',
+						}
+					)
+				} catch (error) {
+					throw error
+				} finally {
+					localStorage.removeItem('accessToken')
+					localStorage.removeItem('user')
+				}
+			} else {
+				console.log('aaa')
+
+				const accessToken = error.config?.headers?.Authorization?.split('Bearer ')[1]
+				redirect(`/logout`)
+			}
+		}
+
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
 		// Do something with response error
+
 		return Promise.reject(error)
 	}
 )
 
-class HttpRequest {
-	private readonly axiosIntance: AxiosInstance
-
-	constructor() {
-		this.axiosIntance = axiosIntance
-	}
-
-	async get<TResponse>(url: string, configs?: AxiosRequestConfig<any>) {
-		try {
-			const { data: result } = await this.axiosIntance.get<TResponse>(url, configs)
-			return result
-		} catch (error) {
-			throw error
-		}
-	}
-
-	async post<TResponse>(url: string, data?: any, configs?: AxiosRequestConfig<any>) {
-		try {
-			const { data: result } = await this.axiosIntance.post<TResponse>(url, data, configs)
-			return result
-		} catch (error) {
-			throw error
-		}
-	}
-
-	async put<TResponse>(url: string, data?: any, configs?: AxiosRequestConfig<any>) {
-		try {
-			const { data: result } = await this.axiosIntance.put<TResponse>(url, data, configs)
-			return result
-		} catch (error) {
-			throw error
-		}
-	}
-
-	async delete<TResponse>(url: string, configs?: AxiosRequestConfig<any>) {
-		try {
-			const { data: result } = await this.axiosIntance.delete<TResponse>(url, configs)
-			return result
-		} catch (error) {
-			throw error
-		}
-	}
+type CustomOptions = AxiosRequestConfig & {
+	token?: string
+	baseURL?: string
 }
 
-export default HttpRequest
+const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
+	return {
+		...instance.defaults,
+		baseURL: options.baseURL ? options.baseURL : instance.defaults.headers.common['baseURL'],
+		headers: {
+			...instance.defaults.headers,
+			Authorization: options.token
+				? `Bearer ${options.token}`
+				: instance.defaults.headers.common['Authorization'],
+		},
+	} as AxiosRequestConfig
+}
+
+export const httpGet = async <T = any>(url: string, options = {} as CustomOptions) => {
+	const config = setOptions(baseHttp, options)
+	return await baseHttp.get<T>(url, config)
+}
+
+export const httpPost = async <T = any>(url: string, data = {}, options = {} as CustomOptions) => {
+	const config = setOptions(baseHttp, options)
+	return await baseHttp.post<T>(url, data, config)
+}
+
+export const httpPut = async <T = any>(url: string, data = {}, options = {} as CustomOptions) => {
+	const config = setOptions(baseHttp, options)
+
+	return await baseHttp.put<T>(url, data, config)
+}
+
+export const httpDelete = async <T = any>(url: string, options = {} as CustomOptions) => {
+	const config = setOptions(baseHttp, options)
+
+	return await baseHttp.delete<T>(url, config)
+}
+const http = () => {
+	baseHttp
+}
+
+export default baseHttp

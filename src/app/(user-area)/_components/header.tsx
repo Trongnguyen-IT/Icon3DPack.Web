@@ -1,11 +1,18 @@
 'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { showLoginHandlerDispatch } from '../../_components/login'
 import { ConvertToCloudfontUrl } from '../../../helper/cloudfont-helper'
 import { useAppContext } from '@/app/app-provider'
-export default function Header() {
+import { UserResponseModel } from '@/models/users/user-response-model'
+
+export default function Header({
+	//user,
+	isAuthentication,
+}: {
+	//user: UserResponseModel | null
+	isAuthentication: boolean
+}) {
 	const { user } = useAppContext()
 
 	return (
@@ -22,7 +29,7 @@ export default function Header() {
 					</Link>
 				</div>
 				<div className="col-end-12">
-					{!user && (
+					{!isAuthentication && (
 						<button
 							onClick={() => showLoginHandlerDispatch()}
 							className="w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] focus:outline-none rounded-full font-bold text-white transition-all"
@@ -31,14 +38,14 @@ export default function Header() {
 						</button>
 					)}
 
-					{user && (
+					{isAuthentication && (
 						<Link href="/profile">
 							<div className="w-[3.125rem] h-[3.125rem] relative rounded-full overflow-hidden aspect-[1/1]">
 								<Image
 									fill
-									src={ConvertToCloudfontUrl(user.imageUrl)}
+									src={ConvertToCloudfontUrl(user?.imageUrl)}
 									style={{ objectFit: 'contain' }}
-									alt={ConvertToCloudfontUrl(user.imageUrl)}
+									alt={ConvertToCloudfontUrl(user?.imageUrl)}
 								/>
 							</div>
 						</Link>

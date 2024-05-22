@@ -2,16 +2,17 @@ import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import Image from 'next/image'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { FileExtensionService } from '@/services/file-extensions'
 import { FileExtensionResponseModel } from '@/models/file-extensions/file-extension-response-model'
 import Delete from './components/delete'
+import { adminGetAll } from '@/services/file-extensions'
 
 export default async function AdminFileExtension() {
 	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const fileextensionService = new FileExtensionService('adminfileextension', token?.value)
+	const token = cookieStore.get('accessToken')
 
-	const { result: dataSource } = await fileextensionService.getAll('/adminfileextension')
+	const {
+		data: { result: dataSource },
+	} = await adminGetAll(token?.value)
 
 	return (
 		<div>

@@ -10,8 +10,6 @@ export default function Pagination({
 	pagingObject: any
 	onChangePageSize: (val: any) => void
 }) {
-	console.log('pagingObject', pagingObject)
-
 	return (
 		<div className="w-full">
 			<div className="grid grid-cols-2">

@@ -18,12 +18,7 @@ import { useRef } from 'react'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 
-export default function ListCategories({
-	props,
-}: {
-	props: { categories: CategoryResponseModel[] }
-}) {
-	const { categories } = props
+export default function ListCategories({ categories }: { categories: CategoryResponseModel[] }) {
 	const navPrevButton = useRef<HTMLButtonElement>(null)
 	const navNextButton = useRef<HTMLButtonElement>(null)
 

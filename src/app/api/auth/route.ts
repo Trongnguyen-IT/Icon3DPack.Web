@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 export async function POST(request: Request) {
 	const body = await request.json()
 
@@ -13,10 +15,24 @@ export async function POST(request: Request) {
 	}
 
 	//const expiresDate = new Date(expiresAt).toUTCString()
+
+	const response = NextResponse.json(body, {
+		status: 200,
+		statusText: 'Set cookie successfully',
+		headers: {
+			'Set-Cookie': `accessToken=${token}; Path=/; HttpOnly; Secure`,
+		},
+	})
+
 	return Response.json(body, {
 		status: 200,
 		headers: {
-			'Set-Cookie': `token=${token}; Path=/; SameSite=Lax; Secure`,
+			'Set-Cookie': `accessToken=${token}; Path=/; HttpOnly; Secure`,
 		},
 	})
+
+	//response.cookies.set('accessToken', token.accessToken)
+	//response.cookies.set('refreshToken', token.refreshToken)
+
+	//return response
 }

@@ -1,7 +1,8 @@
 'use client'
 
 import ConfirmDialog from '@/app/(admin-area)/admin/category/_components/confirm-dialog'
-import { CategoryService } from '@/services/categories'
+import { apiStatus } from '@/configs'
+import { adminDeleteOne } from '@/services/categories'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -11,10 +12,12 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const categoryService = new CategoryService('admincategory')
-		const { succeeded } = await categoryService.deleteOne(id)
+		const {
+			status,
+			data: { result },
+		} = await adminDeleteOne(id)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			setIsShow(false)
 			router.refresh()
 		}

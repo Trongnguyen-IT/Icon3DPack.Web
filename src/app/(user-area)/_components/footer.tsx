@@ -1,7 +1,7 @@
 'use client'
 
 import { PostResponseModel } from '@/models/posts/post-response-model'
-import { PostService } from '@/services/posts'
+import { getAll } from '@/services/posts'
 import Image from 'next/image'
 import Link from 'next/link'
 import Script from 'next/script'
@@ -11,15 +11,17 @@ export default function Footer() {
 	const icons = ['Figma', 'Dribbble', 'Behance', 'Pinterest', 'Instagram', 'Youtube'].map(
 		(p) => `../../../images/${p}.svg`
 	)
-	const postService = new PostService('post')
 	const [routes, setRoutes] = useState([Object.assign({})] as PostResponseModel[])
 	const donateRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const { succeeded, result } = await postService.getAll()
+			const {
+				status,
+				data: { result },
+			} = await getAll()
 
-			succeeded && setRoutes(result)
+			status && setRoutes(result)
 		}
 
 		fetchData()

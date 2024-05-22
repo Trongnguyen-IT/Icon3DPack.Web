@@ -7,40 +7,42 @@ import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CategoryRequestModel } from '@/models/categories/category-request-model'
-import { CategoryService } from '@/services/categories'
-import { TagService } from '@/services/tag/tag-service'
 import { TagResponseModel } from '@/models/tags/tag-response-model'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
 import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
 import AdminCombobox from '@/app/(admin-area)/_components/combobox'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
+import { apiStatus } from '@/configs'
+import { adminCreateOne, adminUpdateOne } from '@/services/categories'
+import { adminCreateOne as createTag, adminGetAll } from '@/services/tag'
 
 const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryResponseModel }) => {
 	const isAddMode = !id
 	const router = useRouter()
 	const [model, setModel] = useState(
-		Object.assign({ tags: [] }, { ...category }) as CategoryRequestModel
+		Object.assign({ name: '', tags: [] }, { ...category }) as CategoryRequestModel
 	)
 	const [tags, setTags] = useState([Object.assign({ name: '' })] as TagResponseModel[])
 	const [newTag, setNewTag] = useState({} as TagResponseModel)
-	const categoryService = new CategoryService('admincategory')
-	const tagService = new TagService('admintag')
 
 	const onSubmit = async (data: CategoryRequestModel): Promise<void> => {
-		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
+		const {
+			status,
+			data: { result },
+		} = isAddMode ? await createOne(data) : await updateOne(id, data)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			router.push('/admin/category')
 			router.refresh()
 		}
 	}
 
 	async function createOne(data: CategoryRequestModel) {
-		return await categoryService.createOne(data)
+		return await adminCreateOne(data)
 	}
 
 	async function updateOne(id: string, data: CategoryRequestModel) {
-		return await categoryService.updateOne(id, data)
+		return await adminUpdateOne(id, data)
 	}
 
 	const handleUpdateAvatar = useCallback((imageUrl: string) => {
@@ -52,8 +54,12 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const { succeeded, result: tags } = await tagService.getAll()
-			succeeded && setTags(tags)
+			const {
+				status,
+				data: { result: tags },
+			} = await adminGetAll()
+
+			status === apiStatus.success && setTags(tags)
 		}
 
 		fetchData()
@@ -84,10 +90,11 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 
 	const addTag = async () => {
 		if (!tags.find((t) => t.id === newTag.id)) {
-			const { succeeded, result: addedTag } = await tagService.createOne(
-				Object.assign({} as TagRequestModel, { name: newTag })
-			)
-			if (succeeded) {
+			const {
+				status,
+				data: { result: addedTag },
+			} = await createTag(Object.assign({} as TagRequestModel, { name: newTag }))
+			if (status === apiStatus.success) {
 				setTags((prev) => {
 					return [...prev, addedTag]
 				})

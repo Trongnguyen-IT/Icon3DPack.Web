@@ -2,7 +2,7 @@
 
 import { UserResponseModel } from '@/models/users/user-response-model'
 import { clientSessionToken } from '@/services/http-request'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 const AppContext = createContext<{
 	user: UserResponseModel | null
@@ -18,21 +18,25 @@ export const useAppContext = () => {
 }
 
 export default function AppProvider({
+	user: initialUser,
 	children,
-	inititalSessionToken = '',
-	user: userProp,
 }: {
-	children: React.ReactNode
-	inititalSessionToken?: string
 	user: UserResponseModel | null
+	children: React.ReactNode
 }) {
-	const [user, setUser] = useState<UserResponseModel | null>(userProp)
+	const [user, setUserState] = useState<UserResponseModel | null>(initialUser)
+	const setUser = useCallback(
+		(user: UserResponseModel | null) => {
+			setUserState(user)
+			localStorage.setItem('user', JSON.stringify(user))
+		},
+		[setUserState]
+	)
 
-	// useState(() => {
-	// 	if (typeof window !== 'undefined') {
-	// 		clientSessionToken.value = inititalSessionToken
-	// 	}
-	// })
+	useEffect(() => {
+		const _user = localStorage.getItem('user')
+		setUserState(_user ? JSON.parse(_user) : null)
+	}, [setUserState])
 
 	return (
 		<AppContext.Provider

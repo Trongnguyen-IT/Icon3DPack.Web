@@ -2,19 +2,27 @@
 
 import ImageUpload from '@/app/_components/image-upload'
 import { useState, useCallback } from 'react'
-import { toast } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { UserResponseModel } from '@/models/users/user-response-model'
-import { AuthService } from '@/services/user/auth-service'
 import { useAppContext } from '@/app/app-provider'
+import { updateProfile } from '@/services/user'
+import { apiStatus } from '@/configs'
+import Loading from '@/app/_components/loading'
+import { successNotification } from '@/untils/toast-notification'
 
-export default function ProfileClient() {
-	const { user } = useAppContext()
-	const authService = new AuthService('users')
-	const [profile, setProfile] = useState({ ...user } as UserResponseModel)
-
-	const updateProfile = async (): Promise<void> => {
-		const { result } = await authService.updateProfile(profile)
+export default function ProfileClient({ profileProp }: { profileProp: UserResponseModel }) {
+	const { setUser } = useAppContext()
+	const [profile, setProfile] = useState({ ...profileProp } as UserResponseModel)
+	const [isLoading, setIsLoading] = useState(false)
+	const submit = async (): Promise<void> => {
+		setIsLoading(true)
+		const { status } = await updateProfile(profile)
+		if (status === apiStatus.success) {
+			setUser(profile)
+			notify()
+			setIsLoading(false)
+		}
 	}
 
 	const handleUpdateAvatar = useCallback((imageUrl: string) => {
@@ -24,17 +32,7 @@ export default function ProfileClient() {
 		}))
 	}, [])
 
-	const notify = () =>
-		toast.success('Update success!', {
-			position: 'top-right',
-			autoClose: 2000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: 'light',
-		})
+	const notify = () => successNotification()
 
 	return (
 		<div>
@@ -86,16 +84,17 @@ export default function ProfileClient() {
 							Cancel
 						</button>
 						<button
-							onClick={() => updateProfile()}
-							className="border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white"
+							onClick={() => submit()}
+							className={`border border-[#46B8E9] rounded-lg bg-[#46B8E9] h-[3.125rem] col-span-3 font-medium text-white ${
+								isLoading ? 'cursor-no-drop' : 'cursor-pointer'
+							}`}
+							disabled={isLoading}
 						>
-							Save Changes
+							{isLoading ? <Loading /> : <span>Save Changes</span>}
 						</button>
 					</div>
 				</div>
 			</div>
-			{/* <ToastContainer containerId={'profileId'} />
-			<ToastContainer /> */}
 		</div>
 	)
 }

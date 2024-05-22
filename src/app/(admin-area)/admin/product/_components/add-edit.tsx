@@ -6,20 +6,24 @@ import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ProductService } from '@/services/products'
 import ProductRequestModel from '@/models/products/product-request-model'
 import Dropdown from '@/app/_components/dropdown'
-import { CategoryService } from '@/services/categories'
 import { TagResponseModel } from '@/models/tags/tag-response-model'
-import { TagService } from '@/services/tag/tag-service'
 import ProductResponseModel from '@/models/products/product-response-model'
 import AdminCombobox from '@/app/(admin-area)/_components/combobox'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
 import TagComponent from '@/app/(admin-area)/_components/tags/tag-component'
 import FileUpload from '@/app/_components/file-upload'
-import { FileExtensionService } from '@/services/file-extensions'
 import { FileExtensionRequestModel } from '@/models/file-extensions/file-extenstion-request-model'
 import { FileEntity } from '@/models/files/file-entity'
+import { apiStatus } from '@/configs'
+import { adminCreateOne as createTag, adminGetAll as getTags } from '@/services/tag'
+import { adminGetAll as getCategories } from '@/services/categories'
+import { adminGetAll as getExtensions } from '@/services/file-extensions'
+import {
+	adminCreateOne as createProduct,
+	adminUpdateOne as updateProduct,
+} from '@/services/products'
 
 export default function AddOrEditProduct({
 	props,
@@ -27,7 +31,6 @@ export default function AddOrEditProduct({
 	props?: { product?: ProductResponseModel }
 }) {
 	const product = props?.product
-	console.log('product', product)
 	const isAddMode = !product
 	const router = useRouter()
 	const [model, setModel] = useState(Object.assign({ ...product }) as ProductRequestModel)
@@ -39,28 +42,30 @@ export default function AddOrEditProduct({
 	const [extensions, setExtensions] = useState([] as FileExtensionRequestModel[])
 	const [fileEntities, setFileEntities] = useState([] as FileEntity[])
 
-	const productService = new ProductService('adminproduct')
-	const tagService = new TagService('admintag')
-	const categoryService = new CategoryService('admincategory')
-	const fileExtensionService = new FileExtensionService('adminfileextension')
-
 	const onSubmit = async (data: ProductRequestModel): Promise<void> => {
-		const { succeeded, result } = isAddMode
-			? await createOne(data)
-			: await updateOne(product.id, data)
+		const {
+			status,
+			data: { result },
+		} = isAddMode ? await createOne(data) : await updateOne(product.id, data)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			router.push('/admin/product')
 			router.refresh()
 		}
 	}
 
 	const getRelatedData = async () => {
-		const [{ result: tags }, { result: categories }, { result: extensions }] = await Promise.all([
-			await tagService.getAll(),
-			await categoryService.getAll(),
-			await fileExtensionService.getAll(),
-		])
+		const [
+			{
+				data: { result: tags },
+			},
+			{
+				data: { result: categories },
+			},
+			{
+				data: { result: extensions },
+			},
+		] = await Promise.all([await getTags(), await getCategories(), await getExtensions()])
 
 		setTags(tags)
 		setCategories(categories)
@@ -72,11 +77,11 @@ export default function AddOrEditProduct({
 	}, [])
 
 	async function createOne(data: ProductRequestModel) {
-		return await productService.createOne(data)
+		return await createProduct(data)
 	}
 
 	async function updateOne(id: string, data: ProductRequestModel) {
-		return await productService.updateOne(id, data)
+		return await updateProduct(id, data)
 	}
 
 	const handleUpdateAvatar = useCallback((imageUrl: string) => {
@@ -121,10 +126,11 @@ export default function AddOrEditProduct({
 
 	const addTag = async () => {
 		if (!tags.find((t) => t.id === newTag.id)) {
-			const { succeeded, result: addedTag } = await tagService.createOne(
-				Object.assign({} as TagRequestModel, { name: newTag })
-			)
-			if (succeeded) {
+			const {
+				status,
+				data: { result: addedTag },
+			} = await createTag(Object.assign({} as TagRequestModel, { name: newTag }))
+			if (status === apiStatus.success) {
 				setTags((prev) => {
 					return [...prev, addedTag]
 				})

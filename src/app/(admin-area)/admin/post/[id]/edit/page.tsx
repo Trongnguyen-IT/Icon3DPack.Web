@@ -1,15 +1,14 @@
-import { PostService } from '@/services/posts'
 import { cookies } from 'next/headers'
 import AddOrEditPost from '../../_components/add-edit'
+import { adminGetOne } from '@/services/posts'
 
 export default async function PostEditComponent({ params }: { params: { id: string } }) {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-
-	const postService = new PostService('adminpost', token?.value)
+	const token = cookies().get('accessToken')
 	const { id } = params
 
-	const { result: post } = await postService.getOne(id)
+	const {
+		data: { result: post },
+	} = await adminGetOne(id, token?.value)
 
 	return (
 		<div>

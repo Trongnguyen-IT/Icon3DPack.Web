@@ -3,10 +3,11 @@ import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
-import { UploadService } from '@/services/image-upload'
 import PropTypes from 'prop-types'
 import { FileExtensionResponseModel } from '@/models/file-extensions/file-extension-response-model'
 import { FileEntity } from '@/models/files/file-entity'
+import { uploadService } from '@/services/image-upload'
+import { apiStatus } from '@/configs'
 
 const FileUpload = ({
 	props,
@@ -22,7 +23,6 @@ const FileUpload = ({
 	}
 }) => {
 	const { imageUrl, bucketName, prefix, fileEntity, fileType, onChangeFile, extension } = props
-	const productService = new UploadService(bucketName, prefix)
 
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
@@ -57,12 +57,15 @@ const FileUpload = ({
 			let formData = new FormData()
 			formData.append('file', file)
 
-			const request = {
-				formData: formData,
+			const awsConfig = {
 				bucketName: bucketName,
 				prefix: prefix,
-			} as FileUploadRequest
-			const { succeeded, result: imageUrl } = await productService.upload(request)
+			}
+
+			const {
+				status,
+				data: { result: imageUrl },
+			} = await uploadService.upload(formData, awsConfig)
 
 			const fileEntity = {
 				name: file.name,
@@ -70,7 +73,7 @@ const FileUpload = ({
 				fileExtensionId: extension.id,
 			}
 
-			succeeded && onChangeFile(fileEntity)
+			status == apiStatus.success && onChangeFile(fileEntity)
 		} catch (err) {
 			console.log(err)
 		}

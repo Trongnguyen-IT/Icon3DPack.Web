@@ -4,11 +4,11 @@ import { ChangeEvent, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PostRequestModel } from '@/models/posts/post-request-model'
-import { PostService } from '@/services/posts'
 import { Editor } from '@tinymce/tinymce-react'
 import { apikey } from '@/configs/tiny'
 import slugify from 'slugify'
-import { Montserrat } from 'next/font/google'
+import { adminCreateOne, adminUpdateOne } from '@/services/posts'
+import { apiStatus } from '@/configs'
 
 export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRequestModel }) {
 	const isAddMode = !id
@@ -17,7 +17,6 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 	const [model, setModel] = useState(
 		Object.assign({ name: '', order: 0 }, post) as PostRequestModel
 	)
-	const postService = new PostService('adminpost')
 
 	const onSubmit = async (data: PostRequestModel): Promise<void> => {
 		if (editorRef.current) {
@@ -25,20 +24,23 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 		}
 		data.slug = slugify(data.name, { lower: true, strict: true })
 
-		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
+		const {
+			status,
+			data: { result },
+		} = isAddMode ? await createOne(data) : await updateOne(id, data)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			router.push('/admin/post')
 			router.refresh()
 		}
 	}
 
 	async function createOne(data: PostRequestModel) {
-		return await postService.createOne(data)
+		return await adminCreateOne(data)
 	}
 
 	async function updateOne(id: string, data: PostRequestModel) {
-		return await postService.updateOne(id, data)
+		return await adminUpdateOne(id, data)
 	}
 
 	return (

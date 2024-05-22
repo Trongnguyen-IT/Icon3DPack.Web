@@ -1,16 +1,14 @@
 import { cookies } from 'next/headers'
 import Link from 'next/link'
-import Delete from './_components/delete'
 import { PostResponseModel } from '@/models/posts/post-response-model'
-import { PostService } from '@/services/posts'
+import { adminGetAll } from '@/services/posts'
 
 export default async function AdminPost() {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
+	const token = cookies().get('accessToken')
 
-	const postService = new PostService('adminpost', token?.value)
-
-	const { result: dataSource } = await postService.getAll('/adminpost')
+	const {
+		data: { result: dataSource },
+	} = await adminGetAll(token?.value)
 
 	return (
 		<div>

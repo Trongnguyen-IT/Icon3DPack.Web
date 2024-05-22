@@ -1,30 +1,31 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import ProductItem from '@/app/(user-area)/product/[id]/_components/product-item'
-import { ProductService } from '@/services/products'
-import { cookies } from 'next/headers'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import ProductResponseModel from '@/models/products/product-response-model'
-import { FileExtensionService } from '@/services/file-extensions'
 import DownloadFile from './_components/download-file'
+import { getOne as getProduct, productFilter } from '@/services/products'
+import { getAll as getExtensions } from '@/services/file-extensions'
 
 export default async function ProductDetails({ params }: { params: { id: string } }) {
-	const cookieStore = cookies()
-	const token = cookieStore.get('token')
-	const productService = new ProductService('product', token?.value)
-	const fileExtension = new FileExtensionService('fileextension', token?.value)
-
-	const [{ result: product }, { result: extension }] = await Promise.all([
-		await productService.getOne(params.id),
-		await fileExtension.getAll(params.id),
-	])
+	const [
+		{
+			data: { result: product },
+		},
+		{
+			data: { result: extension },
+		},
+	] = await Promise.all([await getProduct(params.id), await getExtensions(params.id)])
 
 	const queryObject = {
 		sortOrder: 'date_desc',
 		categoryId: product.categoryId,
 	}
 
-	const { result: relatedProducts } = await productService.productFilter({ queryObject })
+	const {
+		status,
+		data: { result: relatedProducts },
+	} = await productFilter({ queryObject })
 
 	return (
 		<div className="container mx-auto py-20">
@@ -130,13 +131,14 @@ export default async function ProductDetails({ params }: { params: { id: string 
 				</h2>
 				<div className="product-list">
 					<div className="product-items py-12 grid grid-cols-6 gap-4">
-						{relatedProducts.items.map((product: ProductResponseModel) => {
-							return (
-								<div key={product.id} className="col-span-1">
-									<ProductItem props={{ product }} />
-								</div>
-							)
-						})}
+						{status &&
+							relatedProducts.items.map((product: ProductResponseModel) => {
+								return (
+									<div key={product.id} className="col-span-1">
+										<ProductItem props={{ product }} />
+									</div>
+								)
+							})}
 					</div>
 				</div>
 			</div>

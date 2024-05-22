@@ -4,4 +4,8 @@ const awsS3Configuration = {
 
 const baseAppUrl = 'http://localhost:5000/api/v1'
 
-export { awsS3Configuration, baseAppUrl }
+const apiStatus = {
+	success: 200,
+}
+
+export { awsS3Configuration, baseAppUrl, apiStatus }

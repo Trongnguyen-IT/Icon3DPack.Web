@@ -7,37 +7,40 @@ import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FileExtensionRequestModel } from '@/models/file-extensions/file-extenstion-request-model'
-import { FileExtensionService } from '@/services/file-extensions'
+import { extensionService } from '@/services/file-extensions'
+import { apiStatus } from '@/configs'
 
 export default function AddOrEditFileExtension({
 	id,
-	fileextension,
+	extension,
 }: {
 	id?: string
-	fileextension?: FileExtensionRequestModel
+	extension?: FileExtensionRequestModel
 }) {
 	const isAddMode = !id
 	const router = useRouter()
 	const [model, setModel] = useState(
-		Object.assign({ name: '' }, fileextension) as FileExtensionRequestModel
+		Object.assign({ name: '', order: 0 }, extension) as FileExtensionRequestModel
 	)
-	const fileextensionService = new FileExtensionService('adminfileextension')
 
 	const onSubmit = async (data: FileExtensionRequestModel): Promise<void> => {
-		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
+		const {
+			status,
+			data: { result },
+		} = isAddMode ? await createOne(data) : await updateOne(id, data)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			router.push('/admin/file-extension')
 			router.refresh()
 		}
 	}
 
 	async function createOne(data: FileExtensionRequestModel) {
-		return await fileextensionService.createOne(data)
+		return await extensionService.createOne(data)
 	}
 
 	async function updateOne(id: string, data: FileExtensionRequestModel) {
-		return await fileextensionService.updateOne(id, data)
+		return await extensionService.updateOne(id, data)
 	}
 
 	const updateAvatar = (imageUrl: string): void => {
@@ -70,7 +73,7 @@ export default function AddOrEditFileExtension({
 							imageUrl=""
 							bucketName="icon3dpack-bucket-s3"
 							prefix="categories"
-							updateAvatar={updateAvatar}
+							onUpdateAvatar={updateAvatar}
 						/>
 					</div>
 					<div className="mb-4">

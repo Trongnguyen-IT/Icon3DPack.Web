@@ -3,8 +3,9 @@ import { Montserrat } from 'next/font/google'
 import './globals.css'
 import AppProvider from '@/app/app-provider'
 import { cookies } from 'next/headers'
-import { AuthService } from '@/services/user/auth-service'
+import { profile } from '@/services/user'
 import { UserResponseModel } from '@/models/users/user-response-model'
+import { ToastContainer } from 'react-toastify'
 
 const inter = Montserrat({ subsets: ['latin'], variable: '--montserrat-font' })
 
@@ -15,23 +16,29 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const cookieStore = cookies()
-	const sessionToken = cookieStore.get('token')
-
-	const authService = new AuthService('users', sessionToken?.value)
+	const sessionToken = cookieStore.get('accessToken')
 
 	let user: UserResponseModel | null = null
 	if (sessionToken) {
-		const { result } = await authService.profile()
-		user = result
+		//try {
+		try {
+			const {
+				status,
+				data: { result },
+			} = await profile(sessionToken?.value)
+			user = result
+			//console.log('result', result)
+		} catch (error) {
+			console.log('error', error)
+		}
 	}
 
 	return (
 		<html lang="en">
-			<AppProvider inititalSessionToken={sessionToken?.value} user={user}>
-				<body className={`${inter.className} bg-white text-[#1B1B1B] font-medium text-base`}>
-					{children}
-				</body>
-			</AppProvider>
+			<body className={`${inter.className} bg-white text-[#1B1B1B] font-medium text-base`}>
+				<ToastContainer />
+				<AppProvider user={user}>{children}</AppProvider>
+			</body>
 		</html>
 	)
 }

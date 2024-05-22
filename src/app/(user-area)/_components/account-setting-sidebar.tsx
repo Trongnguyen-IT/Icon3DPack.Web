@@ -2,10 +2,26 @@
 import { userSettingRoutes } from '@/configs/routes'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { logout as handleLogout } from '@/services/user'
+import { apiStatus } from '@/configs'
 
 export default function AccountSettingSidebar() {
 	const pathname = usePathname()
+	const router = useRouter()
+
+	const logout = async () => {
+		const { status } = await handleLogout(true)
+
+		if (status === apiStatus.success) {
+			localStorage.removeItem('accessToken')
+			localStorage.removeItem('user')
+		}
+
+		router.push('/')
+		router.refresh()
+	}
+
 	return (
 		<ul role="list" className="sidebar">
 			{userSettingRoutes.map((item: any, index: number) => {
@@ -27,9 +43,9 @@ export default function AccountSettingSidebar() {
 				)
 			})}
 			<li className="opacity-50 text-[#1B1B1B] rounded-lg py-2 px-3 hover:bg-[#E7E7E7] hover:opacity-100">
-				<a href="#" className="flex">
+				<button className="flex cursor-pointer" onClick={() => logout()}>
 					Sign out
-				</a>
+				</button>
 			</li>
 		</ul>
 	)

@@ -3,7 +3,8 @@ import { useEffect, useState, useRef, memo } from 'react'
 import Image from 'next/image'
 import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
-import { UploadService } from '@/services/image-upload'
+import { uploadService } from '@/services/image-upload'
+import { apiStatus } from '@/configs'
 
 const ImageUpload = ({
 	imageUrl,
@@ -18,9 +19,6 @@ const ImageUpload = ({
 	prefix: string
 	isShowImage: boolean
 }) => {
-	const productService = new UploadService(bucketName, prefix)
-	console.log('child rerender')
-
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
 	const uploadInput = useRef<HTMLInputElement>(null)
@@ -52,14 +50,16 @@ const ImageUpload = ({
 			let formData = new FormData()
 			formData.append('file', file)
 
-			const request = {
-				formData: formData,
+			const awsConfig = {
 				bucketName: bucketName,
 				prefix: prefix,
-			} as FileUploadRequest
-			const { succeeded, result } = await productService.upload(request)
+			}
+			const {
+				status,
+				data: { result },
+			} = await uploadService.upload(formData, awsConfig)
 
-			succeeded && result && onUpdateAvatar(result)
+			status == apiStatus.success && result && onUpdateAvatar(result)
 		} catch (err) {
 			console.log(err)
 		}

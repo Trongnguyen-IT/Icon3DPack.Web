@@ -2,10 +2,7 @@
 
 import ProductResponseModel from '@/models/products/product-response-model'
 import ProductHomeItem from './product-home-item'
-import { PaginatedList } from '@/models/base-models/paginated-list'
-import { ProductService } from '@/services/products'
-import { cookies } from 'next/headers'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 
 const ProductList = ({ products }: { products: ProductResponseModel[] }) => {
 	return (

@@ -1,15 +1,16 @@
-import { TagService } from '@/services/tag/tag-service'
 import { cookies } from 'next/headers'
 import AddOrEditTag from '../../_components/add-edit'
+import { adminGetOne } from '@/services/tag'
 
 export default async function TagEditComponent({ params }: { params: { id: string } }) {
 	const cookieStore = cookies()
-	const token = cookieStore.get('token')
+	const token = cookieStore.get('accessToken')
 
-	const tagService = new TagService('admintag', token?.value)
 	const { id } = params
 
-	const { result: tag } = await tagService.getOne(id)
+	const {
+		data: { result: tag },
+	} = await adminGetOne(id, token?.value)
 
 	return (
 		<div>

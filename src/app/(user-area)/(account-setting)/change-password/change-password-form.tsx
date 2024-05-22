@@ -1,14 +1,19 @@
 'use client'
 
 import { useAppContext } from '@/app/app-provider'
+import { apiStatus } from '@/configs'
 import { ChangePasswordModel } from '@/models/users/change-password'
-import { AuthService } from '@/services/user/auth-service'
+import { UserResponseModel } from '@/models/users/user-response-model'
+import { changePassword } from '@/services/user'
+import { successNotification } from '@/untils/toast-notification'
 import Link from 'next/link'
 import { ChangeEvent, useState } from 'react'
 
-export default function ChangePasswordForm() {
-	const authService = new AuthService('users')
-	const { user } = useAppContext()
+export default function ChangePasswordForm({
+	initialProfile,
+}: {
+	initialProfile: UserResponseModel
+}) {
 	const [model, setModel] = useState({
 		oldPassword: '',
 		newPassword: '',
@@ -16,10 +21,12 @@ export default function ChangePasswordForm() {
 	} as ChangePasswordModel)
 
 	const submit = async (model: ChangePasswordModel) => {
-		if (user) {
-			const { succeeded } = await authService.changePassword(user.id, model)
-			if (succeeded) {
+		if (initialProfile) {
+			const { status } = await changePassword(initialProfile.id, model)
+
+			if (status === apiStatus.success) {
 				setModel({ oldPassword: '', newPassword: '', confirmPassword: '' } as ChangePasswordModel)
+				successNotification()
 			}
 		}
 	}

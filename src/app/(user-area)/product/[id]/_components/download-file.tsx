@@ -3,7 +3,7 @@
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { FileExtensionResponseModel } from '@/models/file-extensions/file-extension-response-model'
 import ProductResponseModel from '@/models/products/product-response-model'
-import { ProductService } from '@/services/products'
+import { downloadFile } from '@/services/products'
 import Image from 'next/image'
 
 export default function DownloadFile({
@@ -12,22 +12,20 @@ export default function DownloadFile({
 	props: { product: ProductResponseModel; extension: FileExtensionResponseModel }
 }) {
 	const { product, extension } = props
-	const productService = new ProductService('product')
 
 	const handleDownload = async () => {
 		try {
 			const file = product.fileEntities.find((p) => p.fileExtensionId == extension.id)
-			console.log('file', file)
 
 			if (file) {
-				const response = await productService.DownloadFile({
+				const { status, data } = await downloadFile({
 					productId: product.id,
 					bucketName: 'icon3dpack-bucket-s3',
 					key: file.fileUrl,
 				})
 
 				// Create a blob from the response data
-				const blob = new Blob([response])
+				const blob = new Blob([data])
 
 				// Create a temporary URL for the blob
 				const url = window.URL.createObjectURL(blob)

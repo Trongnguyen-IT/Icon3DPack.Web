@@ -1,7 +1,8 @@
 'use client'
 
 import ConfirmDialog from '@/app/(admin-area)/admin/category/_components/confirm-dialog'
-import { FileExtensionService } from '@/services/file-extensions'
+import { apiStatus } from '@/configs'
+import { extensionService } from '@/services/file-extensions'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -11,11 +12,10 @@ export default function Delete({ props }: { props: { id: string } }) {
 	const [isShow, setIsShow] = useState(false)
 
 	const confirmDelete = async (): Promise<void> => {
-		const fileExtensionService = new FileExtensionService('fileextension')
-		const { payload } = await fileExtensionService.deleteOne(id)
+		const { status } = await extensionService.deleteOne(id)
 
-		if (payload.succeeded) {
-			payload.succeeded && setIsShow(false)
+		if (status === apiStatus.success) {
+			setIsShow(false)
 			router.refresh()
 		}
 	}

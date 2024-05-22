@@ -4,29 +4,29 @@ import { ChangeEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
-import { TagService } from '@/services/tag/tag-service'
+import { adminCreateOne, adminUpdateOne } from '@/services/tag'
+import { apiStatus } from '@/configs'
 
 export default function AddOrEditTag({ id, tag }: { id?: string; tag?: TagRequestModel }) {
 	const isAddMode = !id
 	const router = useRouter()
 	const [model, setModel] = useState(Object.assign({ name: '' }, tag) as TagRequestModel)
-	const tagService = new TagService('admintag')
 
 	const onSubmit = async (data: TagRequestModel): Promise<void> => {
-		const { succeeded, result } = isAddMode ? await createOne(data) : await updateOne(id, data)
+		const { status } = isAddMode ? await createOne(data) : await updateOne(id, data)
 
-		if (succeeded) {
+		if (status === apiStatus.success) {
 			router.push('/admin/tag')
 			router.refresh()
 		}
 	}
 
 	async function createOne(data: TagRequestModel) {
-		return await tagService.createOne(data)
+		return await adminCreateOne(data)
 	}
 
 	async function updateOne(id: string, data: TagRequestModel) {
-		return await tagService.updateOne(id, data)
+		return await adminUpdateOne(id, data)
 	}
 
 	const updateAvatar = (imageUrl: string): void => {
