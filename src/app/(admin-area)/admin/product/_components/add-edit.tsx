@@ -24,6 +24,10 @@ import {
 	adminCreateOne as createProduct,
 	adminUpdateOne as updateProduct,
 } from '@/services/products'
+import Loading from '@/app/_components/loading'
+import SwitchButton from '@/app/_components/switch-button'
+import SaveButton from '@/app/_components/save-button'
+import slugify from 'slugify'
 
 export default function AddOrEditProduct({
 	props,
@@ -40,30 +44,39 @@ export default function AddOrEditProduct({
 	] as TagResponseModel[])
 	const [newTag, setNewTag] = useState({} as TagResponseModel)
 	const [extensions, setExtensions] = useState([] as FileExtensionRequestModel[])
-	const [fileEntities, setFileEntities] = useState([] as FileEntity[])
+	const [isLoading, setIsLoading] = useState(false)
 
-	const onSubmit = async (data: ProductRequestModel): Promise<void> => {
+	const handleSubmit = useCallback(async (): Promise<void> => {
+		setIsLoading(true)
+		model.slug = slugify(model.name, { lower: true, strict: true })
 		const {
 			status,
 			data: { result },
-		} = isAddMode ? await createOne(data) : await updateOne(product.id, data)
+		} = isAddMode ? await createOne(model) : await updateOne(product.id, model)
 
+		setIsLoading(false)
 		if (status === apiStatus.success) {
 			router.push('/admin/product')
 			router.refresh()
 		}
-	}
+	}, [model])
 
 	const getRelatedData = async () => {
 		const [
 			{
-				data: { result: tags },
+				data: {
+					result: { items: tags },
+				},
 			},
 			{
-				data: { result: categories },
+				data: {
+					result: { items: categories },
+				},
 			},
 			{
-				data: { result: extensions },
+				data: {
+					result: { items: extensions },
+				},
 			},
 		] = await Promise.all([await getTags(), await getCategories(), await getExtensions()])
 
@@ -156,6 +169,24 @@ export default function AddOrEditProduct({
 		})
 	}, [])
 
+	const handleRemoveFile = useCallback((file: any) => {
+		setModel((prev) => {
+			return {
+				...prev,
+				fileEntities: prev?.fileEntities?.filter((p) => p.id !== file?.id) || [],
+			}
+		})
+	}, [])
+
+	const handlePublish = useCallback((value: boolean) => {
+		setModel((prev) => {
+			return {
+				...prev,
+				isPublish: value,
+			}
+		})
+	}, [])
+
 	return (
 		<div className="min-h-[100vh]">
 			<div className="grid grid-cols-8 gap-10">
@@ -234,15 +265,14 @@ export default function AddOrEditProduct({
 							return (
 								<FileUpload
 									key={index}
-									props={{
-										imageUrl: item.imageUrl,
-										bucketName: 'icon3dpack-bucket-s3',
-										prefix: 'products',
-										fileType: item.name,
-										extension: item,
-										onChangeFile: handleChangeFile,
-										fileEntity: fileEntity,
-									}}
+									imageExtensionUrl={item.imageUrl}
+									bucketName="icon3dpack-bucket-s3"
+									prefix="products"
+									fileType={item.name}
+									extension={item}
+									onChangeFile={handleChangeFile}
+									fileEntity={fileEntity}
+									onHandleRemoveFile={handleRemoveFile}
 								></FileUpload>
 							)
 						})}
@@ -250,17 +280,7 @@ export default function AddOrEditProduct({
 					<div className="my-4">
 						<div className="flex items-center">
 							<strong className="mr-2">Publish product</strong>
-							<label className="inline-flex items-center cursor-pointer">
-								<input
-									onChange={(e) => {
-										setModel((prev) => ({ ...prev, isPublish: e.target.checked }))
-									}}
-									type="checkbox"
-									defaultChecked={model.isPublish}
-									className="sr-only peer"
-								/>
-								<div className=" bg-[#E7E7E7] relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-transparent after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600"></div>
-							</label>
+							<SwitchButton initialValue={model.isPublish} onHandleSwitch={handlePublish} />
 						</div>
 					</div>
 					<div className="grid grid-cols-4 gap-4 mt-8">
@@ -270,12 +290,7 @@ export default function AddOrEditProduct({
 						>
 							Cancel
 						</Link>
-						<button
-							onClick={() => onSubmit(model)}
-							className="col-span-1 border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 font-medium text-white"
-						>
-							Save Changes
-						</button>
+						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 					</div>
 				</div>
 			</div>

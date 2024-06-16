@@ -10,13 +10,18 @@ import debounce from 'lodash.debounce'
 import Pagination from '../../_components/pagination'
 import ProductResponseModel from '@/models/products/product-response-model'
 import { productFilter } from '@/services/products'
+import { useSearchParams } from 'next/navigation'
 
 export default function FilterComponent({ categories }: { categories: CategoryResponseModel[] }) {
+	const searchParams = useSearchParams()
+	const categoryId = searchParams.get('categoryId')
+
 	const [products, setProducts] = useState([] as ProductResponseModel[])
 
 	const [filter, setFilter] = useState({
 		pageNumber: 1,
 		pageSize: 200,
+		categoryId: categoryId,
 	})
 
 	const [pagingObject, setPagingObject] = useState(Object.assign({ pageNumber: 1, pageSize: 1 }))
@@ -73,6 +78,23 @@ export default function FilterComponent({ categories }: { categories: CategoryRe
 	}, [])
 
 	useEffect(() => {
+		if (categoryId) {
+			const selected = categories.find((p) => p.id === categoryId)
+			if (selected) {
+				selected && setSelectedCategory(selected)
+				// setFilter((prev) => ({
+				// 	...prev,
+				// 	categoryId: categoryId,
+				// }))
+			}
+		} else {
+			setSelectedCategory({ id: '', name: 'All categories' } as CategoryResponseModel)
+			// setFilter((prev) => ({
+			// 	...prev,
+			// 	categoryId: '',
+			// }))
+		}
+
 		const fetchData = async () => {
 			const {
 				status,

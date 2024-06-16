@@ -5,6 +5,7 @@ import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { uploadService } from '@/services/image-upload'
 import { apiStatus } from '@/configs'
+import Loading from './loading'
 
 const ImageUpload = ({
 	imageUrl,
@@ -22,6 +23,7 @@ const ImageUpload = ({
 	const [fileImage, setFileImage] = useState('')
 	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
 	const uploadInput = useRef<HTMLInputElement>(null)
+	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
 		imageUrl && setPreviewImg(imageUrl)
@@ -43,9 +45,11 @@ const ImageUpload = ({
 	const handleRemove = (): void => {
 		setFileImage('')
 		setPreviewImg('/images/default-avatar.svg')
+		onUpdateAvatar('')
 	}
 
 	const uploadImage = async (file: any): Promise<void> => {
+		setIsLoading(true)
 		try {
 			let formData = new FormData()
 			formData.append('file', file)
@@ -62,6 +66,8 @@ const ImageUpload = ({
 			status == apiStatus.success && result && onUpdateAvatar(result)
 		} catch (err) {
 			console.log(err)
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
@@ -75,16 +81,24 @@ const ImageUpload = ({
 			<div className="col-span-3 place-self-start">
 				<button
 					onClick={() => uploadInput.current?.click()}
-					className="flex justify-center items-center w-[7.5rem] h-[3.125rem] border rounded-lg border-[#E7E7E7] font-bold"
+					className={`flex justify-center items-center w-[7.5rem] h-[3.125rem] border rounded-lg border-[#E7E7E7] font-bold ${
+						isLoading ? 'cursor-no-drop' : 'cursor-pointer'
+					}`}
 				>
-					<Image
-						src={ConvertToCloudfontUrl('utilities-image/icon-upload.svg')}
-						width={16}
-						height={16}
-						alt="Picture of the author"
-						className="mr-2"
-					/>
-					Upload
+					{isLoading ? (
+						<Loading />
+					) : (
+						<>
+							<Image
+								src={ConvertToCloudfontUrl('utilities-image/icon-upload.svg')}
+								width={16}
+								height={16}
+								alt="Picture of the author"
+								className="mr-2"
+							/>
+							Upload
+						</>
+					)}
 				</button>
 				<input
 					ref={uploadInput}

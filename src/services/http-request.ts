@@ -37,6 +37,7 @@ export const clientSessionToken = new SessionToken()
 const baseHttp = axios.create({
 	baseURL,
 	headers: {
+		'Content-Type': 'application/json',
 		accept: 'application/json', // If you receieve JSON response.
 	},
 })
@@ -63,8 +64,6 @@ baseHttp.interceptors.request.use(
 		if (typeof window !== 'undefined') {
 			//const cookie = getCookieClient('accessToken')
 			const token = localStorage.getItem('accessToken')
-			console.log('tokenBase', token)
-
 			config.headers['Authorization'] = `Bearer ${token}`
 		}
 
@@ -123,8 +122,6 @@ baseHttp.interceptors.response.use(
 					localStorage.removeItem('user')
 				}
 			} else {
-				console.log('aaa')
-
 				const accessToken = error.config?.headers?.Authorization?.split('Bearer ')[1]
 				redirect(`/logout`)
 			}
@@ -140,6 +137,7 @@ baseHttp.interceptors.response.use(
 type CustomOptions = AxiosRequestConfig & {
 	token?: string
 	baseURL?: string
+	contentType?: string
 }
 
 const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
@@ -151,6 +149,9 @@ const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
 			Authorization: options.token
 				? `Bearer ${options.token}`
 				: instance.defaults.headers.common['Authorization'],
+			'Content-Type': options.contentType
+				? options.contentType
+				: instance.defaults.headers.common['Content-Type'],
 		},
 	} as AxiosRequestConfig
 }
@@ -162,6 +163,7 @@ export const httpGet = async <T = any>(url: string, options = {} as CustomOption
 
 export const httpPost = async <T = any>(url: string, data = {}, options = {} as CustomOptions) => {
 	const config = setOptions(baseHttp, options)
+
 	return await baseHttp.post<T>(url, data, config)
 }
 

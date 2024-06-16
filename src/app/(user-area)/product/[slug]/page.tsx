@@ -1,31 +1,23 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import ProductItem from '@/app/(user-area)/product/[id]/_components/product-item'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
-import ProductResponseModel from '@/models/products/product-response-model'
 import DownloadFile from './_components/download-file'
-import { getOne as getProduct, productFilter } from '@/services/products'
+import { getBySlug } from '@/services/products'
 import { getAll as getExtensions } from '@/services/file-extensions'
+import RelatedProduct from './_components/related-product'
 
-export default async function ProductDetails({ params }: { params: { id: string } }) {
+export default async function ProductDetails({ params }: { params: { slug: string } }) {
+	const { slug } = params
 	const [
 		{
 			data: { result: product },
 		},
 		{
-			data: { result: extension },
+			data: {
+				result: { items: extension },
+			},
 		},
-	] = await Promise.all([await getProduct(params.id), await getExtensions(params.id)])
-
-	const queryObject = {
-		sortOrder: 'date_desc',
-		categoryId: product.categoryId,
-	}
-
-	const {
-		status,
-		data: { result: relatedProducts },
-	} = await productFilter({ queryObject })
+	] = await Promise.all([await getBySlug(slug), await getExtensions()])
 
 	return (
 		<div className="container mx-auto py-20">
@@ -122,25 +114,7 @@ export default async function ProductDetails({ params }: { params: { id: string 
 				</div>
 			</div>
 			<div className="mt-16">
-				<h2 className="font-bold text-[1.625rem]">
-					More in{' '}
-					<Link href={`/home?categoryId=${product.categoryId}`} className="text-[#46B8E9]">
-						{product.categoryName}
-					</Link>{' '}
-					collection
-				</h2>
-				<div className="product-list">
-					<div className="product-items py-12 grid grid-cols-6 gap-4">
-						{status &&
-							relatedProducts.items.map((product: ProductResponseModel) => {
-								return (
-									<div key={product.id} className="col-span-1">
-										<ProductItem props={{ product }} />
-									</div>
-								)
-							})}
-					</div>
-				</div>
+				<RelatedProduct product={product} />
 			</div>
 		</div>
 	)

@@ -3,11 +3,19 @@ import { PaginatedList } from '@/models/base-models/paginated-list'
 import ProductRequestModel from '@/models/products/product-request-model'
 import ProductResponseModel from '@/models/products/product-response-model'
 import { httpGet, httpPost, httpPut, httpDelete } from '../http-request'
+import { BaseFilter } from '@/models/filter/base-filter'
 
-const adminGetAll = async (token?: string, params?: any) => {
-	return await httpGet<ApiResult<PaginatedList<ProductResponseModel>>>('/adminproduct', {
-		token: token,
-	})
+const adminGetAll = async (
+	token?: string,
+	filter: any = { pageNumber: 1, pageSize: 10 } as BaseFilter
+) => {
+	return await httpPost<ApiResult<PaginatedList<ProductResponseModel>>>(
+		'/adminproduct/products',
+		filter,
+		{
+			token: token,
+		}
+	)
 }
 
 const adminGetOne = async (id: string, token?: string) => {

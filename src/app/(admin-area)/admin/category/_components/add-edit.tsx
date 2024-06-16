@@ -14,28 +14,35 @@ import AdminCombobox from '@/app/(admin-area)/_components/combobox'
 import { TagRequestModel } from '@/models/tags/tag-request-model'
 import { apiStatus } from '@/configs'
 import { adminCreateOne, adminUpdateOne } from '@/services/categories'
-import { adminCreateOne as createTag, adminGetAll } from '@/services/tag'
+import { adminCreateOne as createTag, adminGetAll as getTags } from '@/services/tag'
+import SaveButton from '@/app/_components/save-button'
 
 const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryResponseModel }) => {
 	const isAddMode = !id
+	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
 	const [model, setModel] = useState(
 		Object.assign({ name: '', tags: [] }, { ...category }) as CategoryRequestModel
 	)
-	const [tags, setTags] = useState([Object.assign({ name: '' })] as TagResponseModel[])
+	const [tags, setTags] = useState([
+		Object.assign({ id: '', name: '-- Select Tag --' }),
+	] as TagResponseModel[])
 	const [newTag, setNewTag] = useState({} as TagResponseModel)
 
-	const onSubmit = async (data: CategoryRequestModel): Promise<void> => {
+	const handleSubmit = useCallback(async (): Promise<void> => {
+		setIsLoading(true)
 		const {
 			status,
 			data: { result },
-		} = isAddMode ? await createOne(data) : await updateOne(id, data)
+		} = isAddMode ? await createOne(model) : await updateOne(id, model)
+
+		setIsLoading(false)
 
 		if (status === apiStatus.success) {
 			router.push('/admin/category')
 			router.refresh()
 		}
-	}
+	}, [model])
 
 	async function createOne(data: CategoryRequestModel) {
 		return await adminCreateOne(data)
@@ -50,19 +57,6 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 			...prev,
 			imageUrl: imageUrl,
 		}))
-	}, [])
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const {
-				status,
-				data: { result: tags },
-			} = await adminGetAll()
-
-			status === apiStatus.success && setTags(tags)
-		}
-
-		fetchData()
 	}, [])
 
 	const handleDropdownChange = useCallback((selected: any) => {
@@ -107,6 +101,20 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 			}
 		}
 	}
+
+	const getRelatedData = async () => {
+		const {
+			data: {
+				result: { items: tags },
+			},
+		} = await getTags()
+
+		setTags(tags)
+	}
+
+	useEffect(() => {
+		getRelatedData()
+	}, [])
 
 	return (
 		<div className="min-h-[100vh]">
@@ -188,12 +196,8 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 						>
 							Cancel
 						</Link>
-						<button
-							onClick={() => onSubmit(model)}
-							className="col-span-1 border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 font-medium text-white"
-						>
-							Save Changes
-						</button>
+
+						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 					</div>
 				</div>
 			</div>

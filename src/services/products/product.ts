@@ -47,18 +47,18 @@ const productFilter = async (filterObject: any, token?: string) => {
 }
 
 const downloadFile = async ({
-	productId,
 	bucketName,
 	key,
+	fileId,
 	token,
 }: {
-	productId: string
 	bucketName: string
 	key: string
+	fileId: string
 	token?: string
 }) => {
 	return await httpPost(
-		`/product/${productId}/download-file`,
+		`/product/${fileId}/download-file`,
 		{ bucketName, key },
 		{
 			responseType: 'blob', // Important for binary data
@@ -67,4 +67,8 @@ const downloadFile = async ({
 	)
 }
 
-export { getAll, getOne, createOne, updateOne, deleteOne, productFilter, downloadFile }
+const getBySlug = async (slug: string) => {
+	return await httpGet<ApiResult<ProductResponseModel>>(`/product/${slug}`)
+}
+
+export { getAll, getOne, createOne, updateOne, deleteOne, productFilter, downloadFile, getBySlug }

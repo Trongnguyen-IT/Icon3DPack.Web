@@ -29,7 +29,6 @@ export default async function AdminCategory() {
 			<table className="text-left w-full table-auto border-collapse border border-slate-400">
 				<thead>
 					<tr>
-						<th className="border border-slate-300 px-2">Id</th>
 						<th className="border border-slate-300 px-2">Cover</th>
 						<th className="border border-slate-300 px-2">Name</th>
 						<th className="border border-slate-300 px-2">ProductAmount</th>
@@ -37,11 +36,10 @@ export default async function AdminCategory() {
 					</tr>
 				</thead>
 				<tbody>
-					{dataSource && dataSource.length ? (
-						dataSource.map((item: CategoryResponseModel): JSX.Element => {
+					{dataSource && dataSource.totalPages > 0 ? (
+						dataSource.items.map((item: CategoryResponseModel): JSX.Element => {
 							return (
 								<tr key={item.id}>
-									<td className="border border-slate-300 px-2">{item.id}</td>
 									<td className="border border-slate-300 px-2">
 										<div className="flex justify-center">
 											<div className="col-span-1 relative h-full aspect-[4/3] m-2 w-32">
@@ -57,7 +55,7 @@ export default async function AdminCategory() {
 									<td className="border border-slate-300 px-2">{item.name}</td>
 									<td className="border border-slate-300 px-2">{item.productAmount}</td>
 
-									<td className="border border-slate-300 px-2">
+									<td className="border border-slate-300 px-2 w-[14.75rem]">
 										<div className="grid grid-cols-2 gap-2 mx-4">
 											<Link
 												href={`/admin/category/${item.id}/edit/`}

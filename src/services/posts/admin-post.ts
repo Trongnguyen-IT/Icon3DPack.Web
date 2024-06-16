@@ -2,9 +2,16 @@ import { PostRequestModel } from '@/models/posts/post-request-model'
 import { PostResponseModel } from '@/models/posts/post-response-model'
 import { ApiResult } from '@/models/api-result'
 import { httpDelete, httpGet, httpPost, httpPut } from '../http-request'
+import { BaseFilter } from '@/models/filter/base-filter'
+import { PaginatedList } from '@/models/base-models/paginated-list'
 
-const adminGetAll = async (token?: string, params?: any) => {
-	return await httpGet<ApiResult<PostResponseModel[]>>('/adminpost', { token: token })
+const adminGetAll = async (
+	token?: string,
+	filter: any = { pageNumber: 1, pageSize: 10 } as BaseFilter
+) => {
+	return await httpPost<ApiResult<PaginatedList<PostResponseModel>>>('/adminpost/posts', filter, {
+		token: token,
+	})
 }
 
 const adminGetOne = async (id: string, token?: string) => {

@@ -10,12 +10,14 @@ import { updateProfile } from '@/services/user'
 import { apiStatus } from '@/configs'
 import Loading from '@/app/_components/loading'
 import { successNotification } from '@/untils/toast-notification'
+import SaveButton from '@/app/_components/save-button'
 
 export default function ProfileClient({ profileProp }: { profileProp: UserResponseModel }) {
 	const { setUser } = useAppContext()
 	const [profile, setProfile] = useState({ ...profileProp } as UserResponseModel)
 	const [isLoading, setIsLoading] = useState(false)
-	const submit = async (): Promise<void> => {
+
+	const handleSubmit = useCallback(async (): Promise<void> => {
 		setIsLoading(true)
 		const { status } = await updateProfile(profile)
 		if (status === apiStatus.success) {
@@ -23,7 +25,7 @@ export default function ProfileClient({ profileProp }: { profileProp: UserRespon
 			notify()
 			setIsLoading(false)
 		}
-	}
+	}, [profile])
 
 	const handleUpdateAvatar = useCallback((imageUrl: string) => {
 		setProfile((prev) => ({
@@ -83,15 +85,7 @@ export default function ProfileClient({ profileProp }: { profileProp: UserRespon
 						<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
 							Cancel
 						</button>
-						<button
-							onClick={() => submit()}
-							className={`border border-[#46B8E9] rounded-lg bg-[#46B8E9] h-[3.125rem] col-span-3 font-medium text-white ${
-								isLoading ? 'cursor-no-drop' : 'cursor-pointer'
-							}`}
-							disabled={isLoading}
-						>
-							{isLoading ? <Loading /> : <span>Save Changes</span>}
-						</button>
+						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 					</div>
 				</div>
 			</div>

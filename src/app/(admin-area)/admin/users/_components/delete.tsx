@@ -2,11 +2,13 @@
 
 import ConfirmDialog from '@/app/(admin-area)/admin/tag/_components/confirm-dialog'
 import { apiStatus } from '@/configs'
-import { adminDeleteOne } from '@/services/tag'
+import { adminDeleteOne } from '@/services/user'
 import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 
-export default function Delete({ id }: { id: string }) {
+function Delete({ id }: { id: string }) {
+	console.log('render')
+
 	const router = useRouter()
 	const [isShow, setIsShow] = useState(false)
 
@@ -36,3 +38,4 @@ export default function Delete({ id }: { id: string }) {
 		</div>
 	)
 }
+export default memo(Delete)

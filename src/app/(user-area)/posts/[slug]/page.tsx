@@ -1,11 +1,12 @@
-import { PostService } from '@/services/posts'
+import { getBySlug } from '@/services/posts'
 
 export default async function Posts({ params }: { params: { slug: string } }) {
 	const { slug } = params
 
-	const postService = new PostService('post')
-
-	const { succeeded, result } = await postService.getBySlug(slug)
+	const {
+		status,
+		data: { result },
+	} = await getBySlug(slug)
 
 	return (
 		<div className="min-h-[55vh]">

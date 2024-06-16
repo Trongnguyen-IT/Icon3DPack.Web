@@ -2,11 +2,20 @@ import { CategoryResponseModel } from '@/models/categories/category-response-mod
 import { CategoryRequestModel } from '@/models/categories/category-request-model'
 import { httpDelete, httpGet, httpPost, httpPut } from '../http-request'
 import { ApiResult } from '@/models/api-result'
+import { BaseFilter } from '@/models/filter/base-filter'
+import { PaginatedList } from '@/models/base-models/paginated-list'
 
-const adminGetAll = async (token?: string) => {
-	return await httpGet<ApiResult<CategoryResponseModel[]>>('/admincategory', {
-		token: token,
-	})
+const adminGetAll = async (
+	token?: string,
+	filter: any = { pageNumber: 1, pageSize: 10 } as BaseFilter
+) => {
+	return await httpPost<ApiResult<PaginatedList<CategoryResponseModel>>>(
+		'/admincategory/categories',
+		filter,
+		{
+			token: token,
+		}
+	)
 }
 
 const adminGetOne = async (id: string, token?: string) => {

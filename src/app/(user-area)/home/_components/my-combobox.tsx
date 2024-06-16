@@ -1,10 +1,11 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { CategoryResponseModel } from '@/models/categories/category-response-model'
+import { useRouter } from 'next/navigation'
 
 export default function MyCombobox({
 	categories,
@@ -15,6 +16,7 @@ export default function MyCombobox({
 	selectedCategory: CategoryResponseModel
 	onSelectedCategory: (val: any) => void
 }) {
+	const router = useRouter()
 	const inputRef = useRef<HTMLInputElement>(null)
 	const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -34,6 +36,7 @@ export default function MyCombobox({
 			  )
 
 	const handleSelect = (category: any) => {
+		//router.push(`/home?categoryId=${category.id}`)
 		setSelected(category)
 		onSelectedCategory(category)
 	}
@@ -41,6 +44,9 @@ export default function MyCombobox({
 	const handleInputClick = () => {
 		buttonRef.current?.click()
 	}
+	useEffect(() => {
+		selectedCategory && setSelected(selectedCategory)
+	}, [selectedCategory])
 
 	return (
 		<div className="w-full">

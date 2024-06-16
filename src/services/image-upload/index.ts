@@ -12,7 +12,8 @@ export const uploadService = {
 		const { bucketName, prefix } = awsConfig
 		return await httpPost<ApiResult<any>>(
 			`/filestorage/upload?bucketName=${bucketName}&prefix=${prefix}`,
-			data
+			data,
+			{ contentType: 'multipart/form-data' }
 		)
 	},
 }

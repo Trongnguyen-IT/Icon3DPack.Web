@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { PostRequestModel } from '@/models/posts/post-request-model'
@@ -9,6 +9,7 @@ import { apikey } from '@/configs/tiny'
 import slugify from 'slugify'
 import { adminCreateOne, adminUpdateOne } from '@/services/posts'
 import { apiStatus } from '@/configs'
+import SaveButton from '@/app/_components/save-button'
 
 export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRequestModel }) {
 	const isAddMode = !id
@@ -17,23 +18,28 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 	const [model, setModel] = useState(
 		Object.assign({ name: '', order: 0 }, post) as PostRequestModel
 	)
+	const [isLoading, setIsLoading] = useState(false)
 
-	const onSubmit = async (data: PostRequestModel): Promise<void> => {
+	const handleSubmit = useCallback(async (): Promise<void> => {
+		setIsLoading(true)
+
 		if (editorRef.current) {
-			data.content = editorRef.current.getContent()
+			model.content = editorRef.current.getContent()
 		}
-		data.slug = slugify(data.name, { lower: true, strict: true })
+		model.slug = slugify(model.name, { lower: true, strict: true })
 
 		const {
 			status,
 			data: { result },
-		} = isAddMode ? await createOne(data) : await updateOne(id, data)
+		} = isAddMode ? await createOne(model) : await updateOne(id, model)
+
+		setIsLoading(true)
 
 		if (status === apiStatus.success) {
 			router.push('/admin/post')
 			router.refresh()
 		}
-	}
+	}, [model])
 
 	async function createOne(data: PostRequestModel) {
 		return await adminCreateOne(data)
@@ -123,12 +129,9 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 					>
 						Cancel
 					</Link>
-					<button
-						onClick={() => onSubmit(model)}
-						className="col-span-1 border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 font-medium text-white"
-					>
-						Save Changes
-					</button>
+					<div className="col-span-1">
+						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
+					</div>
 				</div>
 			</div>
 		</div>

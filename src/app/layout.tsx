@@ -29,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 			user = result
 			//console.log('result', result)
 		} catch (error) {
-			console.log('error', error)
+			//console.log('error', error)
 		}
 	}
 

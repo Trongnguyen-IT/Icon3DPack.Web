@@ -1,10 +1,11 @@
 'use client'
 
+import SaveButton from '@/app/_components/save-button'
 import { apiStatus } from '@/configs'
 import { UserResponseModel } from '@/models/users/user-response-model'
 import { updateNotification } from '@/services/user'
 import { successNotification } from '@/untils/toast-notification'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export default function NotificationForm({
 	initialProfile,
@@ -14,18 +15,22 @@ export default function NotificationForm({
 	const [isNotification, setIsNotification] = useState(
 		initialProfile?.receiveEmailNotification || false
 	)
+	const [isLoading, setIsLoading] = useState(false)
 
-	const submit = async () => {
+	const handleSubmit = useCallback(async () => {
 		if (initialProfile) {
+			setIsLoading(true)
 			const request = {
 				userId: initialProfile.id,
 				receiveEmailNotification: isNotification,
 			}
 
 			const { status } = await updateNotification(initialProfile.id, isNotification)
+
+			setIsLoading(false)
 			status === apiStatus.success && successNotification()
 		}
-	}
+	}, [isNotification])
 
 	return (
 		<>
@@ -51,12 +56,7 @@ export default function NotificationForm({
 							<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
 								Cancel
 							</button>
-							<button
-								onClick={() => submit()}
-								className="border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 col-span-3 font-medium text-white"
-							>
-								Save Changes
-							</button>
+							<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 						</div>
 					</div>
 				</div>

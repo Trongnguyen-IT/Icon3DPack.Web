@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, memo } from 'react'
 import Image from 'next/image'
 import FileUploadRequest from '@/models/files/file-load-request'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
@@ -8,52 +8,41 @@ import { FileExtensionResponseModel } from '@/models/file-extensions/file-extens
 import { FileEntity } from '@/models/files/file-entity'
 import { uploadService } from '@/services/image-upload'
 import { apiStatus } from '@/configs'
+import Loading from './loading'
 
 const FileUpload = ({
-	props,
+	imageExtensionUrl,
+	bucketName,
+	prefix,
+	fileType,
+	fileEntity,
+	onChangeFile,
+	extension,
+	onHandleRemoveFile,
 }: {
-	props: {
-		imageUrl: string
-		bucketName: string
-		prefix: string
-		fileType: string
-		fileEntity?: FileEntity
-		onChangeFile: Function
-		extension: FileExtensionResponseModel
-	}
+	imageExtensionUrl: string
+	bucketName: string
+	prefix: string
+	fileType: string
+	fileEntity?: FileEntity
+	onChangeFile: Function
+	extension: FileExtensionResponseModel
+	onHandleRemoveFile: Function
 }) => {
-	const { imageUrl, bucketName, prefix, fileEntity, fileType, onChangeFile, extension } = props
-
-	const [fileImage, setFileImage] = useState('')
-	const [previewImg, setPreviewImg] = useState(imageUrl || '/images/default-avatar.svg')
+	const [fileName, setFileName] = useState(fileEntity?.name)
 	const uploadInput = useRef<HTMLInputElement>(null)
+	const [isLoading, setIsLoading] = useState(false)
 
-	// useEffect(() => {
-	// 	imageUrl && setPreviewImg(imageUrl)
-	// 	return () => {
-	// 		fileImage && URL.revokeObjectURL(previewImg)
-	// 	}
-	// }, [imageUrl])
-
-	const handlePreviewfileImage = (e: any): void => {
-		const file = e.target.files[0]
-
-		//const preview = URL.createObjectURL(file)
-		//setFileImage(file)
-		//setPreviewImg(preview)
-
-		uploadImage(file)
-	}
-
-	const handleRemove = (): void => {
-		setFileImage('')
-		setPreviewImg('/images/default-avatar.svg')
+	const handleRemove = (file?: FileEntity): void => {
+		setFileName('')
+		onHandleRemoveFile(file)
 	}
 
 	const uploadImage = async (e: any): Promise<void> => {
+		setIsLoading(true)
 		try {
 			const file = e.target.files[0]
-
+			setFileName(file.name)
 			let formData = new FormData()
 			formData.append('file', file)
 
@@ -64,18 +53,20 @@ const FileUpload = ({
 
 			const {
 				status,
-				data: { result: imageUrl },
+				data: { result: imageExtensionUrl },
 			} = await uploadService.upload(formData, awsConfig)
 
 			const fileEntity = {
 				name: file.name,
-				fileUrl: imageUrl,
+				fileUrl: imageExtensionUrl,
 				fileExtensionId: extension.id,
 			}
 
 			status == apiStatus.success && onChangeFile(fileEntity)
 		} catch (err) {
 			console.log(err)
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
@@ -85,8 +76,8 @@ const FileUpload = ({
 				<div className="w-[3.75rem] h-[3.75rem] relative rounded-full overflow-hidden ">
 					<Image
 						fill
-						src={ConvertToCloudfontUrl(imageUrl)}
-						alt={previewImg}
+						src={ConvertToCloudfontUrl(imageExtensionUrl)}
+						alt={ConvertToCloudfontUrl(imageExtensionUrl)}
 						className="object-contain object-center"
 					/>
 				</div>
@@ -94,16 +85,24 @@ const FileUpload = ({
 			<div className="col-span-3 place-self-start">
 				<button
 					onClick={() => uploadInput.current?.click()}
-					className="flex justify-center items-center w-[7.5rem] h-[3.125rem] border rounded-lg border-[#E7E7E7] font-bold"
+					className={`flex justify-center items-center w-[7.5rem] h-[3.125rem] border rounded-lg border-[#E7E7E7] font-bold ${
+						isLoading ? 'cursor-no-drop' : 'cursor-pointer'
+					}`}
 				>
-					<Image
-						src={ConvertToCloudfontUrl('utilities-image/icon-upload.svg')}
-						width={16}
-						height={16}
-						alt="Picture of the author"
-						className="mr-2"
-					/>
-					Upload
+					{isLoading ? (
+						<Loading />
+					) : (
+						<>
+							<Image
+								src={ConvertToCloudfontUrl('utilities-image/icon-upload.svg')}
+								width={16}
+								height={16}
+								alt="Picture of the author"
+								className="mr-2"
+							/>
+							Upload
+						</>
+					)}
 				</button>
 				<input
 					ref={uploadInput}
@@ -112,10 +111,10 @@ const FileUpload = ({
 					className='hidden className="max-w-[260px] ext-sm text-stone-500 file:mr-5 file:py-1 file:px-3 file:border-[1px] file:text-xs file:font-medium file:bg-stone-50 file:text-stone-700 hover:file:cursor-pointer hover:file:bg-blue-50 hover:file:text-blue-700"'
 				/>
 			</div>
-			<span className="col-span-6 font-medium opacity-50">{fileEntity?.name}</span>
+			<span className="col-span-6 font-medium opacity-50">{fileName}</span>
 			<button
 				className="w-[1.155rem] h[1.283125rem] aspect-[18/20] relative cursor-pointer col-span-1"
-				onClick={() => handleRemove()}
+				onClick={() => handleRemove(fileEntity)}
 			>
 				<Image
 					src={ConvertToCloudfontUrl('utilities-image/icon-delete.svg')}
@@ -129,14 +128,4 @@ const FileUpload = ({
 	)
 }
 
-FileUpload.propTypes = {
-	imageUrl: PropTypes.string,
-	bucketName: PropTypes.string,
-	prefix: PropTypes.string,
-	fileType: PropTypes.string,
-	onChangeFile: PropTypes.func,
-	extension: PropTypes.any,
-	fileEntity: PropTypes.any,
-}
-
-export default FileUpload
+export default memo(FileUpload)

@@ -6,4 +6,5 @@ export default interface ProductModel {
 	categoryId: string
 	categoryName: string
 	slug: string
+	downloadCount: number
 }

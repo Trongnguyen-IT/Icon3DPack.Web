@@ -6,7 +6,6 @@ interface UserRequestModel extends BaseAuditRequestModel {
 	phoneNumber?: string
 	imageUrl?: string
 	receiveEmailNotification: boolean
-	username: string
 }
 
 export type { UserRequestModel }

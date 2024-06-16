@@ -6,7 +6,7 @@ import { memo } from 'react'
 
 const ProductHomeItem = ({ product }: { product: ProductResponseModel }) => {
 	return (
-		<Link href={`/product/${product.id}`}>
+		<Link href={`/product/${product.slug}`}>
 			<div className="product-box relative group overflow-hidden border-transparent rounded-[20px] border-solid border-2 hover:border-[#46B8E9] transition duration-300">
 				<div className="relative product-image aspect-[217/213] overflow-hidden">
 					<Image

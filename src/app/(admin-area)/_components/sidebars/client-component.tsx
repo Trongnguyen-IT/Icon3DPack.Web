@@ -4,8 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { adminRoutes } from '@/configs/routes'
+import { memo } from 'react'
 
-export default function AdminSideBar() {
+const AdminSideBar = () => {
 	const pathname = usePathname()
 
 	return (
@@ -31,3 +32,4 @@ export default function AdminSideBar() {
 		</ul>
 	)
 }
+export default memo(AdminSideBar)

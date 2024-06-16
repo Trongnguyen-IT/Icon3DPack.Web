@@ -5,8 +5,9 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { logout as handleLogout } from '@/services/user'
 import { apiStatus } from '@/configs'
+import { memo } from 'react'
 
-export default function AccountSettingSidebar() {
+const AccountSettingSidebar = () => {
 	const pathname = usePathname()
 	const router = useRouter()
 
@@ -50,3 +51,5 @@ export default function AccountSettingSidebar() {
 		</ul>
 	)
 }
+
+export default memo(AccountSettingSidebar)

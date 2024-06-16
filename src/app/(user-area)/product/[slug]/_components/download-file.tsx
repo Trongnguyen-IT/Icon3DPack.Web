@@ -1,10 +1,12 @@
 'use client'
 
+import Loading from '@/app/_components/loading'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { FileExtensionResponseModel } from '@/models/file-extensions/file-extension-response-model'
 import ProductResponseModel from '@/models/products/product-response-model'
 import { downloadFile } from '@/services/products'
 import Image from 'next/image'
+import { useState } from 'react'
 
 export default function DownloadFile({
 	props,
@@ -12,16 +14,22 @@ export default function DownloadFile({
 	props: { product: ProductResponseModel; extension: FileExtensionResponseModel }
 }) {
 	const { product, extension } = props
+	const [isLoading, setIsLoading] = useState(false)
+	const [currentFile] = useState(() => {
+		return product.fileEntities.find((p) => p.fileExtensionId == extension.id)
+	})
 
 	const handleDownload = async () => {
 		try {
+			setIsLoading(true)
+
 			const file = product.fileEntities.find((p) => p.fileExtensionId == extension.id)
 
 			if (file) {
 				const { status, data } = await downloadFile({
-					productId: product.id,
 					bucketName: 'icon3dpack-bucket-s3',
 					key: file.fileUrl,
+					fileId: file.id,
 				})
 
 				// Create a blob from the response data
@@ -42,6 +50,8 @@ export default function DownloadFile({
 			}
 		} catch (error) {
 			console.error('Error downloading file:', error)
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
@@ -50,16 +60,24 @@ export default function DownloadFile({
 			<button
 				onClick={() => handleDownload()}
 				key={extension.id}
-				className="border border-solid border-[#E7E7E7] rounded-full inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center"
+				className={`border border-solid border-[#E7E7E7] rounded-full inline-flex w-[3.25rem] h-[3.25rem] justify-center items-center ${
+					isLoading || !currentFile ? 'cursor-no-drop' : 'cursor-pointer'
+				}`}
 			>
-				<Image
-					src={ConvertToCloudfontUrl(extension.imageUrl)}
-					style={{ objectFit: 'contain' }}
-					alt={ConvertToCloudfontUrl(extension.imageUrl)}
-					className="w-[1.5rem] h-[1.5rem]"
-					width={20}
-					height={30}
-				/>
+				{isLoading ? (
+					<Loading />
+				) : (
+					<span>
+						<Image
+							src={ConvertToCloudfontUrl(extension.imageUrl)}
+							style={{ objectFit: 'contain' }}
+							alt={ConvertToCloudfontUrl(extension.imageUrl)}
+							className="w-[1.5rem] h-[1.5rem]"
+							width={20}
+							height={30}
+						/>
+					</span>
+				)}
 			</button>
 		</>
 	)

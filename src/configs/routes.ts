@@ -1,8 +1,8 @@
 export const adminRoutes = [
-	{ path: '/admin', name: 'Dashboard', icon: '/images/icon-dashboard.svg' },
+	// { path: '/admin', name: 'Dashboard', icon: '/images/icon-dashboard.svg' },
 	{ path: '/admin/category', name: 'Category', icon: '/images/icon-product.svg' },
 	{ path: '/admin/product', name: 'Product', icon: '/images/icon-product.svg' },
-	{ path: '/admin/user', name: 'User', icon: '/images/icon-user.svg' },
+	{ path: '/admin/users', name: 'User', icon: '/images/icon-user.svg' },
 	{ path: '/admin/file-extension', name: 'File Extension', icon: '/images/icon-setting.svg' },
 	{ path: '/admin/post', name: 'Post', icon: '/images/icon-setting.svg' },
 	{ path: '/admin/tag', name: 'Tag', icon: '/images/icon-setting.svg' },

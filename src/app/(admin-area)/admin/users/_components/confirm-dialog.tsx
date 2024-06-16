@@ -1,21 +1,25 @@
 'use client'
 
-import { Fragment, memo, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
-function ConfirmDialog({
-	id,
-	isShow,
-	callBackConfirm,
-	setIsShow,
+export default function ConfirmDialog({
+	props,
 }: {
-	id: string
-	isShow: boolean
-	callBackConfirm: () => Promise<void>
-	setIsShow: (isShow: boolean) => void
+	props: {
+		id: string
+		isShow: boolean
+		callBackConfirm: () => Promise<void>
+		setIsShow: (isShow: boolean) => void
+	}
 }) {
+	const { id, isShow, setIsShow, callBackConfirm } = props
 	const cancelButtonRef = useRef(null)
+
+	function handleConfirm(): void {
+		callBackConfirm()
+	}
 
 	return (
 		<Transition.Root show={isShow} as={Fragment} key={id}>
@@ -69,7 +73,7 @@ function ConfirmDialog({
 									<button
 										type="button"
 										className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-										onClick={callBackConfirm}
+										onClick={() => handleConfirm()}
 									>
 										Deactivate
 									</button>
@@ -90,4 +94,3 @@ function ConfirmDialog({
 		</Transition.Root>
 	)
 }
-export default memo(ConfirmDialog)

@@ -24,30 +24,28 @@ export default async function AdminPost() {
 			<table className="text-left w-full table-fixed border-collapse border border-slate-400">
 				<thead>
 					<tr>
-						<th className="border border-slate-300 px-2">Id</th>
 						<th className="border border-slate-300 px-2">Name</th>
 						<th className="border border-slate-300 px-2">Order</th>
 						<th className="border border-slate-300 px-2">Content</th>
-						<th className="border border-slate-300 px-2">Actions</th>
+						<th className="border border-slate-300 px-2 w-[14.75rem]">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					{dataSource && dataSource.length ? (
-						dataSource.map((item: PostResponseModel): JSX.Element => {
+					{dataSource && dataSource.totalPages ? (
+						dataSource.items.map((item: PostResponseModel): JSX.Element => {
 							return (
 								<tr key={item.id}>
-									<td className="border border-slate-300 px-2">{item.id}</td>
 									<td className="border border-slate-300 px-2">{item.name}</td>
 									<td className="border border-slate-300 px-2">{item.order}</td>
 									<td className="border border-slate-300 px-2">
 										<p className="truncate ">{item.content}</p>
 									</td>
 
-									<td className="border border-slate-300 px-2">
-										<div className="flex justify-center">
+									<td className="border border-slate-300 px-2 w-[14.75rem]">
+										<div className="grid grid-cols-2 gap-2 mx-4">
 											<Link
 												href={`/admin/post/${item.id}/edit/`}
-												className="w-1/2 inline-block border text-center border-[#E7E7E7] rounded-xl py-3"
+												className="col-span-1 inline-block border text-center border-[#E7E7E7] rounded-xl py-3"
 											>
 												Edit
 											</Link>

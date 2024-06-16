@@ -2,13 +2,16 @@ import { PostRequestModel } from '@/models/posts/post-request-model'
 import { PostResponseModel } from '@/models/posts/post-response-model'
 import { ApiResult } from '@/models/api-result'
 import { httpDelete, httpGet, httpPost, httpPut } from '../http-request'
+import { PaginatedList } from '@/models/base-models/paginated-list'
 
 const getBySlug = async (slug: string) => {
 	return await httpGet<ApiResult<PostResponseModel>>(`/post/${slug}`)
 }
 
 const getAll = async (token?: string, params?: any) => {
-	return await httpGet<ApiResult<PostResponseModel[]>>('/post', { token: token })
+	return await httpPost<ApiResult<PaginatedList<PostResponseModel>>>('/post/posts', {
+		token: token,
+	})
 }
 
 const getOne = async (id: string, token?: string) => {
@@ -27,4 +30,4 @@ const deleteOne = async (id: string, token?: string) => {
 	return await httpDelete<ApiResult<PostResponseModel>>(`/post/${id}`, { token: token })
 }
 
-export { getAll, getOne, createOne, updateOne, deleteOne }
+export { getAll, getOne, createOne, updateOne, deleteOne, getBySlug }

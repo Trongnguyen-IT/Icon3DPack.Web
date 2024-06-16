@@ -10,7 +10,7 @@ export default async function AdminTag() {
 
 	const {
 		data: { result: dataSource },
-	} = await adminGetAll('/admintag', token?.value)
+	} = await adminGetAll(token?.value)
 
 	return (
 		<div>
@@ -26,34 +26,26 @@ export default async function AdminTag() {
 			<table className="text-left w-full table-auto border-collapse border border-slate-400">
 				<thead>
 					<tr>
-						<th className="border border-slate-300 px-2">Id</th>
 						<th className="border border-slate-300 px-2">Name</th>
 						<th className="border border-slate-300 px-2">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					{dataSource && dataSource.length ? (
-						dataSource.map((item: TagResponseModel): JSX.Element => {
+					{dataSource && dataSource.totalPages ? (
+						dataSource.items.map((item: TagResponseModel): JSX.Element => {
 							return (
 								<tr key={item.id}>
-									<td className="border border-slate-300 px-2">{item.id}</td>
 									<td className="border border-slate-300 px-2">{item.name}</td>
 
-									<td className="border border-slate-300 px-2">
-										<div className="grid grid-cols-2 gap-2 mx-4">
+									<td className="border border-slate-300 px-2 w-[14.75rem]">
+										<div className="grid grid-cols-2 gap-2 mx-4 ">
 											<Link
 												href={`/admin/tag/${item.id}/edit/`}
 												className="col-span-1 border text-center border-[#E7E7E7] rounded-xl py-3"
 											>
 												Edit
 											</Link>
-											{/* <button
-												onClick={() => onDelete(item.id)}
-												className="col-span-1 text-white border bg-[#F04F23] border-[#E7E7E7] rounded-xl py-3"
-											>
-												Delete
-											</button> */}
-											<Delete key={item.id} props={{ id: item.id }} />
+											<Delete id={item.id} />
 										</div>
 									</td>
 								</tr>

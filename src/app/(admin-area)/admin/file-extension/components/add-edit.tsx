@@ -1,14 +1,15 @@
 'use client'
 
 import ImageUpload from '@/app/_components/image-upload'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useCallback, useState } from 'react'
 import Image from 'next/image'
 import { ConvertToCloudfontUrl } from '@/helper/cloudfont-helper'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FileExtensionRequestModel } from '@/models/file-extensions/file-extenstion-request-model'
-import { extensionService } from '@/services/file-extensions'
 import { apiStatus } from '@/configs'
+import { adminCreateOne, adminUpdateOne } from '@/services/file-extensions'
+import SaveButton from '@/app/_components/save-button'
 
 export default function AddOrEditFileExtension({
 	id,
@@ -22,25 +23,30 @@ export default function AddOrEditFileExtension({
 	const [model, setModel] = useState(
 		Object.assign({ name: '', order: 0 }, extension) as FileExtensionRequestModel
 	)
+	const [isLoading, setIsLoading] = useState(false)
 
-	const onSubmit = async (data: FileExtensionRequestModel): Promise<void> => {
+	const handleSubmit = useCallback(async (): Promise<void> => {
+		setIsLoading(true)
+
 		const {
 			status,
 			data: { result },
-		} = isAddMode ? await createOne(data) : await updateOne(id, data)
+		} = isAddMode ? await createOne(model) : await updateOne(id, model)
+
+		setIsLoading(false)
 
 		if (status === apiStatus.success) {
 			router.push('/admin/file-extension')
 			router.refresh()
 		}
-	}
+	}, [model])
 
 	async function createOne(data: FileExtensionRequestModel) {
-		return await extensionService.createOne(data)
+		return await adminCreateOne(data)
 	}
 
 	async function updateOne(id: string, data: FileExtensionRequestModel) {
-		return await extensionService.updateOne(id, data)
+		return await adminUpdateOne(id, data)
 	}
 
 	const updateAvatar = (imageUrl: string): void => {
@@ -113,12 +119,9 @@ export default function AddOrEditFileExtension({
 						>
 							Cancel
 						</Link>
-						<button
-							onClick={() => onSubmit(model)}
-							className="col-span-1 border border-[#46B8E9] rounded-lg bg-[#46B8E9] py-3 font-medium text-white"
-						>
-							Save Changes
-						</button>
+						<div className="col-span-1">
+							<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
+						</div>
 					</div>
 				</div>
 			</div>
