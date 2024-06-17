@@ -60,10 +60,16 @@ export default function AddOrEditUser({ user }: { user?: UserResponseModel }) {
 						<p className="mb-1 font-bold">Email</p>
 						<input
 							className="w-full border rounded-lg py-3 px-2 border-[#E7E7E7] outline-none"
-							disabled
+							disabled={!isAddMode}
 							type="text"
-							placeholder="User name..."
+							placeholder="Email..."
 							value={model.email}
+							onChange={(e: ChangeEvent<HTMLInputElement>) =>
+								setModel((prev: UserRequestModel) => ({
+									...prev,
+									email: e.target.value,
+								}))
+							}
 						/>
 					</div>
 					<div className="mb-4">

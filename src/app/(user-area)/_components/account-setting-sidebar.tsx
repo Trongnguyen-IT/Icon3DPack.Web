@@ -6,20 +6,23 @@ import { usePathname, useRouter } from 'next/navigation'
 import { logout as handleLogout } from '@/services/user'
 import { apiStatus } from '@/configs'
 import { memo } from 'react'
+import { useAppContext } from '@/app/app-provider'
 
 const AccountSettingSidebar = () => {
 	const pathname = usePathname()
 	const router = useRouter()
+	const { setUser } = useAppContext()
 
 	const logout = async () => {
 		const { status } = await handleLogout(true)
 
 		if (status === apiStatus.success) {
+			setUser(null)
 			localStorage.removeItem('accessToken')
 			localStorage.removeItem('user')
 		}
 
-		router.push('/')
+		router.push(`/home`)
 		router.refresh()
 	}
 

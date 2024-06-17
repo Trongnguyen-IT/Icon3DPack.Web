@@ -2,7 +2,7 @@ import { normalizePath } from '@/untils'
 import axios, { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
 import { deleteCookie, getCookie, setCookie } from 'cookies-next'
 import { RedirectType, redirect, useRouter } from 'next/navigation'
-const baseURL = 'http://localhost:5000/api/v1' //process.env.NEXT_PUBLIC_API_URL
+//const baseURL = process.env.BASE_URL // 'http://localhost:5000/api/v1' //process.env.NEXT_PUBLIC_API_URL
 class SessionToken {
 	private token = ''
 	private _expiresAt = new Date().toISOString()
@@ -35,7 +35,7 @@ export const clientSessionToken = new SessionToken()
 // }
 
 const baseHttp = axios.create({
-	baseURL,
+	baseURL: process.env.BASE_URL,
 	headers: {
 		'Content-Type': 'application/json',
 		accept: 'application/json', // If you receieve JSON response.
@@ -141,9 +141,10 @@ type CustomOptions = AxiosRequestConfig & {
 }
 
 const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
+	const baseURL = process.env.BASE_URL
 	return {
 		...instance.defaults,
-		baseURL: options.baseURL ? options.baseURL : instance.defaults.headers.common['baseURL'],
+		baseURL: options.baseURL ? options.baseURL : instance.defaults.baseURL,
 		headers: {
 			...instance.defaults.headers,
 			Authorization: options.token
@@ -158,6 +159,8 @@ const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
 
 export const httpGet = async <T = any>(url: string, options = {} as CustomOptions) => {
 	const config = setOptions(baseHttp, options)
+	console.log('configconfig', config)
+
 	return await baseHttp.get<T>(url, config)
 }
 
