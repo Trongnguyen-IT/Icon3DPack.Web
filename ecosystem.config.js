@@ -3,7 +3,7 @@ module.exports = {
 		{
 			name: 'gui-icon3dpack',
 			script: 'yarn',
-			args: 'start:prod  -p 9001',
+			args: 'start:prod -p 9001',
 			interpreter: '/bin/bash',
 			instances: 1,
 			watch: false,
