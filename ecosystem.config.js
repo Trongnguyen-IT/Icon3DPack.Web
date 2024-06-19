@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'gui-icon3dpack',
-			script: 'npm',
+			script: 'yarn',
 			args: 'start:prod  -p 9001',
 			interpreter: '/bin/bash',
 			instances: 1,
