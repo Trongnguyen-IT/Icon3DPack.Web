@@ -159,7 +159,6 @@ const setOptions = (instance: AxiosInstance, options: CustomOptions) => {
 
 export const httpGet = async <T = any>(url: string, options = {} as CustomOptions) => {
 	const config = setOptions(baseHttp, options)
-	console.log('configconfig', config)
 
 	return await baseHttp.get<T>(url, config)
 }
