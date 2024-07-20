@@ -17,7 +17,7 @@ export default async function CategoryEditComponent({ params }: { params: { id: 
 				result: { items: tags },
 			},
 		},
-	] = await Promise.all([await adminGetOne(id, token?.value), await getTags(token?.value)])
+	] = await Promise.all([adminGetOne(id, token?.value), getTags(token?.value)])
 
 	return (
 		<div>

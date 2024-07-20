@@ -3,13 +3,17 @@ import { PostResponseModel } from '@/models/posts/post-response-model'
 import { ApiResult } from '@/models/api-result'
 import { httpDelete, httpGet, httpPost, httpPut } from '../http-request'
 import { PaginatedList } from '@/models/base-models/paginated-list'
+import { BaseFilter } from '@/models/filter/base-filter'
 
 const getBySlug = async (slug: string) => {
 	return await httpGet<ApiResult<PostResponseModel>>(`/post/${slug}`)
 }
 
-const getAll = async (token?: string, params?: any) => {
-	return await httpPost<ApiResult<PaginatedList<PostResponseModel>>>('/post/posts', {
+const getAll = async (
+	token?: string,
+	filter: any = { pageNumber: 1, pageSize: 10, sortBy: 'Order' } as BaseFilter
+) => {
+	return await httpPost<ApiResult<PaginatedList<PostResponseModel>>>('/post/posts', filter, {
 		token: token,
 	})
 }

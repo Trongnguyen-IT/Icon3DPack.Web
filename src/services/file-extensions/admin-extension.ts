@@ -7,7 +7,7 @@ import { PaginatedList } from '@/models/base-models/paginated-list'
 
 const adminGetAll = async (
 	token?: string,
-	filter: any = { pageNumber: 1, pageSize: 10 } as BaseFilter
+	filter: any = { pageNumber: 1, pageSize: 10, sortBy: 'Order' } as BaseFilter
 ) => {
 	return await httpPost<ApiResult<PaginatedList<FileExtensionResponseModel>>>(
 		'/adminfileextension/extensions',

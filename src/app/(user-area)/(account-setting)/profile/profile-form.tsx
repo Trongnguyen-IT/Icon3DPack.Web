@@ -85,7 +85,11 @@ export default function ProfileClient({ profileProp }: { profileProp: UserRespon
 						<button className="border border-[#E7E7E7] rounded-lg py-3 col-span-1 font-bold">
 							Cancel
 						</button>
-						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
+						<SaveButton
+							classOptions="col-span-3"
+							isLoading={isLoading}
+							onHandleClick={handleSubmit}
+						/>
 					</div>
 				</div>
 			</div>

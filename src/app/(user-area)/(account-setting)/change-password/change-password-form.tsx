@@ -108,7 +108,11 @@ export default function ChangePasswordForm({
 							>
 								Cancel
 							</Link>
-							<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
+							<SaveButton
+								classOptions="col-span-3"
+								isLoading={isLoading}
+								onHandleClick={handleSubmit}
+							/>
 						</div>
 					</div>
 				</div>

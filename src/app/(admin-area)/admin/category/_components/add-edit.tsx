@@ -16,6 +16,7 @@ import { apiStatus } from '@/configs'
 import { adminCreateOne, adminUpdateOne } from '@/services/categories'
 import { adminCreateOne as createTag, adminGetAll as getTags } from '@/services/tag'
 import SaveButton from '@/app/_components/save-button'
+import slugify from 'slugify'
 
 const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryResponseModel }) => {
 	const isAddMode = !id
@@ -31,6 +32,8 @@ const AddOrEditCategory = ({ id, category }: { id?: string; category?: CategoryR
 
 	const handleSubmit = useCallback(async (): Promise<void> => {
 		setIsLoading(true)
+
+		model.slug = slugify(model.name, { lower: true, strict: true })
 		const {
 			status,
 			data: { result },

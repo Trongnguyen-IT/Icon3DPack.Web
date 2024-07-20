@@ -17,14 +17,14 @@ export default async function AdminFileExtension() {
 	return (
 		<div>
 			<h1 className="font-bold text-[1.875rem] mb-8">FileExtension</h1>
-			<div className="flex justify-end mb-4">
+			{/* <div className="flex justify-end mb-4">
 				<Link
 					href="/admin/file-extension/add"
 					className="flex justify-center items-center w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] focus:outline-none rounded-lg font-bold text-white transition-all"
 				>
 					Add
 				</Link>
-			</div>
+			</div> */}
 			<table className="text-left w-full table-auto border-collapse border border-slate-400">
 				<thead>
 					<tr>
@@ -61,7 +61,7 @@ export default async function AdminFileExtension() {
 											>
 												Edit
 											</Link>
-											<Delete key={item.id} props={{ id: item.id }} />
+											{/* <Delete key={item.id} props={{ id: item.id }} /> */}
 										</div>
 									</td>
 								</tr>

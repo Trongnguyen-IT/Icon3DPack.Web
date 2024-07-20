@@ -73,7 +73,7 @@ const FileUpload = ({
 	return (
 		<div className="grid grid-cols-12 place-items-center gap-4">
 			<div className="col-span-2">
-				<div className="w-[3.75rem] h-[3.75rem] relative rounded-full overflow-hidden ">
+				<div className="w-[3.75rem] h-[3.75rem] relative rounded-full overflow-hidden aspect-[1/1]">
 					<Image
 						fill
 						src={ConvertToCloudfontUrl(imageExtensionUrl)}

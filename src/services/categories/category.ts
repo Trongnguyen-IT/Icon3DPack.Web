@@ -3,6 +3,10 @@ import { CategoryRequestModel } from '@/models/categories/category-request-model
 import { httpDelete, httpGet, httpPost, httpPut } from '../http-request'
 import { ApiResult } from '@/models/api-result'
 
+const getBySlug = async (slug: string) => {
+	return await httpGet<ApiResult<CategoryResponseModel>>(`/category/${slug}`)
+}
+
 const getAll = async (token?: string) => {
 	return await httpGet<ApiResult<CategoryResponseModel[]>>('/category', {
 		token: token,
@@ -33,4 +37,4 @@ const deleteOne = async (id: string, token?: string) => {
 	})
 }
 
-export { getAll, getOne, createOne, updateOne, deleteOne }
+export { getAll, getOne, createOne, updateOne, deleteOne, getBySlug }

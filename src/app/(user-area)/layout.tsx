@@ -3,7 +3,6 @@ import Header from '@/app/(user-area)/_components/header'
 import Footer from '@/app/(user-area)/_components/footer'
 import Login from '@/app/_components/login'
 import Register from '@/app/_components/register'
-import AppProvider from '../app-provider'
 import { cookies } from 'next/headers'
 
 export const metadata: Metadata = {

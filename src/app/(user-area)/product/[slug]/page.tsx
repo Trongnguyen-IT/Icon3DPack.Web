@@ -17,7 +17,7 @@ export default async function ProductDetails({ params }: { params: { slug: strin
 				result: { items: extension },
 			},
 		},
-	] = await Promise.all([await getBySlug(slug), await getExtensions()])
+	] = await Promise.all([getBySlug(slug), getExtensions()])
 
 	return (
 		<div className="container mx-auto py-20">

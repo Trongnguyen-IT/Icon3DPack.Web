@@ -7,8 +7,6 @@ import { useRouter } from 'next/navigation'
 import { memo, useCallback, useState } from 'react'
 
 function Delete({ id }: { id: string }) {
-	console.log('render')
-
 	const router = useRouter()
 	const [isShow, setIsShow] = useState(false)
 

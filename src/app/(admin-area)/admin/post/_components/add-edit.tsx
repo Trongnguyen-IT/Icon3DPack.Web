@@ -114,7 +114,7 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 								'wordcount',
 							],
 							toolbar:
-								'undo redo | blocks | ' +
+								'undo redo | blocks fontsize | ' +
 								'bold italic forecolor | alignleft aligncenter ' +
 								'alignright alignjustify | bullist numlist outdent indent | ' +
 								'removeformat | help',
@@ -122,16 +122,14 @@ export default function AddOrEditPost({ id, post }: { id?: string; post?: PostRe
 						}}
 					/>
 				</div>
-				<div className="grid grid-cols-4 gap-4 mt-8">
+				<div className="grid grid-cols-8 gap-4 mt-8">
 					<Link
 						href="/admin/post"
 						className="col-span-1 text-center border border-[#E7E7E7] rounded-lg py-3 font-bold"
 					>
 						Cancel
 					</Link>
-					<div className="col-span-1">
-						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
-					</div>
+					<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 				</div>
 			</div>
 		</div>

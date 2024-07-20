@@ -119,9 +119,7 @@ export default function AddOrEditFileExtension({
 						>
 							Cancel
 						</Link>
-						<div className="col-span-1">
-							<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
-						</div>
+						<SaveButton isLoading={isLoading} onHandleClick={handleSubmit} />
 					</div>
 				</div>
 			</div>

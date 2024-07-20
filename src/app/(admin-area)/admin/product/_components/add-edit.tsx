@@ -78,7 +78,7 @@ export default function AddOrEditProduct({
 					result: { items: extensions },
 				},
 			},
-		] = await Promise.all([await getTags(), await getCategories(), await getExtensions()])
+		] = await Promise.all([getTags(), getCategories(), getExtensions()])
 
 		setTags(tags)
 		setCategories(categories)

@@ -13,14 +13,14 @@ export default async function AdminPost() {
 	return (
 		<div>
 			<h1 className="font-bold text-[1.875rem] mb-12">Post</h1>
-			<div className="flex justify-end mb-4">
+			{/* <div className="flex justify-end mb-4">
 				<Link
 					href="/admin/post/add"
 					className="flex justify-center items-center w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] focus:outline-none rounded-lg font-bold text-white transition-all"
 				>
 					Add
 				</Link>
-			</div>
+			</div> */}
 			<table className="text-left w-full table-fixed border-collapse border border-slate-400">
 				<thead>
 					<tr>

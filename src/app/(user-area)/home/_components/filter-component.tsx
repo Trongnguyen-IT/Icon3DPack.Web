@@ -14,14 +14,14 @@ import { useSearchParams } from 'next/navigation'
 
 export default function FilterComponent({ categories }: { categories: CategoryResponseModel[] }) {
 	const searchParams = useSearchParams()
-	const categoryId = searchParams.get('categoryId')
+	const categorySlug = searchParams.get('category')
 
 	const [products, setProducts] = useState([] as ProductResponseModel[])
-
+	const category = categories.find((p) => p.slug === categorySlug)
 	const [filter, setFilter] = useState({
 		pageNumber: 1,
 		pageSize: 200,
-		categoryId: categoryId,
+		categoryId: category?.id,
 	})
 
 	const [pagingObject, setPagingObject] = useState(Object.assign({ pageNumber: 1, pageSize: 1 }))
@@ -78,8 +78,8 @@ export default function FilterComponent({ categories }: { categories: CategoryRe
 	}, [])
 
 	useEffect(() => {
-		if (categoryId) {
-			const selected = categories.find((p) => p.id === categoryId)
+		if (categorySlug) {
+			const selected = categories.find((p) => p.slug === categorySlug)
 			if (selected) {
 				selected && setSelectedCategory(selected)
 				// setFilter((prev) => ({
