@@ -1,11 +1,8 @@
-import { showSignupHandlerDispatch } from '@/app/_components/register'
-import { useAppContext } from '@/app/app-provider'
 import Image from 'next/image'
 import { memo } from 'react'
 import SignupButton from './signup-button'
 
 const Banner = () => {
-	//const { user } = useAppContext()
 	return (
 		<div className="banner">
 			<div className="grid grid-cols-1 md:grid-cols-2">

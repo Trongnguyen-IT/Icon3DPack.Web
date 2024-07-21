@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { apiStatus } from '@/configs'
 import { useAppContext } from '../app-provider'
 import { auth, login, profile as getProfile } from '@/services/user'
+import SaveButton from './save-button'
 
 export const showLoginHandlerDispatch = () => {
 	document.dispatchEvent(new CustomEvent('showLogin'))
@@ -26,6 +27,7 @@ export default function Login() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [isPassword, setIsPassword] = useState(true)
+	const [isLoading, setIsLoading] = useState(false)
 
 	const showLoginHandler = () => setIsOpen(true)
 	const hideLoginHandler = () => setIsOpen(false)
@@ -35,38 +37,44 @@ export default function Login() {
 		showSignupHandlerDispatch()
 	}
 
-	const submit = async () => {
+	const handleSubmit = async () => {
 		const request = {
 			email: email,
 			password,
 		} as LoginModel
 
-		const {
-			status,
-			statusText,
-			data: { result },
-		} = await login(request)
+		try {
+			setIsLoading(true)
+			const {
+				status,
+				statusText,
+				data: { result },
+			} = await login(request)
+			if (status === apiStatus.success) {
+				const { token } = result
+				localStorage.setItem('accessToken', token)
 
-		if (status === apiStatus.success) {
-			const { token } = result
-			localStorage.setItem('accessToken', token)
+				const { status: nextStatus } = await auth(result)
 
-			const { status: nextStatus } = await auth(result)
+				if (nextStatus) {
+					const {
+						data: { result: profile },
+					} = await getProfile()
 
-			if (nextStatus) {
-				const {
-					data: { result: profile },
-				} = await getProfile()
+					setUser(profile)
+					hideLoginHandler()
+					router.push('/')
+					router.refresh()
 
-				setUser(profile)
-				hideLoginHandler()
-				router.push('/')
-				router.refresh()
-
-				//location.reload()
-				//router.push('/profile')
-				//router.refresh()
+					//location.reload()
+					//router.push('/profile')
+					//router.refresh()
+				}
 			}
+		} catch (error) {
+			console.log('error', error)
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
@@ -191,12 +199,12 @@ export default function Login() {
 											</div>
 										</div>
 										<div className="flex flex-row justify-between pb-5 pt-3 px-12">
-											<button
-												onClick={() => submit()}
-												className="w-[7.5rem] h-[3.125rem] bg-[#46B8E9] hover:bg-[#0F9CD9] font-bold text-white rounded-lg transition-all"
-											>
-												Log in
-											</button>
+											<SaveButton
+												classOptions="w-[7.5rem]"
+												title="Login"
+												isLoading={isLoading}
+												onHandleClick={handleSubmit}
+											/>
 											<button className="underline opacity-60">Lost your password?</button>
 										</div>
 									</div>
